@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="A creative portfolio for showcasing projects and experiences." />
+
+    <title>Muse Portfolio</title>
+    <link rel="icon" href="images/musecast.png" />
+    <link rel="stylesheet" href="style.css" />
+
+
+
+    <script>
+	// SCRIPT TO RANDOMIZE backgroundColor EVERY LOADUP
+    // Define the RGB values for the start (purple) and end (blue) colors
+    const startColor = { r: 55, g: 53, b: 147 }; // Purple #373593
+    const endColor = { r: 60, g: 86, b: 171 };   // Blue #5555FF
+
+    function randomColor(start, end) {
+        // Generate a random factor between 0 and 1
+        const factor = Math.random();
+
+        // Calculate each color component (R, G, B) by interpolating between start and end
+        const r = Math.round(start.r + factor * (end.r - start.r));
+        const g = Math.round(start.g + factor * (end.g - start.g));
+        const b = Math.round(start.b + factor * (end.b - start.b));
+
+        // Return the color as a CSS-friendly string
+        return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    // Apply the random color as the background on page load
+    document.addEventListener("DOMContentLoaded", () => {
+        document.body.style.backgroundColor = randomColor(startColor, endColor);
+    });
+	</script>
+
+  </head>
+  <body>
+    <!-- Barebones Portfolio Layout -->
+    <div id="main-container">
+        <main>
+		<!-- GENGAR CURSOR CODE BLOCK
+        <style>
+			html, body {
+				cursor: url("https://downloads.totallyfreecursors.com/cursor_files/gengar.ani"),
+						url("https://downloads.totallyfreecursors.com/thumbnails/gengar.gif"),
+						auto;
+			}
+		</style>
+
+		<!-- GENGAR CURSOR CODE BLOCK -->
+
+            <!-- Header Art -->
+            <div id="art">
+
+                <img id="art-header" src="images/musecast.png" alt="Header Art" width="300" height="100" />
+
+                <img id="art-main" src="images/musecast.png" alt="Main Art" width="400" height="200" />
+
+                <img id="art-sub" src="images/musecast.png" alt="Sub Art" width="300" height="50" />
+            </div>
+
+            <!-- Text Section (Intro) -->
+            <div id="text">
+                <span>Hello! My name is Jason Muse. On this webpage, I showcase my work as a Computer Engineer and Indie Game Developer, including my design, development, music composition and more!</span>
+                <br /><br />
+                <span>My work combines tech and creativity, inspired by unique, adventurous worlds and stories that spark a sense of wonder and excitement. I’m passionate about blending engineering with artistry to bring bold ideas to life.</span>
+            </div>
+
+            <!-- Button Section (Links to Projects) -->
+            <div id="button">
+
+				<iframe frameborder="0" class="button-link" src="https://itch.io/embed/2775351?border_width=5&amp;bg_color=d7e5f8&amp;fg_color=222222&amp;link_color=5a63fa&amp;border_color=5e6163" width="560" height="175"><a href="https://amused.itch.io/frog-quest">FROG QUEST by mooz</a></iframe>
+
+            <div id="text">
+                <span>This is the first game I spent a lot of time on, spent a summer designing the game, programming, doing some of the art, and curating and composing the soundtrack.</span>
+                <br /><br />
+            </div>
+
+				<iframe frameborder="0" class="button-link" src="https://itch.io/embed/2364489?border_width=5&amp;bg_color=f7e8e8&amp;fg_color=222222&amp;link_color=fa5c5c&amp;border_color=efc78b" width="560" height="175"><a href="https://amused.itch.io/upside-down-pineapple-race">Upside-Down Pineapple Race! by mooz</a></iframe>
+
+            <div id="text">
+                <span>This was the first game I ever completed, and it was made for a game jam in <strong>48 hours!</strong> I coded and designed the level for the game myself, as well as composed the music!</span>
+                <br /><br />
+            </div>
+
+                <a href="https://musecast.github.io/">
+                    <img id="button-project2" class="button-link" src="images/musecast.png" alt="Project 2 Link" height="167" />
+                </a>
+
+            <div id="text">
+                <span>Musecast HQ is a website I made to encompass all my passion projects, it featured videos, music, and games from my ouvre!</span>
+                <br /><br />
+            </div>
+
+
+            <iframe frameborder="0" class="button-link" src="https://itch.io/embed/2639471?border_width=5&amp;bg_color=161616&amp;fg_color=faf9f9&amp;link_color=fa5c5c&amp;border_color=bebebe" width="560" height="175"><a href="https://amused.itch.io/boombox-swarm">BOOMBOX SWARM by mooz</a></iframe>
+            </div>
+			<div id="text">
+                <span>Another game made for a game jam, a simple run n' gun shooter. Difficulty scales over time, have fun!</span>
+                <br /><br />
+            </div>
+
+            <!-- Social Links Section -->
+            <div id="link">
+                <img id="link-wheel" src="images/musecast.png" alt="Social Links Wheel" width="150" height="150" />
+                <a href="#social1">
+                    <img id="link-tiktok" class="link-icon" src="images/musecast.png" alt="Social Link 1" width="50" height="50" />
+                </a>
+                <a href="#social2">
+                    <img id="link-youtube" class="link-icon" src="images/musecast.png" alt="Social Link 2" width="50" height="50" />
+                </a>
+                <a href="#social3">
+                    <img id="link-patreon" class="link-icon" src="images/musecast.png" alt="Social Link 3" width="50" height="50" />
+                </a>
+            </div>
+
+            <!-- Banner Section -->
+            <div id="banner">
+				<div>
+					<img src="images/musecast.png" alt="Banner 1" width="120" height="42" />
+					<img src="images/banner-smile.gif" alt="Banner 2" />
+				</div>
+				<div>
+					<img src="images/banner-planetclue.gif" alt="Banner 3" />
+					<img src="images/musecast.png" alt="Banner 6" width="120" height="42" />
+				</div>
+			</div>
+            </div>
+        </main>
+    </div>
+  </body>
+</html>
