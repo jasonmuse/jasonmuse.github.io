@@ -61,13 +61,30 @@ filter: drop-shadow(0px 0px 4px #ffffff);
 
 #art-main2 {
 position: absolute;
-top: 70px;
 left: 0;
+top: 0;
 width: 90%; /* Match the width of #art-main if needed */
 margin: 20px; /* Match the margin of #art-main for perfect overlay */
 filter: drop-shadow(0px 0px 4px #ffffff);
-opacity: 1.0; /* Optional: Adjust transparency for blending effect */
+opacity: 1.0; /* Adjust transparency for blending effect */
+animation: tilt 10s infinite ease-in-out; /* Apply animation */
 }
+
+@keyframes tilt {
+	0% {
+		transform: rotate(0deg);
+	}
+	20% {
+		transform: rotate(2.5deg); /* Slight tilt to the right */
+	}
+	80% {
+		transform: rotate(-2.5deg); /* Slight tilt to the left */
+	}
+	100% {
+		transform: rotate(0deg); /* Return to center */
+	}
+}
+
 
 
 #text {
