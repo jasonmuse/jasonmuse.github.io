@@ -68,6 +68,11 @@ margin: 20px; /* Match the margin of #art-main for perfect overlay */
 filter: drop-shadow(0px 0px 4px #ffffff);
 opacity: 1.0; /* Adjust transparency for blending effect */
 animation: tilt 10s infinite ease-in-out; /* Apply animation */
+transition: transform 0.2s ease-in-out; /* Add transition here for smooth scaling */
+}
+
+#art-main:hover {
+transform: scale(1.1); /* Apply scale on hover */
 }
 
 @keyframes tilt {
@@ -87,6 +92,7 @@ animation: tilt 10s infinite ease-in-out; /* Apply animation */
 
 
 
+
 #text {
 width: 95%;
 font-size: 22px;
@@ -103,11 +109,22 @@ width: 95%;
 font-size: 15px;
 line-height: 1.2;
 color: #FFFFFF;
-filter: drop-shadow(0px 1px 1px #000000);
+filter: drop-shadow(0px 3px 3px #000000);
 text-align: center;
 margin: auto;
 margin-top: -5%;
 margin-bottom: 5%;
+}
+
+#text-3 {
+	width: 95%;
+	font-size: 15px;
+	line-height: 1.2;
+	color: #FFFFFF;
+	text-align: center;
+	margin: auto;
+	margin-top: -5%;
+	margin-bottom: 5%;
 }
 
 #button {
