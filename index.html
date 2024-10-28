@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en-US">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="A creative portfolio for showcasing projects and experiences." />
@@ -9,127 +9,135 @@
     <link rel="icon" href="images/musecast.png" />
     <link rel="stylesheet" href="style.css" />
 
-
-
     <script>
-	// SCRIPT TO RANDOMIZE backgroundColor EVERY LOADUP
-    // Define the RGB values for the start (purple) and end (blue) colors
-    const startColor = { r: 55, g: 53, b: 147 }; // Purple #373593
-    const endColor = { r: 60, g: 86, b: 171 };   // Blue #5555FF
+        // Script to randomize background color on each page load
+        const startColor = { r: 55, g: 53, b: 147 }; // Purple #373593
+        const endColor = { r: 60, g: 86, b: 171 };   // Blue #5555FF
 
-    function randomColor(start, end) {
-        // Generate a random factor between 0 and 1
-        const factor = Math.random();
+        function randomColor(start, end) {
+            const factor = Math.random();
+            const r = Math.round(start.r + factor * (end.r - start.r));
+            const g = Math.round(start.g + factor * (end.g - start.g));
+            const b = Math.round(start.b + factor * (end.b - start.b));
+            return `rgb(${r}, ${g}, ${b})`;
+        }
 
-        // Calculate each color component (R, G, B) by interpolating between start and end
-        const r = Math.round(start.r + factor * (end.r - start.r));
-        const g = Math.round(start.g + factor * (end.g - start.g));
-        const b = Math.round(start.b + factor * (end.b - start.b));
+        document.addEventListener("DOMContentLoaded", () => {
+            document.body.style.backgroundColor = randomColor(startColor, endColor);
+        });
+    </script>
+</head>
 
-        // Return the color as a CSS-friendly string
-        return `rgb(${r}, ${g}, ${b})`;
-    }
-
-    // Apply the random color as the background on page load
-    document.addEventListener("DOMContentLoaded", () => {
-        document.body.style.backgroundColor = randomColor(startColor, endColor);
-    });
-	</script>
-
-  </head>
-  <body>
-    <!-- Barebones Portfolio Layout -->
+<body>
+    <!-- Main Content Container -->
     <div id="main-container">
         <main>
-		<!-- GENGAR CURSOR CODE BLOCK
-        <style>
-			html, body {
-				cursor: url("https://downloads.totallyfreecursors.com/cursor_files/gengar.ani"),
-						url("https://downloads.totallyfreecursors.com/thumbnails/gengar.gif"),
-						auto;
-			}
-		</style>
-
-		<!-- GENGAR CURSOR CODE BLOCK -->
 
             <!-- Header Art -->
             <div id="art">
-
-                <img id="art-header" src="images/musecast.png" alt="Header Art" width="300" height="100" />
-
-                <img id="art-main" src="images/musecast.png" alt="Main Art" width="400" height="200" />
-
-                <img id="art-sub" src="images/musecast.png" alt="Sub Art" width="300" height="50" />
+                <img id="art-main" src="images/howhollows.png" alt="Main Art" />
+                <img id="art-main2" src="images/pojm.gif" alt="Main Art" />
+                <!-- <img id="art-main" style="margin-top:-50000px" src="images/pojm.gif"alt="Main Art" /> -->
             </div>
 
-            <!-- Text Section (Intro) -->
+            <!-- About Section -->
             <div id="text">
-                <span>Hello! My name is Jason Muse. On this webpage, I showcase my work as a Computer Engineer and Indie Game Developer, including my design, development, music composition and more!</span>
-                <br /><br />
-                <span>My work combines tech and creativity, inspired by unique, adventurous worlds and stories that spark a sense of wonder and excitement. I’m passionate about blending engineering with artistry to bring bold ideas to life.</span>
+                <h1 id="games-title">ABOUT ME</h1>
+                <span>Hello! My name is Jason Muse. On this page, I share my work as a <strong>Computer Engineer</strong>, <strong>Indie Game Developer</strong>, and <strong>Music Composer</strong>, including projects focused on design, development, music, and more!</span>
+
+
+                <br/><br/>
+
+                <span>My work combines tech and creativity, inspired by unique, adventurous worlds and stories that spark a sense of wonder and excitement. I’m passionate about blending engineering with artistry to bring fun ideas to life.</span>
+
+
             </div>
 
-            <!-- Button Section (Links to Projects) -->
+            <!-- Games Section -->
             <div id="button">
+                <div id="text">
+                    <h1 id="games-title">GAME DEV</h1>
+                </div>
 
-				<iframe frameborder="0" class="button-link" src="https://itch.io/embed/2775351?border_width=5&amp;bg_color=d7e5f8&amp;fg_color=222222&amp;link_color=5a63fa&amp;border_color=5e6163" width="560" height="175"><a href="https://amused.itch.io/frog-quest">FROG QUEST by mooz</a></iframe>
+                <br>
 
-            <div id="text">
-                <span>This is the first game I spent a lot of time on, spent a summer designing the game, programming, doing some of the art, and curating and composing the soundtrack.</span>
-                <br /><br />
+                <iframe frameborder="0" class="button-link" src="https://itch.io/embed/2775351?border_width=5&amp;bg_color=d7e5f8&amp;fg_color=222222&amp;link_color=5a63fa&amp;border_color=5e6163" width="560" height="175">
+                    <a href="https://amused.itch.io/frog-quest">FROG QUEST by mooz</a>
+                </iframe>
+                <div id="text-2">
+                <span><strong>FROG QUEST</strong> is my most polished game dev creation to date—a fully realized, solo-made adventure from start to finish.</span>
+                </div>
+
+
+
+
+
+
+                <iframe frameborder="0" class="button-link" src="https://itch.io/embed/2364489?border_width=5&amp;bg_color=f7e8e8&amp;fg_color=222222&amp;link_color=fa5c5c&amp;border_color=efc78b" width="560" height="175">
+                    <a href="https://amused.itch.io/upside-down-pineapple-race">Upside-Down Pineapple Race! by mooz</a>
+                </iframe>
+                <div id="text-2">
+                <span>Upside-Down Pineapple Race is the first game I ever made. Created solo in a 48 hour game jam with the theme: <i>Upside Down</i>!</span>
+                </div>
+
+
+
+
+                <iframe frameborder="0" class="button-link" src="https://itch.io/embed/2639471?border_width=5&amp;bg_color=161616&amp;fg_color=faf9f9&amp;link_color=fa5c5c&amp;border_color=bebebe" width="560" height="175">
+                    <a href="https://amused.itch.io/boombox-swarm">BOOMBOX SWARM by mooz</a>
+                </iframe>
+                </iframe>
+                <div id="text-2">
+                <span>Another game made for a 48 hour game jam. The difficulty scales over time and the <strong>music</strong> was made by yours truly, enjoy!</span>
+                </div>
+
             </div>
 
-				<iframe frameborder="0" class="button-link" src="https://itch.io/embed/2364489?border_width=5&amp;bg_color=f7e8e8&amp;fg_color=222222&amp;link_color=fa5c5c&amp;border_color=efc78b" width="560" height="175"><a href="https://amused.itch.io/upside-down-pineapple-race">Upside-Down Pineapple Race! by mooz</a></iframe>
 
+            <!-- Web Design Section -->
             <div id="text">
-                <span>This was the first game I ever completed, and it was made for a game jam in <strong>48 hours!</strong> I coded and designed the level for the game myself, as well as composed the music!</span>
-                <br /><br />
-            </div>
+                <h1 id="games-title">WEB DESIGN</h1>
 
+                <h2>Muse HQ</h2>
+                <div id="text-2">
+                <span>Musecast HQ is a website I created to showcase all my passion projects, including videos, games, and a unique scrolling music wheel that lets you explore my collection of sounds and tracks!</span>
+                </div>
                 <a href="https://musecast.github.io/">
-                    <img id="button-project2" class="button-link" src="images/musecast.png" alt="Project 2 Link" height="167" />
+                    <img id="button-project2" class="button-link" src="images/musehq.png" alt="Project 2 Link"
+     style="border: 2px solid black; background-color: #333333;" />
+
                 </a>
+
+            </div>
 
             <div id="text">
-                <span>Musecast HQ is a website I made to encompass all my passion projects, it featured videos, music, and games from my ouvre!</span>
-                <br /><br />
+                <h2>Muse Jukebox</h2>
+                <div id="text-2">
+                <span>The Muse Jukebox is an interactive music player loaded with tracks from my own collection that is <strong>dynamically generated</strong> each time it’s loaded. It's a fun way to explore my music catalog, letting you hit play and enjoy a mix of sounds I’ve created!</span>
+                </div>
+                <a href="https://musecast.github.io/">
+                    <img id="button-project2" class="button-link" src="images/musejukebox.png" alt="Project 2 Link"
+     style="border: 2px solid black; background-color: #333333;" />
+
+                </a>
+
             </div>
 
 
-            <iframe frameborder="0" class="button-link" src="https://itch.io/embed/2639471?border_width=5&amp;bg_color=161616&amp;fg_color=faf9f9&amp;link_color=fa5c5c&amp;border_color=bebebe" width="560" height="175"><a href="https://amused.itch.io/boombox-swarm">BOOMBOX SWARM by mooz</a></iframe>
-            </div>
-			<div id="text">
-                <span>Another game made for a game jam, a simple run n' gun shooter. Difficulty scales over time, have fun!</span>
-                <br /><br />
-            </div>
-
-            <!-- Social Links Section -->
-            <div id="link">
-                <img id="link-wheel" src="images/musecast.png" alt="Social Links Wheel" width="150" height="150" />
-                <a href="#social1">
-                    <img id="link-tiktok" class="link-icon" src="images/musecast.png" alt="Social Link 1" width="50" height="50" />
-                </a>
-                <a href="#social2">
-                    <img id="link-youtube" class="link-icon" src="images/musecast.png" alt="Social Link 2" width="50" height="50" />
-                </a>
-                <a href="#social3">
-                    <img id="link-patreon" class="link-icon" src="images/musecast.png" alt="Social Link 3" width="50" height="50" />
-                </a>
-            </div>
 
             <!-- Banner Section -->
             <div id="banner">
-				<div>
-					<img src="images/musecast.png" alt="Banner 1" width="120" height="42" />
-					<img src="images/banner-smile.gif" alt="Banner 2" />
-				</div>
-				<div>
-					<img src="images/banner-planetclue.gif" alt="Banner 3" />
-					<img src="images/musecast.png" alt="Banner 6" width="120" height="42" />
-				</div>
-			</div>
+                <div>
+                    <img src="images/musecast.png" alt="Banner 1" width="120" height="42" />
+                    <img src="images/banner-smile.gif" alt="Banner 2" />
+                </div>
+                <div>
+                    <img src="images/banner-planetclue.gif" alt="Banner 3" />
+                    <img src="images/musecast.png" alt="Banner 6" width="120" height="42" />
+                </div>
             </div>
+
         </main>
     </div>
-  </body>
+</body>
 </html>
