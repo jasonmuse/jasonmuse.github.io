@@ -73,7 +73,6 @@ transition: transform 0.2s ease-in-out; /* Add transition here for smooth scalin
 }
 
 #art-main:hover {
-transform: scale(1.1); /* Apply scale on hover */
 }
 
 @keyframes tilt {
@@ -176,23 +175,24 @@ gap: 0.4em;
 /* Responsive Design */
 @media (max-width: 600px) {
 	#games-title {
-	background-image: url("images/earthboundbattlesquiggle.gif");
-	background-size: cover;
-	background-position: center;
-	width: 250px;          /* Set to 100% to fill the main content area */
-	height: 50px;
-	color: white;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	text-align: center;
-	font-size: 24px;
-	margin: auto;
-	margin-top:40px;
-	margin-bottom:20px;
-	border-radius: 5px;    /* Optional: smooth the edges slightly */
-	overflow: hidden;
+		background-image: url("images/earthboundbattlesquiggle.gif");
+		background-size: cover;
+		background-position: center;
+		width: 250px;          /* Set to 100% to fill the main content area */
+		height: 50px;
+		color: white;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+		font-size: 24px;
+		margin: auto;
+		margin-top:40px;
+		margin-bottom:20px;
+		border-radius: 5px;    /* Optional: smooth the edges slightly */
+		overflow: hidden;
 	}
+
 
 	#art {
 	position: relative;

@@ -1,30 +1,29 @@
 <!DOCTYPE html>
 <html lang="en-US">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="A creative portfolio for showcasing projects and experiences." />
-
     <title>Muse Portfolio</title>
     <link rel="icon" href="images/musecast.png" />
     <link rel="stylesheet" href="style.css" />
-
     <script>
         // Script to randomize background color on each page load
-        const startColor = { r: 55, g: 53, b: 147 }; // Purple #373593
-        const endColor = { r: 60, g: 86, b: 171 };   // Blue #5555FF
+        			const startColor = { r: 55, g: 53, b: 147 }; // Purple #373593
+        			const endColor = { r: 60, g: 86, b: 171 };   // Blue #5555FF
 
-        function randomColor(start, end) {
-            const factor = Math.random();
-            const r = Math.round(start.r + factor * (end.r - start.r));
-            const g = Math.round(start.g + factor * (end.g - start.g));
-            const b = Math.round(start.b + factor * (end.b - start.b));
-            return `rgb(${r}, ${g}, ${b})`;
-        }
+        			function randomColor(start, end) {
+        			    const factor = Math.random();
+        			    const r = Math.round(start.r + factor * (end.r - start.r));
+        			    const g = Math.round(start.g + factor * (end.g - start.g));
+        			    const b = Math.round(start.b + factor * (end.b - start.b));
+        			    return `rgb(${r}, ${g}, ${b})`;
+        			}
 
-        document.addEventListener("DOMContentLoaded", () => {
-            document.body.style.backgroundColor = randomColor(startColor, endColor);
-        });
+        			document.addEventListener("DOMContentLoaded", () => {
+        			    document.body.style.backgroundColor = randomColor(startColor, endColor);
+        			});
     </script>
 </head>
 
@@ -33,6 +32,7 @@
     <div id="main-container">
         <main>
 
+
             <!-- Header Art -->
             <div id="art">
                 <img id="art-main" src="images/howhollows.png" alt="Main Art" />
@@ -40,95 +40,78 @@
                 <!-- <img id="art-main" style="margin-top:-50000px" src="images/pojm.gif"alt="Main Art" /> -->
             </div>
 
+
             <!-- About Section -->
             <div id="text">
                 <h1 id="games-title">ABOUT ME</h1>
                 <span>Hello! My name is Jason Muse. On this page, I share my work as a <strong>Computer Engineer</strong>, <strong>Indie Game Developer</strong>, and <strong>Music Composer</strong>, including projects focused on design, development, music, and more!</span>
-
-
-                <br/><br/>
-
+                <br/>
+                <br/>
                 <span>My work combines tech and creativity, inspired by unique, adventurous worlds and stories that spark a sense of wonder and excitement. I’m passionate about blending engineering with artistry to bring fun ideas to life.</span>
                 <br/>
-
             </div>
-<br/>
+
+
+            <br/>
+
+
             <!-- Games Section -->
             <div id="button">
                 <div id="text">
                     <h1 id="games-title">GAME DEV</h1>
                 </div>
-
-
                 <iframe frameborder="0" class="button-link" src="https://itch.io/embed/2775351?border_width=5&amp;bg_color=d7e5f8&amp;fg_color=222222&amp;link_color=5a63fa&amp;border_color=5e6163" width="560" height="175">
                     <a href="https://amused.itch.io/frog-quest">FROG QUEST by mooz</a>
                 </iframe>
                 <div id="text-2">
-                <span><strong>FROG QUEST</strong> is my most polished game dev creation to date—a fully realized, solo-made adventure from start to finish.</span>
+                    <span><strong>FROG QUEST</strong> is my most polished game dev creation to date—a fully realized, solo-made adventure from start to finish.</span>
                 </div>
-
-
-
-
-
-
                 <iframe frameborder="0" class="button-link" src="https://itch.io/embed/2364489?border_width=5&amp;bg_color=f7e8e8&amp;fg_color=222222&amp;link_color=fa5c5c&amp;border_color=efc78b" width="560" height="175">
                     <a href="https://amused.itch.io/upside-down-pineapple-race">Upside-Down Pineapple Race! by mooz</a>
                 </iframe>
                 <div id="text-2">
-                <span>Upside-Down Pineapple Race is the first game I ever made. Created solo in a 48 hour game jam with the theme: <i>Upside Down</i>!</span>
+                    <span>Upside-Down Pineapple Race is the first game I ever made. Created solo in a 48 hour game jam with the theme: <i>Upside Down</i>!</span>
                 </div>
-
-
-
-
                 <iframe frameborder="0" class="button-link" src="https://itch.io/embed/2639471?border_width=5&amp;bg_color=161616&amp;fg_color=faf9f9&amp;link_color=fa5c5c&amp;border_color=bebebe" width="560" height="175">
                     <a href="https://amused.itch.io/boombox-swarm">BOOMBOX SWARM by mooz</a>
                 </iframe>
                 <div id="text-2">
-                <span>Another game made for a 48 hour game jam. The difficulty scales over time and the <strong>music</strong> was made by yours truly, enjoy!</span>
+                    <span>Another game made for a 48 hour game jam. The difficulty scales over time and the <strong>music</strong> was made by yours truly, enjoy!</span>
                 </div>
-
             </div>
 
-<br/>
+
+            <br/>
+
+
             <!-- Web Design Section -->
             <div id="text">
                 <h1 id="games-title">WEB DESIGN</h1>
-
-                <h2>Muse HQ</h2>
-                <div id="text-3">
-                <span>Musecast HQ is a website I created to showcase all my passion projects, including videos, games, and a unique scrolling music wheel that lets you explore my collection of sounds and tracks!</span>
-                </div>
-                <a href="https://musecast.github.io/">
-                    <img id="button-project2" class="button-link" src="images/musehq.png" alt="Project 2 Link"
-     style="border: 2px solid black; background-color: #333333;" />
-
-                </a>
-
-            </div>
-
-            <div id="text">
                 <h2>Muse Jukebox</h2>
                 <div id="text-3">
-                <span>The Muse Jukebox is an interactive music player loaded with tracks from my own collection that is <strong>dynamically generated</strong> each time it’s loaded. It's a fun way to explore my music catalog, letting you hit play and enjoy a mix of sounds I’ve created!</span>
+                    <span>The Muse Jukebox is an interactive music player loaded with tracks from my own collection that is <strong>dynamically generated</strong> each time it’s loaded. It's a fun way to explore my music catalog, letting you hit play and enjoy a mix of sounds I’ve created!</span>
                 </div>
                 <a href="https://jasonmuse.github.io/muse-jukebox/">
-                    <img id="button-project2" class="button-link" src="images/musejukebox.png" alt="Project 2 Link"
-     style="border: 2px solid black; background-color: #333333;" />
-
+                    <img id="button-project2" class="button-link" src="images/musejukebox.png" alt="Project 2 Link" style="border: 2px solid black; background-color: #333333;" />
                 </a>
-
+                <h2>Muse HQ</h2>
+                <div id="text-3">
+                    <span>Musecast HQ is a website I created to showcase all my passion projects, including videos, games, and a unique scrolling music wheel that lets you explore my collection of sounds and tracks!</span>
+                </div>
+                <a href="https://musecast.github.io/">
+                    <img id="button-project2" class="button-link" src="images/musehq.png" alt="Project 2 Link" style="border: 2px solid black; background-color: #333333;" />
+                </a>
             </div>
 
-
+            <!-- Copyright -->
+            <div id="text-2">
+                <br>
+                <span>Copyright © 2024 Jason Muse. All Rights Reserved.</span>
+            </div>
 
         </main>
     </div>
 
-                    <div id="text-2">
-                    <br><br><br>
-                <span>Copyright © 2024 Jason Muse. All Rights Reserved.</span>
-                </div>
 </body>
+
 </html>
