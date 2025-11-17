@@ -199,57 +199,34 @@ gap: 0.4em;
     border-radius: 5px;    /* Optional: smooth the edges slightly */
     overflow: hidden;
 }
-/* Make everything fluid first */
-.button-link,
-iframe.button-link {
-    width: 100% !important;
-    height: auto;
-    max-width: 560px;
-    aspect-ratio: 560 / 175; /* keeps itch.io cards from collapsing */
-}
 
-/* Better mobile + force re-layout on orientation change */
-@media screen and (max-width: 896px) {  /* covers iPhones in both orientations */
-    main {
-        padding: 20px 15px 0 15px;
-    }
-    
-    #games-title {
-        width: 90%;
-        max-width: 300px;
-        height: 80px;
-        font-size: 20px;
-        margin: 40px auto 20px auto;
-    }
-    
-    #art-main,
-    #art-main2 {
-        width: 95%;
-        margin: 10px auto;
-    }
-    
-    #art-main2 {
-        position: relative;     /* stop absolute drift on rotation */
-        margin-top: -100px;     /* or whatever negative margin looks good */
-        pointer-events: none;
-    }
-    
-    /* Force the absolute logo to stay centered instead */
-    #art {
-        display: block;
-        position: relative;
-    }
-    
-    /* Small hack to trigger full reflow when orientation changes */
-    body {
-        animation: none; /* remove any body animation that might cache layout */
-    }
-}
+/* Responsive Design */
+@media (max-width: 600px) {
+	#games-title {
+		background-image: url("images/earthboundbattlesquiggle.gif");
+		background-size: cover;
+		background-position: center;
+		width: 250px;          /* Set to 100% to fill the main content area */
+		height: 50px;
+		color: white;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+		font-size: 24px;
+		margin: auto;
+		margin-top:40px;
+		margin-bottom:20px;
+		border-radius: 5px;    /* Optional: smooth the edges slightly */
+		overflow: hidden;
+	}
 
-/* Extra: force reflow when orientation actually changes */
-@media screen and (orientation: landscape) {
-    main { padding-top: 10px; }
-}
-@media screen and (orientation: portrait) {
-    main { padding-top: 40px; }
+
+	#art {
+	position: relative;
+	text-align: center;
+	max-width: 100%;
+	margin-bottom:-20px;
+	transform:scale(1.2)
+	}
 }
