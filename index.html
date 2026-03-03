@@ -7,7 +7,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="A creative portfolio for showcasing projects and experiences." />
     <title>Muse Portfolio</title>
-    <link rel="icon" href="images/musecast.png" />
+    <link rel="icon" href="images/wiz.png" />
+    <link rel="preload" href="fonts/lato-v24-latin-regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="images/howhollows.png" as="image" fetchpriority="high" />
+    <link rel="preload" href="images/JASONMUSELOGO.png" as="image" />
+    <link rel="preconnect" href="https://itch.io" crossorigin />
+    <link rel="preconnect" href="https://web1.eng.famu.fsu.edu" crossorigin />
+    <link rel="dns-prefetch" href="//itch.io" />
+    <link rel="dns-prefetch" href="//web1.eng.famu.fsu.edu" />
+    <link rel="prefetch" href="images/itch.gif" as="image" />
+    <link rel="prefetch" href="images/musejukebox.gif" as="image" />
     <link rel="stylesheet" href="style.css" />
     <script>
         // Script to randomize background color on each page load
@@ -26,6 +35,27 @@
         			document.addEventListener("DOMContentLoaded", () => {
         			    document.body.style.backgroundColor = randomColor(startColor, endColor);
         			});
+                    // Warm up below-the-fold images so they are likely cached before scrolling.
+                    window.addEventListener("load", () => {
+                        const warmupAssets = [
+                            "images/aivrmuseum.png",
+                            "images/itch.gif",
+                            "images/musejukebox.gif"
+                        ];
+
+                        const preload = () => {
+                            warmupAssets.forEach((src) => {
+                                const img = new Image();
+                                img.src = src;
+                            });
+                        };
+
+                        if ("requestIdleCallback" in window) {
+                            requestIdleCallback(preload);
+                        } else {
+                            setTimeout(preload, 250);
+                        }
+                    });
     </script>
 </head>
 
@@ -37,8 +67,8 @@
 
             <!-- Header Art -->
             <div id="art">
-                <img id="art-main" src="images/howhollows.png" alt="Main Art" />
-                <img id="art-main2" src="images/JASONMUSELOGO.png" alt="Main Art" />
+                <img id="art-main" src="images/howhollows.png" alt="Main Art" width="2560" height="1440" decoding="async" fetchpriority="high" />
+                <img id="art-main2" src="images/JASONMUSELOGO.png" alt="Main Art" width="2560" height="1440" decoding="async" />
                 <!-- <img id="art-main" style="margin-top:-50000px" src="images/pojm.gif"alt="Main Art" /> -->
             </div>
 
@@ -63,19 +93,19 @@
                 <div id="text">
                     <h1 id="games-title">DEVELOPMENT</h1>
                 </div>
-                <iframe frameborder="0" class="button-link" src="https://itch.io/embed/2775351?border_width=5&amp;bg_color=d7e5f8&amp;fg_color=222222&amp;link_color=5a63fa&amp;border_color=5e6163" width="560" height="175">
+                <iframe frameborder="0" class="button-link" title="Frog Quest on itch.io" loading="eager" src="https://itch.io/embed/2775351?border_width=5&amp;bg_color=d7e5f8&amp;fg_color=222222&amp;link_color=5a63fa&amp;border_color=5e6163" width="560" height="175">
                     <a href="https://amused.itch.io/frog-quest">FROG QUEST by mooz</a>
                 </iframe>
                 <div id="text-2">
                     <span><strong>FROG QUEST</strong> is my most polished game dev creation to date—a fully realized, solo-made adventure from start to finish.</span>
                 </div>
-                <iframe frameborder="0" class="button-link" src="https://itch.io/embed/2364489?border_width=5&amp;bg_color=f7e8e8&amp;fg_color=222222&amp;link_color=fa5c5c&amp;border_color=efc78b" width="560" height="175">
+                <iframe frameborder="0" class="button-link" title="Upside-Down Pineapple Race on itch.io" loading="eager" src="https://itch.io/embed/2364489?border_width=5&amp;bg_color=f7e8e8&amp;fg_color=222222&amp;link_color=fa5c5c&amp;border_color=efc78b" width="560" height="175">
                     <a href="https://amused.itch.io/upside-down-pineapple-race">Upside-Down Pineapple Race! by mooz</a>
                 </iframe>
                 <div id="text-2">
                     <span>Upside-Down Pineapple Race is the first game I ever made. Created solo in a 48 hour game jam with the theme: <i>Upside Down</i>!</span>
                 </div>
-                <iframe frameborder="0" class="button-link" src="https://itch.io/embed/2639471?border_width=5&amp;bg_color=161616&amp;fg_color=faf9f9&amp;link_color=fa5c5c&amp;border_color=bebebe" width="560" height="175">
+                <iframe frameborder="0" class="button-link" title="Boombox Swarm on itch.io" loading="eager" src="https://itch.io/embed/2639471?border_width=5&amp;bg_color=161616&amp;fg_color=faf9f9&amp;link_color=fa5c5c&amp;border_color=bebebe" width="560" height="175">
                     <a href="https://amused.itch.io/boombox-swarm">BOOMBOX SWARM by mooz</a>
                 </iframe>
                 <div id="text-2">
@@ -99,7 +129,7 @@
 				  </span>
 				</div>
 				<a href="https://web1.eng.famu.fsu.edu/ece/senior_design/2025/team314/" target="_blank">
-				  <img id="button-project2" class="button-link" src="images/aivrmuseum.png" alt="Visit the FAMU-FSU C.O.E AI-VR Museum" style="border: 2px solid black; background-color: #333333;" />
+				  <img id="button-project2" class="button-link" src="images/aivrmuseum.png" alt="Visit the FAMU-FSU C.O.E AI-VR Museum" width="2880" height="1800" loading="lazy" decoding="async" style="border: 2px solid black; background-color: #333333;" />
 				</a>
 				
 				
@@ -125,8 +155,8 @@
                 <a href="">
 		            <!-- Header Art -->
 		            <div id="art">
-		                <img style="width: 90%; margin: 20px;"class="button-link" src="images/howhollows.png" alt="Project 2 art" />
-						<img id="art-main2" src="images/JASONMUSELOGO.png" alt="Jason Muse" style="pointer-events: none; top:-20px" />
+		                <img style="width: 90%; margin: 20px;"class="button-link" src="images/howhollows.png" alt="Project 2 art" width="2560" height="1440" loading="lazy" decoding="async" />
+						<img id="art-main2" src="images/JASONMUSELOGO.png" alt="Jason Muse" width="2560" height="1440" loading="lazy" decoding="async" style="pointer-events: none; top:-20px" />
 						<br>
 		            </div>
                 </a>		
@@ -136,7 +166,7 @@
 				    <span>Explore all my games on <strong>itch.io</strong>! This page features every game project I’ve officially released, from polished adventures to amusing game jam entries. Check out the creative work that drives my passion for game development!</span>
 				</div>
 				<a href="https://amused.itch.io/">
-				    <img id="button-project2" class="button-link" src="images/itch.gif" alt="itch.io Link" style="border: 2px solid black; background-color: #333333;" />
+				    <img id="button-project2" class="button-link" src="images/itch.gif" alt="itch.io Link" width="640" height="415" loading="eager" decoding="async" style="border: 2px solid black; background-color: #333333;" />
 				</a>
                 
                 <h2>Muse Jukebox</h2>
@@ -144,7 +174,7 @@
                     <span>The Muse Jukebox is an interactive music player loaded with tracks from my own collection that is <strong>dynamically generated</strong> each time it’s loaded. It's a fun way to explore my music catalog, letting you hit play and enjoy a mix of sounds I’ve created!</span>
                 </div>
                 <a href="https://jasonmuse.github.io/muse-jukebox/">
-                    <img id="button-project2" class="button-link" src="images/musejukebox.gif" alt="Project 1 Link" style="border: 2px solid black; background-color: #333333;" />
+                    <img id="button-project2" class="button-link" src="images/musejukebox.gif" alt="Project 1 Link" width="640" height="761" loading="eager" decoding="async" style="border: 2px solid black; background-color: #333333;" />
                 </a>
 				
 				
