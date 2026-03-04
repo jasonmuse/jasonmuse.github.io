@@ -2,12 +2,28 @@
 <html lang="en-US">
 <!-- Hello! You found the secret note in my HTML, pat yourself on the back :] -->
 <head>
-    <meta charset="utf-8">
-
+    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="A creative portfolio for showcasing projects and experiences." />
-    <title>Muse Portfolio</title>
+    <title>Jason Muse | Computer Engineer, Game Developer, and Music Composer</title>
+    <meta name="description" content="Portfolio of Jason Muse, a computer engineer, game developer, and music composer featuring game projects, web design work, and creative technology." />
+    <meta name="author" content="Jason Muse" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="theme-color" content="#373593" />
+    <link rel="canonical" href="https://jasonmuse.github.io/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Jason Muse Portfolio" />
+    <meta property="og:title" content="Jason Muse | Computer Engineer, Game Developer, and Music Composer" />
+    <meta property="og:description" content="Explore Jason Muse's portfolio of game development, web design, and music composition projects." />
+    <meta property="og:url" content="https://jasonmuse.github.io/" />
+    <meta property="og:image" content="https://jasonmuse.github.io/images/howhollows.png" />
+    <meta property="og:image:alt" content="Fantasy themed hero artwork from Jason Muse's portfolio" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Jason Muse | Computer Engineer, Game Developer, and Music Composer" />
+    <meta name="twitter:description" content="Explore game development, design, and music projects by Jason Muse." />
+    <meta name="twitter:image" content="https://jasonmuse.github.io/images/howhollows.png" />
+
     <link rel="icon" href="images/wiz.png" />
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
     <link rel="preload" href="fonts/lato-v24-latin-regular.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="images/howhollows.png" as="image" fetchpriority="high" />
     <link rel="preload" href="images/JASONMUSELOGO.png" as="image" />
@@ -18,44 +34,68 @@
     <link rel="prefetch" href="images/itch.gif" as="image" />
     <link rel="prefetch" href="images/musejukebox.gif" as="image" />
     <link rel="stylesheet" href="style.css" />
+
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "WebSite",
+                    "name": "Jason Muse Portfolio",
+                    "url": "https://jasonmuse.github.io/"
+                },
+                {
+                    "@type": "Person",
+                    "name": "Jason Muse",
+                    "url": "https://jasonmuse.github.io/",
+                    "jobTitle": "Computer Engineer, Game Developer, Music Composer",
+                    "sameAs": [
+                        "https://amused.itch.io/"
+                    ]
+                }
+            ]
+        }
+    </script>
+
     <script>
         // Script to randomize background color on each page load
         // Refresh the page and see if you get a different color ;]
-        			const startColor = { r: 55, g: 53, b: 147 }; // Purple #373593
-        			const endColor = { r: 60, g: 86, b: 171 };   // Blue #5555FF
+        const startColor = { r: 55, g: 53, b: 147 }; // Purple #373593
+        const endColor = { r: 60, g: 86, b: 171 }; // Blue #5555FF
 
-        			function randomColor(start, end) {
-        			    const factor = Math.random();
-        			    const r = Math.round(start.r + factor * (end.r - start.r));
-        			    const g = Math.round(start.g + factor * (end.g - start.g));
-        			    const b = Math.round(start.b + factor * (end.b - start.b));
-        			    return `rgb(${r}, ${g}, ${b})`;
-        			}
+        function randomColor(start, end) {
+            const factor = Math.random();
+            const r = Math.round(start.r + factor * (end.r - start.r));
+            const g = Math.round(start.g + factor * (end.g - start.g));
+            const b = Math.round(start.b + factor * (end.b - start.b));
+            return `rgb(${r}, ${g}, ${b})`;
+        }
 
-        			document.addEventListener("DOMContentLoaded", () => {
-        			    document.body.style.backgroundColor = randomColor(startColor, endColor);
-        			});
-                    // Warm up below-the-fold images so they are likely cached before scrolling.
-                    window.addEventListener("load", () => {
-                        const warmupAssets = [
-                            "images/aivrmuseum.png",
-                            "images/itch.gif",
-                            "images/musejukebox.gif"
-                        ];
+        document.addEventListener("DOMContentLoaded", () => {
+            document.body.style.backgroundColor = randomColor(startColor, endColor);
+        });
 
-                        const preload = () => {
-                            warmupAssets.forEach((src) => {
-                                const img = new Image();
-                                img.src = src;
-                            });
-                        };
+        // Warm up below-the-fold images so they are likely cached before scrolling.
+        window.addEventListener("load", () => {
+            const warmupAssets = [
+                "images/aivrmuseum.png",
+                "images/itch.gif",
+                "images/musejukebox.gif"
+            ];
 
-                        if ("requestIdleCallback" in window) {
-                            requestIdleCallback(preload);
-                        } else {
-                            setTimeout(preload, 250);
-                        }
-                    });
+            const preload = () => {
+                warmupAssets.forEach((src) => {
+                    const img = new Image();
+                    img.src = src;
+                });
+            };
+
+            if ("requestIdleCallback" in window) {
+                requestIdleCallback(preload);
+            } else {
+                setTimeout(preload, 250);
+            }
+        });
     </script>
 </head>
 
@@ -63,132 +103,110 @@
     <!-- Main Content Container -->
     <div id="main-container">
         <main>
-
+            <noscript>
+                <p>This portfolio highlights Jason Muse's game development, web design, and music composition projects.</p>
+            </noscript>
 
             <!-- Header Art -->
-            <div id="art">
-                <img id="art-main" src="images/howhollows.png" alt="Main Art" width="2560" height="1440" decoding="async" fetchpriority="high" />
-                <img id="art-main2" src="images/JASONMUSELOGO.png" alt="Main Art" width="2560" height="1440" decoding="async" />
-                <!-- <img id="art-main" style="margin-top:-50000px" src="images/pojm.gif"alt="Main Art" /> -->
+            <div class="art">
+                <img class="art-main" src="images/howhollows.png" alt="Stylized fantasy artwork for the Jason Muse portfolio homepage" width="2560" height="1440" decoding="async" fetchpriority="high" />
+                <img class="art-main2" src="images/JASONMUSELOGO.png" alt="Jason Muse logo" width="2560" height="1440" decoding="async" />
             </div>
-
 
             <!-- About Section -->
-            <div id="text">
-                <h1 id="games-title">ABOUT ME</h1>
-                <span>Hello! My name is Jason Muse. On this page, I share my work as a <strong>Computer Engineer</strong>, <strong>Game Developer</strong>, and <strong>Music Composer</strong>, including projects focused on design, development, music, and more!</span>
-                <br/>
-		<a href="documents/resume.pdf" target="_blank" class="resume-button">View Resume</a>
-                <br/>
-                <span>My work combines tech and creativity, inspired by unique, adventurous worlds and stories that spark a sense of wonder and excitement. I’m passionate about blending engineering with art to bring fun ideas to life.</span>
-                <br/>
+            <div class="text">
+                <h1 class="section-title">ABOUT ME</h1>
+                <span>Hello! My name is Jason Muse. On this page, I share my work as a <strong>Computer Engineer</strong>, <strong>Game Developer</strong>, and <strong>Music Composer</strong>, including projects focused on design, development, music, and more.</span>
+                <br />
+                <a href="documents/resume.pdf" target="_blank" rel="noopener noreferrer" class="resume-button">View Resume</a>
+                <br />
+                <span>My work combines tech and creativity, inspired by unique, adventurous worlds and stories that spark a sense of wonder and excitement. I'm passionate about blending engineering with art to bring fun ideas to life.</span>
+                <br />
             </div>
 
-
-            <br/>
-
+            <br />
 
             <!-- Games Section -->
-            <div id="button">
-                <div id="text">
-                    <h1 id="games-title">DEVELOPMENT</h1>
+            <div class="button">
+                <div class="text">
+                    <h2 class="section-title">DEVELOPMENT</h2>
+                </div>
+                <div class="text-3">
+                    <span>Direct links: <a href="https://amused.itch.io/frog-quest">Frog Quest</a>, <a href="https://amused.itch.io/upside-down-pineapple-race">Upside-Down Pineapple Race</a>, <a href="https://amused.itch.io/boombox-swarm">Boombox Swarm</a>.</span>
                 </div>
                 <iframe frameborder="0" class="button-link" title="Frog Quest on itch.io" loading="eager" src="https://itch.io/embed/2775351?border_width=5&amp;bg_color=d7e5f8&amp;fg_color=222222&amp;link_color=5a63fa&amp;border_color=5e6163" width="560" height="175">
-                    <a href="https://amused.itch.io/frog-quest">FROG QUEST by mooz</a>
+                    <a href="https://amused.itch.io/frog-quest">Frog Quest by mooz</a>
                 </iframe>
-                <div id="text-2">
-                    <span><strong>FROG QUEST</strong> is my most polished game dev creation to date—a fully realized, solo-made adventure from start to finish.</span>
+                <div class="text-2">
+                    <span><strong>FROG QUEST</strong> is my most polished game dev creation to date: a fully realized, solo-made adventure from start to finish.</span>
                 </div>
                 <iframe frameborder="0" class="button-link" title="Upside-Down Pineapple Race on itch.io" loading="eager" src="https://itch.io/embed/2364489?border_width=5&amp;bg_color=f7e8e8&amp;fg_color=222222&amp;link_color=fa5c5c&amp;border_color=efc78b" width="560" height="175">
-                    <a href="https://amused.itch.io/upside-down-pineapple-race">Upside-Down Pineapple Race! by mooz</a>
+                    <a href="https://amused.itch.io/upside-down-pineapple-race">Upside-Down Pineapple Race by mooz</a>
                 </iframe>
-                <div id="text-2">
-                    <span>Upside-Down Pineapple Race is the first game I ever made. Created solo in a 48 hour game jam with the theme: <i>Upside Down</i>!</span>
+                <div class="text-2">
+                    <span>Upside-Down Pineapple Race is the first game I ever made. Created solo in a 48 hour game jam with the theme: <i>Upside Down</i>.</span>
                 </div>
                 <iframe frameborder="0" class="button-link" title="Boombox Swarm on itch.io" loading="eager" src="https://itch.io/embed/2639471?border_width=5&amp;bg_color=161616&amp;fg_color=faf9f9&amp;link_color=fa5c5c&amp;border_color=bebebe" width="560" height="175">
-                    <a href="https://amused.itch.io/boombox-swarm">BOOMBOX SWARM by mooz</a>
+                    <a href="https://amused.itch.io/boombox-swarm">Boombox Swarm by mooz</a>
                 </iframe>
-                <div id="text-2">
-                    <span>Another game made for a 48 hour game jam. The difficulty scales over time and the <strong>music</strong> was made by yours truly, enjoy!</span>
+                <div class="text-2">
+                    <span>Another game made for a 48 hour game jam. The difficulty scales over time and the <strong>music</strong> was made by yours truly.</span>
                 </div>
             </div>
 
-
-            <br/>
-
+            <br />
 
             <!-- Web Design Section -->
-            <div id="text">
-                <h1 id="games-title">DESIGN</h1>
-				
-                
-				<h2>Engineering AI-VR Museum</h2>
-				<div id="text-3">
-				  <span>
-				    This website provides an overview of the FAMU-FSU C.O.E. AI-VR Museum project—highlighting interactive exhibits, team roles, design concepts, and supporting documents. I served as the lead VR developer, designer, and webmaster, solely developing the site to effectively communicate our project’s vision.
-				  </span>
-				</div>
-				<a href="https://web1.eng.famu.fsu.edu/ece/senior_design/2025/team314/" target="_blank">
-				  <img id="button-project2" class="button-link" src="images/aivrmuseum.png" alt="Visit the FAMU-FSU C.O.E AI-VR Museum" width="2880" height="1800" loading="lazy" decoding="async" style="border: 2px solid black; background-color: #333333;" />
-				</a>
-				
-				
-                
-				
-				
-                <!-- LEGAL FLORIDA G*MBLING WEBSITE (WIP)
-					
-                <h2>Muse Jukebox</h2>
-                <div id="text-3">
-                    <span>The Muse Jukebox is an interactive music player loaded with tracks from my own collection that is <strong>dynamically generated</strong> each time it’s loaded. It's a fun way to explore my music catalog, letting you hit play and enjoy a mix of sounds I’ve created!</span>
+            <div class="text">
+                <h2 class="section-title">DESIGN</h2>
+
+                <h2>Engineering AI-VR Museum</h2>
+                <div class="text-3">
+                    <span>
+                        This website provides an overview of the FAMU-FSU C.O.E. AI-VR Museum project, highlighting interactive exhibits, team roles, design concepts, and supporting documents. I served as the lead VR developer, designer, and webmaster, solely developing the site to effectively communicate our project's vision.
+                    </span>
                 </div>
-                <a href="https://jasonmuse.github.io/muse-jukebox/">
-                    <img id="button-project2" class="button-link" src="images/musejukebox.gif" alt="Project 1 Link" style="border: 2px solid black; background-color: #333333;" />
+                <a href="https://web1.eng.famu.fsu.edu/ece/senior_design/2025/team314/" target="_blank" rel="noopener noreferrer">
+                    <img class="button-project2 button-link" src="images/aivrmuseum.png" alt="Screenshot of the FAMU-FSU C.O.E. AI-VR Museum website project" width="2880" height="1800" loading="lazy" decoding="async" style="border: 2px solid black; background-color: #333333;" />
                 </a>
-					
-				 LEGAL FLORIDA G*MBLING WEBSITE (WIP) -->
-				
+
                 <h2>Muse Portfolio</h2>
-                <div id="text-3">
-                    <span>This is the website you're looking at right now, made from scratch to showcase all the projects in design and development that I'm proud of.</span> <br>
+                <div class="text-3">
+                    <span>This is the website you're looking at right now, made from scratch to showcase the design and development projects I'm proud of.</span> <br />
                 </div>
-                <a href="">
-		            <!-- Header Art -->
-		            <div id="art">
-		                <img style="width: 90%; margin: 20px;"class="button-link" src="images/howhollows.png" alt="Project 2 art" width="2560" height="1440" loading="lazy" decoding="async" />
-						<img id="art-main2" src="images/JASONMUSELOGO.png" alt="Jason Muse" width="2560" height="1440" loading="lazy" decoding="async" style="pointer-events: none; top:-20px" />
-						<br>
-		            </div>
-                </a>		
-						
-				<h2>My Itch.io Page</h2>
-				<div id="text-3">
-				    <span>Explore all my games on <strong>itch.io</strong>! This page features every game project I’ve officially released, from polished adventures to amusing game jam entries. Check out the creative work that drives my passion for game development!</span>
-				</div>
-				<a href="https://amused.itch.io/">
-				    <img id="button-project2" class="button-link" src="images/itch.gif" alt="itch.io Link" width="640" height="415" loading="eager" decoding="async" style="border: 2px solid black; background-color: #333333;" />
-				</a>
-                
+                <a href="/" aria-label="Back to the Jason Muse portfolio homepage">
+                    <!-- Header Art -->
+                    <div class="art">
+                        <img style="width: 90%; margin: 20px;" class="button-link" src="images/howhollows.png" alt="Portfolio hero art preview" width="2560" height="1440" loading="lazy" decoding="async" />
+                        <img class="art-main2" src="images/JASONMUSELOGO.png" alt="Jason Muse portfolio logo" width="2560" height="1440" loading="lazy" decoding="async" style="pointer-events: none; top:-20px" />
+                        <br />
+                    </div>
+                </a>
+
+                <h2>My Itch.io Page</h2>
+                <div class="text-3">
+                    <span>Explore all my games on <strong>itch.io</strong>. This page features every game project I've officially released, from polished adventures to game jam entries.</span>
+                </div>
+                <a href="https://amused.itch.io/">
+                    <img class="button-project2 button-link" src="images/itch.gif" alt="Animated preview of Jason Muse's itch.io game page" width="640" height="415" loading="eager" decoding="async" style="border: 2px solid black; background-color: #333333;" />
+                </a>
+
                 <h2>Muse Jukebox</h2>
-                <div id="text-3">
-                    <span>The Muse Jukebox is an interactive music player loaded with tracks from my own collection that is <strong>dynamically generated</strong> each time it’s loaded. It's a fun way to explore my music catalog, letting you hit play and enjoy a mix of sounds I’ve created!</span>
+                <div class="text-3">
+                    <span>The Muse Jukebox is an interactive music player loaded with tracks from my own collection that is <strong>dynamically generated</strong> each time it's loaded.</span>
                 </div>
                 <a href="https://jasonmuse.github.io/muse-jukebox/">
-                    <img id="button-project2" class="button-link" src="images/musejukebox.gif" alt="Project 1 Link" width="640" height="761" loading="eager" decoding="async" style="border: 2px solid black; background-color: #333333;" />
+                    <img class="button-project2 button-link" src="images/musejukebox.gif" alt="Animated preview of the Muse Jukebox web app" width="640" height="761" loading="eager" decoding="async" style="border: 2px solid black; background-color: #333333;" />
                 </a>
-				
-				
             </div>
 
             <!-- Copyright -->
-            <div id="text-2">
-                <br>
-                <span>Copyright © 2025 Jason Muse. All Rights Reserved.</span>
+            <div class="text-2">
+                <br />
+                <span>Copyright &copy; 2026 Jason Muse. All rights reserved.</span>
             </div>
-
         </main>
     </div>
-
 </body>
 
 </html>

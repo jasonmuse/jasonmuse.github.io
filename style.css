@@ -81,31 +81,31 @@ main {
 	padding:40px 40px 0px 40px;
 }
 
-#art {
+.art {
 position: relative;
 text-align: center;
 max-width: 100%;
 }
 
-#art-main {
+.art-main {
 width: 90%;
 margin: 20px;
 filter: drop-shadow(0px 0px 4px #ffffff);
 }
 
-#art-main2 {
+.art-main2 {
 position: absolute;
 left: 0;
 top: 0;
-width: 90%; /* Match the width of #art-main if needed */
-margin: 20px; /* Match the margin of #art-main for perfect overlay */
+width: 90%; /* Match the width of .art-main if needed */
+margin: 20px; /* Match the margin of .art-main for perfect overlay */
 filter: drop-shadow(0px 0px 4px #ffffff);
 opacity: 1.0; /* Adjust transparency for blending effect */
 animation: tilt 10s infinite ease-in-out; /* Apply animation */
 transition: transform 0.2s ease-in-out; /* Add transition here for smooth scaling */
 }
 
-#art-main:hover {
+.art-main:hover {
 }
 
 @keyframes tilt {
@@ -126,7 +126,7 @@ transition: transform 0.2s ease-in-out; /* Add transition here for smooth scalin
 
 
 
-#text {
+.text {
 width: 95%;
 font-size: 22px;
 line-height: 1.5;
@@ -137,7 +137,7 @@ margin: auto;
 margin-top: 2%;
 }
 
-#text-2 {
+.text-2 {
 width: 95%;
 font-size: 15px;
 line-height: 1.2;
@@ -149,7 +149,7 @@ margin-top: -5%;
 margin-bottom: 5%;
 }
 
-#text-3 {
+.text-3 {
 	width: 95%;
 	font-size: 15px;
 	line-height: 1.2;
@@ -160,7 +160,7 @@ margin-bottom: 5%;
 	margin-bottom: 5%;
 }
 
-#button {
+.button {
 position: relative;
 text-align: center;
 max-width: 90%;
@@ -187,7 +187,7 @@ gap: 0.4em;
 
 
 
-#games-title {
+.section-title {
     background-image: url("images/earthboundbattlesquiggle.gif");
     background-size: cover;
     background-position: center;
@@ -207,7 +207,7 @@ gap: 0.4em;
 
 /* Responsive Design */
 @media (max-width: 600px) {
-	#games-title {
+	.section-title {
 		background-image: url("images/earthboundbattlesquiggle.gif");
 		background-size: cover;
 		background-position: center;
@@ -227,7 +227,7 @@ gap: 0.4em;
 	}
 
 
-	#art {
+	.art {
 	position: relative;
 	text-align: center;
 	max-width: 100%;
