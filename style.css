@@ -60,9 +60,26 @@ margin-top: 0;
 }
 
 .resume-button:hover {
-    transform: scale(1.08);
+    transform: scale(1.02);
     background: linear-gradient(135deg, #4e4e4e, #2a2a2a);
     border: 2px solid #ffffffaa;
+}
+
+.profile-links {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    margin: 20px auto;
+}
+
+.profile-links .resume-button {
+    box-sizing: border-box;
+    flex: 0 0 auto;
+    margin: 0;
+    max-width: 300px;
+    width: 80%;
 }
 
 
@@ -176,7 +193,7 @@ gap: 0.4em;
 }
 
 .button-link:hover {
-	transform: scale(1.08);
+	transform: scale(1.03);
 	transition: 0.2s;
 }
 
@@ -196,7 +213,7 @@ gap: 0.4em;
 	margin-bottom:20px;
     border-radius: 5px;    /* Optional: smooth the edges slightly */
     overflow: hidden;
-	background-color: #090f2e;
+	background-color: #171717;
 	transform: translateZ(0);
 	backface-visibility: hidden;
 	isolation: isolate;
@@ -206,15 +223,27 @@ gap: 0.4em;
 	content: "";
 	position: absolute;
 	inset: -2px;
-	background-image: url("images/earthboundbattlesquiggle.gif");
+	background-image: url("images/earthboundbattlesquiggle-soft.webp");
 	background-size: cover;
 	background-position: center;
 	background-repeat: no-repeat;
+	opacity: 0.5;
+	transform: scale(1.03);
 	z-index: -1;
 }
 
 /* Responsive Design */
 @media (max-width: 600px) {
+	main {
+		box-sizing: border-box;
+		overflow-x: hidden;
+		padding: 40px 20px 0px 20px;
+	}
+
+	.profile-links .resume-button {
+		max-width: 275px;
+	}
+
 	.section-title {
 		width: 250px;          /* Set to 100% to fill the main content area */
 		height: 50px;
