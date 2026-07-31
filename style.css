@@ -161,6 +161,16 @@ margin-top: -5%;
 margin-bottom: 5%;
 }
 
+.project-link {
+	color: #ffffff;
+	font-weight: 700;
+	text-underline-offset: 2px;
+}
+
+.project-link:hover {
+	color: #ffd6df;
+}
+
 .text-3 {
 	width: 95%;
 	font-size: 15px;
