@@ -450,10 +450,11 @@
                     </span>
                 </div>
                 <a href="https://web1.eng.famu.fsu.edu/ece/senior_design/2025/team314/" target="_blank"
-                    rel="noopener noreferrer">
-                    <img class="button-project2 button-link" src="images/aivrmuseum.png"
-                        alt="Screenshot of the FAMU-FSU C.O.E. AI-VR Museum website project" width="2880" height="1800"
-                        loading="lazy" decoding="async" style="border: 2px solid black; background-color: #333333;" />
+                    rel="noopener noreferrer" aria-label="Visit the FAMU-FSU C.O.E. AI-VR Museum website">
+                    <video class="button-project2 button-link preview-video" data-src="images/aivrmuseum.mp4"
+                        poster="images/aivrmuseum.webp" width="960" height="600" muted loop playsinline
+                        preload="none" aria-hidden="true"
+                        style="border: 2px solid black; background-color: #333333;"></video>
                 </a>
 
                 <h2>Muse Portfolio</h2>
@@ -479,10 +480,10 @@
                     <span>Explore all my games on <strong>itch.io</strong>. This page features every game project I've
                         officially released, from polished adventures to game jam entries.</span>
                 </div>
-                <a href="https://amused.itch.io/">
-                    <img class="button-project2 button-link" src="images/itch.png"
-                        alt="Preview of Jason Muse's itch.io game page" width="2880" height="1800"
-                        loading="lazy" decoding="async" style="border: 2px solid black; background-color: #333333;" />
+                <a href="https://amused.itch.io/" aria-label="Visit Jason Muse's itch.io game page">
+                    <video class="button-project2 button-link preview-video" data-src="images/itch.mp4"
+                        poster="images/itch.webp" width="960" height="622" muted loop playsinline preload="none"
+                        aria-hidden="true" style="border: 2px solid black; background-color: #333333;"></video>
                 </a>
 
                 <h2>Muse Jukebox</h2>
@@ -490,10 +491,11 @@
                     <span>The Muse Jukebox is an interactive music player loaded with tracks from my own collection that
                         is <strong>dynamically generated</strong> each time it's loaded.</span>
                 </div>
-                <a href="https://jasonmuse.github.io/muse-jukebox/">
-                    <img class="button-project2 button-link" src="images/musejukebox.png"
-                        alt="Preview of the Muse Jukebox web app" width="690" height="858" loading="lazy"
-                        decoding="async" style="border: 2px solid black; background-color: #333333;" />
+                <a href="https://jasonmuse.github.io/muse-jukebox/" aria-label="Open the Muse Jukebox web app">
+                    <video class="button-project2 button-link preview-video" data-src="images/musejukebox.mp4"
+                        poster="images/musejukebox.webp" width="960" height="1234" muted loop playsinline
+                        preload="none" aria-hidden="true"
+                        style="border: 2px solid black; background-color: #333333;"></video>
                 </a>
             </div>
 
@@ -504,6 +506,32 @@
             </div>
         </main>
     </div>
+
+    <script>
+        // The website previews are short looping videos (like GIFs, a fraction of the size): each one
+        // loads and plays once it's nearly in view and pauses when it's scrolled away. With reduced
+        // motion turned on, they stay as their still posters.
+        (() => {
+            const videos = document.querySelectorAll("video.preview-video");
+            if (!videos.length || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+            const start = (video) => {
+                if (!video.getAttribute("src")) video.src = video.dataset.src;
+                const playing = video.play();
+                if (playing && typeof playing.catch === "function") playing.catch(() => {});
+            };
+            if (!("IntersectionObserver" in window)) {
+                videos.forEach(start);
+                return;
+            }
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(({ target, isIntersecting }) => {
+                    if (isIntersecting) start(target);
+                    else if (!target.paused) target.pause();
+                });
+            }, { rootMargin: "300px 0px" });
+            videos.forEach((video) => observer.observe(video));
+        })();
+    </script>
 </body>
 
 </html>

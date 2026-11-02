@@ -658,6 +658,12 @@ gap: 0.4em;
 	transition: 0.2s;
 }
 
+/* The website previews are looping videos: they keep their shape as they scale, like the images */
+.preview-video {
+	max-width: 100%;
+	height: auto;
+}
+
 
 
 .section-title {
