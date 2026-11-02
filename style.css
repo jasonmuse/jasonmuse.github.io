@@ -67,7 +67,8 @@ margin-top: 0;
 
 .profile-links {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
     gap: 12px;
     align-items: center;
     justify-content: center;
@@ -79,7 +80,8 @@ margin-top: 0;
     flex: 0 0 auto;
     margin: 0;
     max-width: 300px;
-    width: 80%;
+    width: auto;
+    min-width: 160px;
 }
 
 
@@ -406,14 +408,35 @@ margin-bottom: 5%;
 }
 
 @media (prefers-reduced-motion: reduce) {
+	.art-main2,
 	.screenshot-track {
 		animation: none;
 	}
 }
 
+.software-section,
 .games-section {
 	width: 100%;
 	margin: 5% auto 0;
+}
+
+.software-card {
+	width: 95%;
+	margin: 0 auto 30px;
+	color: #ffffff;
+	text-align: left;
+	background: linear-gradient(135deg, #20364e 0%, #192238 100%);
+	border: 1px solid rgba(255, 255, 255, 0.26);
+	border-radius: 9px;
+	box-shadow: 0 10px 22px rgba(0, 0, 0, 0.34);
+	filter: drop-shadow(0 3px 3px #000000);
+}
+
+.game-card-content > .software-highlight {
+	margin: 0 0 16px;
+	font-size: 13px;
+	line-height: 1.4;
+	color: rgba(255, 255, 255, 0.82);
 }
 
 .game-grid {
@@ -679,7 +702,13 @@ gap: 0.4em;
 	}
 
 	.profile-links .resume-button {
+		width: 80%;
+		min-width: 0;
 		max-width: 275px;
+	}
+
+	.profile-links {
+		flex-direction: column;
 	}
 
 	.section-title {
@@ -789,6 +818,10 @@ gap: 0.4em;
 	.game-grid {
 		width: 100%;
 		gap: 14px;
+	}
+
+	.software-card {
+		width: 100%;
 	}
 
 	.game-card {

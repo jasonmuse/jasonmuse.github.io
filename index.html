@@ -5,25 +5,25 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Jason Muse Portfolio</title>
+    <title>Jason Muse | Software Engineer &amp; Indie Game Developer</title>
     <meta name="description"
-        content="Portfolio of Jason Muse, a computer engineer, software developer, game developer, and music composer featuring iOS apps, games, full-stack development, interactive design, music, and creative technology." />
+        content="Portfolio of Jason Muse, a software engineer and indie game developer. Explore desktop and mobile apps, data tools, games, web projects, and original music." />
     <meta name="author" content="Jason Muse" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <meta name="theme-color" content="#373593" />
     <link rel="canonical" href="https://jasonmuse.github.io/" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Jason Muse Portfolio" />
-    <meta property="og:title" content="Jason Muse | Computer Engineer, Game Developer, and Music Composer" />
+    <meta property="og:title" content="Jason Muse | Software Engineer &amp; Indie Game Developer" />
     <meta property="og:description"
-        content="Explore Jason Muse's portfolio of iOS apps, game development, web design, music composition, and creative technology projects." />
+        content="Explore desktop and mobile apps, data tools, indie games, web projects, and original music by Jason Muse." />
     <meta property="og:url" content="https://jasonmuse.github.io/" />
     <meta property="og:image" content="https://jasonmuse.github.io/images/howhollows.png" />
     <meta property="og:image:alt" content="Fantasy themed hero artwork from Jason Muse's portfolio" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Jason Muse | Computer Engineer, Game Developer, and Music Composer" />
+    <meta name="twitter:title" content="Jason Muse | Software Engineer &amp; Indie Game Developer" />
     <meta name="twitter:description"
-        content="Explore iOS apps, game development, design, and music projects by Jason Muse." />
+        content="Explore desktop and mobile apps, data tools, indie games, web projects, and original music by Jason Muse." />
     <meta name="twitter:image" content="https://jasonmuse.github.io/images/howhollows.png" />
 
     <link rel="icon" href="images/wiz.png" />
@@ -33,8 +33,6 @@
     <link rel="preload" href="images/JASONMUSELOGO.png" as="image" />
     <link rel="preconnect" href="https://web1.eng.famu.fsu.edu" crossorigin />
     <link rel="dns-prefetch" href="//web1.eng.famu.fsu.edu" />
-    <link rel="prefetch" href="images/itch.gif" as="image" />
-    <link rel="prefetch" href="images/musejukebox.gif" as="image" />
     <link rel="stylesheet" href="style.css" />
 
     <script type="application/ld+json">
@@ -50,8 +48,14 @@
                     "@type": "Person",
                     "name": "Jason Muse",
                     "url": "https://jasonmuse.github.io/",
-                    "jobTitle": "Computer Engineer, Game Developer, Music Composer",
+                    "jobTitle": "Software Engineer, Indie Game Developer, Music Composer",
+                    "worksFor": {
+                        "@type": "Organization",
+                        "name": "Muse Labs",
+                        "url": "https://muselabs.app/"
+                    },
                     "sameAs": [
+                        "https://muselabs.app/",
                         "https://amused.itch.io/",
                         "https://apps.apple.com/us/developer/jason-muse/id1887675802",
                         "https://github.com/jasonmuse/",
@@ -75,6 +79,47 @@
                     "applicationCategory": "EntertainmentApplication",
                     "operatingSystem": "iOS",
                     "url": "https://apps.apple.com/us/app/muse-media-tracker/id6761553132",
+                    "author": {
+                        "@type": "Person",
+                        "name": "Jason Muse"
+                    }
+                },
+                {
+                    "@type": "SoftwareApplication",
+                    "name": "Poof",
+                    "applicationCategory": "UtilitiesApplication",
+                    "operatingSystem": "iOS, Windows",
+                    "url": "https://muselabs.app/poof/",
+                    "author": {
+                        "@type": "Person",
+                        "name": "Jason Muse"
+                    }
+                },
+                {
+                    "@type": "VideoGame",
+                    "name": "Frog Quest",
+                    "url": "https://amused.itch.io/frog-quest",
+                    "genre": "2D Platformer",
+                    "author": {
+                        "@type": "Person",
+                        "name": "Jason Muse"
+                    }
+                },
+                {
+                    "@type": "VideoGame",
+                    "name": "Boombox Swarm",
+                    "url": "https://amused.itch.io/boombox-swarm",
+                    "genre": "Arcade",
+                    "author": {
+                        "@type": "Person",
+                        "name": "Jason Muse"
+                    }
+                },
+                {
+                    "@type": "VideoGame",
+                    "name": "Upside-Down Pineapple Race",
+                    "url": "https://amused.itch.io/upside-down-pineapple-race",
+                    "genre": "Racing",
                     "author": {
                         "@type": "Person",
                         "name": "Jason Muse"
@@ -112,27 +157,6 @@
             document.body.style.backgroundColor = randomColor(startColor, endColor);
         });
 
-        // Warm up below-the-fold images so they are likely cached before scrolling.
-        window.addEventListener("load", () => {
-            const warmupAssets = [
-                "images/aivrmuseum.png",
-                "images/itch.gif",
-                "images/musejukebox.gif"
-            ];
-
-            const preload = () => {
-                warmupAssets.forEach((src) => {
-                    const img = new Image();
-                    img.src = src;
-                });
-            };
-
-            if ("requestIdleCallback" in window) {
-                requestIdleCallback(preload);
-            } else {
-                setTimeout(preload, 250);
-            }
-        });
     </script>
 </head>
 
@@ -157,10 +181,9 @@
             <!-- About Section -->
             <div class="text">
                 <h1 class="section-title">ABOUT ME</h1>
-                <span>Hello! My name is Jason Muse. I'm a <strong>Computer Engineer</strong>, <strong>Software
-                        Developer</strong>, <strong>Game Developer</strong>, and <strong>Music Composer</strong>. This
-                    portfolio showcases my work across full-stack development, iOS apps, games, interactive design,
-                    music, and creative technology.</span>
+                <span>Hello! My name is Jason Muse. I'm a <strong>Software Engineer</strong> and <strong>Indie Game
+                        Developer</strong> with a computer engineering background. I build desktop and mobile apps,
+                    games, and original music.</span>
                 <br />
                 <div class="profile-links" aria-label="Profile links">
                     <a href="documents/Jason_Muse_Software_Engineer_Resume.pdf" target="_blank" rel="noopener noreferrer" class="resume-button">View
@@ -169,6 +192,7 @@
                         class="resume-button">View GitHub</a>
                     <a href="https://www.linkedin.com/in/jasonwmuse/" target="_blank" rel="noopener noreferrer"
                         class="resume-button">View LinkedIn</a>
+                    <a href="https://muselabs.app/" target="_blank" rel="noopener" class="resume-button">Muse Labs</a>
                 </div>
                 <span>My work combines tech and creativity, inspired by unique, adventurous worlds and stories that
                     spark a sense of wonder and excitement. I'm passionate about blending engineering with art to bring
@@ -177,6 +201,37 @@
             </div>
 
             <br />
+
+            <!-- Software Projects Section -->
+            <section class="software-section" aria-labelledby="software-heading">
+                <div class="text">
+                    <h2 class="section-title" id="software-heading">SOFTWARE</h2>
+                </div>
+                <article class="software-card">
+                    <div class="game-card-content">
+                        <p class="game-label">DATA DESKTOP APP</p>
+                        <h3>FLORIDA HURRICANE LANDFALL EVENT TRACKER</h3>
+                        <div class="game-tags" aria-label="Project technologies">
+                            <span>C# / ASP.NET Core</span><span>TypeScript / Electron</span>
+                            <span>NetTopologySuite</span><span>xUnit</span>
+                        </div>
+                        <p>Parses NOAA HURDAT2 storm tracks and presents inferred Florida hurricane landfalls in a
+                            Windows desktop report.</p>
+                        <p class="software-highlight"><strong>Engineering highlight:</strong> Detects track crossings
+                            against Florida's boundary, filters inland entries from neighboring states, and preserves
+                            separate landfalls from the same storm. The included dataset produces 104 inferred events
+                            across 2,004 storms.</p>
+                        <div class="game-actions">
+                            <a class="game-button game-button-primary"
+                                href="https://github.com/jasonmuse/riskdesk-florida-landfalls" target="_blank"
+                                rel="noopener noreferrer">Source &amp; technical notes</a>
+                            <a class="game-button"
+                                href="https://github.com/jasonmuse/riskdesk-florida-landfalls/releases/latest"
+                                target="_blank" rel="noopener noreferrer">Windows release details</a>
+                        </div>
+                    </div>
+                </article>
+            </section>
 
             <!-- Apps Section -->
             <section class="apps-section" aria-labelledby="apps-heading">
@@ -200,8 +255,8 @@
                                 and UI through testing, submission, and launch.</p>
                             <div class="app-tags" aria-label="Frog Quest+ highlights">
                                 <span>iPhone + iPad</span>
-                                <span>Adventure</span>
-                                <span>by Jason Muse</span>
+                                <span>World Tree climb</span>
+                                <span>Endless mode</span>
                             </div>
                             <span class="app-store-button">
                                 <span class="app-store-copy">
@@ -246,9 +301,9 @@
                             <p>A personal media tracker for organizing what you're watching, playing, reading, and
                                 following across custom categories and profiles.</p>
                             <div class="app-tags" aria-label="Muse Media Tracker highlights">
-                                <span>iPhone</span>
-                                <span>Entertainment</span>
-                                <span>by Jason Muse</span>
+                                <span>Cross-media library</span>
+                                <span>Custom profiles</span>
+                                <span>Back up &amp; restore</span>
                             </div>
                             <span class="app-store-button">
                                 <span class="app-store-copy">
@@ -282,9 +337,9 @@
             <br />
 
             <!-- Games Section -->
-            <section class="games-section" aria-labelledby="development-title">
+            <section class="games-section" aria-labelledby="games-title">
                 <div class="text">
-                    <h2 class="section-title" id="development-title">DEVELOPMENT</h2>
+                    <h2 class="section-title" id="games-title">GAMES</h2>
                 </div>
                 <div class="game-grid">
                     <article class="game-card game-card-countdown">
@@ -306,7 +361,7 @@
                                     href="https://amused.itch.io/countdown-island" target="_blank"
                                     rel="noopener noreferrer">Play on itch.io</a>
                                 <a class="game-button" href="https://itch.io/jam/gmtk-jam-2026/rate/4824944"
-                                    target="_blank" rel="noopener noreferrer">Jam feedback</a>
+                                    target="_blank" rel="noopener noreferrer">Jam results &amp; comments</a>
                             </div>
                         </div>
                     </article>
@@ -425,9 +480,9 @@
                         officially released, from polished adventures to game jam entries.</span>
                 </div>
                 <a href="https://amused.itch.io/">
-                    <img class="button-project2 button-link" src="images/itch.gif"
-                        alt="Animated preview of Jason Muse's itch.io game page" width="640" height="415"
-                        loading="eager" decoding="async" style="border: 2px solid black; background-color: #333333;" />
+                    <img class="button-project2 button-link" src="images/itch.png"
+                        alt="Preview of Jason Muse's itch.io game page" width="2880" height="1800"
+                        loading="lazy" decoding="async" style="border: 2px solid black; background-color: #333333;" />
                 </a>
 
                 <h2>Muse Jukebox</h2>
@@ -436,8 +491,8 @@
                         is <strong>dynamically generated</strong> each time it's loaded.</span>
                 </div>
                 <a href="https://jasonmuse.github.io/muse-jukebox/">
-                    <img class="button-project2 button-link" src="images/musejukebox.gif"
-                        alt="Animated preview of the Muse Jukebox web app" width="640" height="761" loading="eager"
+                    <img class="button-project2 button-link" src="images/musejukebox.png"
+                        alt="Preview of the Muse Jukebox web app" width="690" height="858" loading="lazy"
                         decoding="async" style="border: 2px solid black; background-color: #333333;" />
                 </a>
             </div>
