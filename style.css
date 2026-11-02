@@ -34,54 +34,132 @@ img {
 }
 
 h2 {
-filter: drop-shadow(0px 1px 1px #000000);
+text-shadow: 0px 1px 1px #000000;
 margin-top: 0;
 }
-.resume-button {
-    display: inline-block;
-    padding: 12px 25px;
-    margin: 20px auto;
-    font-size: 20px;
-    font-weight: 700;
-    font-family: 'Lato', sans-serif;
-    color: #ffffff;
-    text-align: center;
-    text-decoration: none;
 
-    background: linear-gradient(135deg, #544d5d, #303143);
-    border-radius: 8px;
-    border: 2px solid #ffffff44;
-
-    filter: drop-shadow(0px 3px 4px #000000);
-    transition: transform 0.25s ease, background 0.3s ease, border 0.3s ease;
-
-    width: 80%;
-    max-width: 300px;
-}
-
-.resume-button:hover {
-    transform: scale(1.02);
-    background: linear-gradient(135deg, #4e4e4e, #2a2a2a);
-    border: 2px solid #ffffffaa;
-}
-
+/* Profile links: one row of four, two by two where there isn't room (never three and one left
+   over). The resume is the main one, in the same coral as the games' play buttons. Their shadows
+   are box-shadows and hovering lifts them by transform, so nothing gets redrawn as they move. */
 .profile-links {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 12px;
-    align-items: center;
-    justify-content: center;
-    margin: 20px auto;
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 12px;
+	margin: 22px auto 26px;
 }
 
-.profile-links .resume-button {
-    box-sizing: border-box;
-    flex: 0 0 auto;
-    margin: 0;
-    max-width: 300px;
-    width: auto;
-    min-width: 160px;
+.profile-link {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 9px;
+	box-sizing: border-box;
+	min-height: 52px;
+	padding: 0 12px;
+	color: #ffffff;
+	font-family: 'Lato', sans-serif;
+	font-size: 17px;
+	font-weight: 700;
+	line-height: 1.1;
+	text-decoration: none;
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+	white-space: nowrap;
+	background-color: rgba(255, 255, 255, 0.06);
+	background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0));
+	border: 1px solid rgba(255, 255, 255, 0.3);
+	border-radius: 12px;
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 2px 3px rgba(0, 0, 0, 0.45), 0 8px 18px rgba(0, 0, 0, 0.28);
+	transition: transform 0.18s ease, background-color 0.18s ease, border-color 0.18s ease;
+	-webkit-tap-highlight-color: transparent;
+	touch-action: manipulation;
+}
+
+/* (a deeper shadow that fades in under a lifted button) */
+.profile-link::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	box-shadow: 0 14px 26px rgba(0, 0, 0, 0.38);
+	opacity: 0;
+	transition: opacity 0.18s ease;
+	pointer-events: none;
+}
+
+/* (a touch deeper than the games' coral, so its white writing is easy to read: 4.7 to 1) */
+.profile-link--primary {
+	background-color: #cc4159;
+	background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0));
+	border-color: #ec8597;
+}
+
+.profile-link-icon {
+	flex: 0 0 auto;
+	width: 20px;
+	height: 20px;
+	fill: currentColor;
+}
+
+.profile-link-icon--line {
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 1.9;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+
+@media (hover: hover) {
+	.profile-link:hover {
+		transform: translateY(-2px);
+		background-color: rgba(255, 255, 255, 0.13);
+		border-color: rgba(255, 255, 255, 0.62);
+	}
+
+	.profile-link--primary:hover {
+		background-color: #d9506a;
+		border-color: #ffc6cf;
+	}
+
+	.profile-link:hover::after {
+		opacity: 1;
+	}
+}
+
+.profile-link:active {
+	transform: translateY(0) scale(0.97);
+}
+
+.profile-link:focus-visible {
+	outline: 2px solid #ffffff;
+	outline-offset: 3px;
+}
+
+/* (two by two once four in a row would squeeze their names) */
+@media (max-width: 720px) {
+	.profile-links {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 10px;
+		max-width: 440px;
+	}
+
+	.profile-link {
+		min-height: 50px;
+		font-size: 16px;
+	}
+}
+
+@media (max-width: 340px) {
+	.profile-link {
+		gap: 7px;
+		padding: 0 8px;
+		font-size: 15px;
+	}
+
+	.profile-link-icon {
+		width: 18px;
+		height: 18px;
+	}
 }
 
 
@@ -112,6 +190,17 @@ margin: 20px;
 filter: drop-shadow(0px 0px 4px #ffffff);
 }
 
+/* The logo tilts to and fro over the art. The tilt is on a wrapper and the glow on the logo inside
+   it, so the glow is drawn once and the tilt just turns it (with both on the logo, the glow was
+   worked out again every frame) */
+.art-logo {
+position: absolute;
+inset: 0;
+pointer-events: none;
+animation: tilt 7s infinite alternate ease-in-out;
+will-change: transform;
+}
+
 .art-main2 {
 position: absolute;
 left: 0;
@@ -119,10 +208,6 @@ top: 0;
 width: 90%; /* Match the width of .art-main if needed */
 margin: 20px; /* Match the margin of .art-main for perfect overlay */
 filter: drop-shadow(0px 0px 4px #ffffff);
-opacity: 1.0; /* Adjust transparency for blending effect */
-animation: tilt 7s infinite alternate ease-in-out;
-transform-origin: 50% 50%;
-will-change: transform;
 }
 
 .art-main:hover {
@@ -145,7 +230,7 @@ width: 95%;
 font-size: 22px;
 line-height: 1.5;
 color: #ffffff;
-filter: drop-shadow(0px 3px 3px #000000);
+text-shadow: 0px 3px 3px #000000;
 text-align: center;
 margin: auto;
 margin-top: 2%;
@@ -156,7 +241,7 @@ width: 95%;
 font-size: 15px;
 line-height: 1.2;
 color: #FFFFFF;
-filter: drop-shadow(0px 3px 3px #000000);
+text-shadow: 0px 3px 3px #000000;
 text-align: center;
 margin: auto;
 margin-top: -5%;
@@ -215,8 +300,7 @@ margin-bottom: 5%;
 	text-decoration: none;
 	border: 1px solid rgba(255, 255, 255, 0.24);
 	border-radius: 8px;
-	box-shadow: 0px 10px 22px rgba(0, 0, 0, 0.32);
-	filter: drop-shadow(0px 3px 3px #000000);
+	box-shadow: 0px 3px 3px #000000, 0px 10px 22px rgba(0, 0, 0, 0.32);
 	transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -231,7 +315,7 @@ margin-bottom: 5%;
 .app-card:hover {
 	transform: translateY(-3px);
 	border-color: rgba(255, 255, 255, 0.58);
-	box-shadow: 0px 14px 26px rgba(0, 0, 0, 0.38);
+	box-shadow: 0px 3px 3px #000000, 0px 14px 26px rgba(0, 0, 0, 0.38);
 }
 
 .app-card-frog {
@@ -408,7 +492,7 @@ margin-bottom: 5%;
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.art-main2,
+	.art-logo,
 	.screenshot-track {
 		animation: none;
 	}
@@ -428,8 +512,7 @@ margin-bottom: 5%;
 	background: linear-gradient(135deg, #20364e 0%, #192238 100%);
 	border: 1px solid rgba(255, 255, 255, 0.26);
 	border-radius: 9px;
-	box-shadow: 0 10px 22px rgba(0, 0, 0, 0.34);
-	filter: drop-shadow(0 3px 3px #000000);
+	box-shadow: 0 3px 3px #000000, 0 10px 22px rgba(0, 0, 0, 0.34);
 }
 
 .game-card-content > .software-highlight {
@@ -456,8 +539,7 @@ margin-bottom: 5%;
 	background: linear-gradient(135deg, #283e63 0%, #17233d 100%);
 	border: 1px solid rgba(255, 255, 255, 0.26);
 	border-radius: 9px;
-	box-shadow: 0 10px 22px rgba(0, 0, 0, 0.34);
-	filter: drop-shadow(0 3px 3px #000000);
+	box-shadow: 0 3px 3px #000000, 0 10px 22px rgba(0, 0, 0, 0.34);
 }
 
 .game-card:nth-child(even) {
@@ -512,19 +594,19 @@ margin-bottom: 5%;
 }
 
 .game-card-countdown {
-	--game-art: url("images/game-countdown-island.png");
+	--game-art: url("images/game-countdown-island.webp");
 }
 
 .game-card-frog {
-	--game-art: url("images/game-frog-quest.png");
+	--game-art: url("images/game-frog-quest.webp");
 }
 
 .game-card-pineapple {
-	--game-art: url("images/game-pineapple-race.png");
+	--game-art: url("images/game-pineapple-race.webp");
 }
 
 .game-card-boombox {
-	--game-art: url("images/game-boombox-swarm.png");
+	--game-art: url("images/game-boombox-swarm.webp");
 }
 
 .game-card:nth-child(even) .game-card-media {
@@ -565,7 +647,7 @@ margin-bottom: 5%;
 	margin: 0;
 	font-size: 23px;
 	line-height: 1.08;
-	filter: drop-shadow(0 1px 1px #000000);
+	text-shadow: 0 1px 1px #000000;
 }
 
 .game-card-content > p:not(.game-label) {
@@ -658,10 +740,13 @@ gap: 0.4em;
 	transition: 0.2s;
 }
 
-/* The website previews are looping videos: they keep their shape as they scale, like the images */
+/* The website previews are looping videos: they keep their shape as they scale, like the images,
+   and their shadow is a box shadow (a filter would be redrawn for every frame they play) */
 .preview-video {
 	max-width: 100%;
 	height: auto;
+	filter: none;
+	box-shadow: 0px 3px 3px #000000, 0px 6px 14px rgba(0, 0, 0, 0.45);
 }
 
 
@@ -681,6 +766,7 @@ gap: 0.4em;
     border-radius: 5px;    /* Optional: smooth the edges slightly */
     overflow: hidden;
 	background-color: #171717;
+	box-shadow: 0 3px 3px #000000;
 	transform: translateZ(0);
 	backface-visibility: hidden;
 	isolation: isolate;
@@ -705,16 +791,6 @@ gap: 0.4em;
 		box-sizing: border-box;
 		overflow-x: hidden;
 		padding: 34px 14px 0px 14px;
-	}
-
-	.profile-links .resume-button {
-		width: 80%;
-		min-width: 0;
-		max-width: 275px;
-	}
-
-	.profile-links {
-		flex-direction: column;
 	}
 
 	.section-title {
