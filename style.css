@@ -149,6 +149,26 @@ margin-top: 0;
 	}
 }
 
+/* Support: one more of those buttons at the very end, for anyone who'd like to chip in (with room
+   under it for the copyright, which tucks itself up close) */
+.support {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 12px;
+	width: 95%;
+	margin: 36px auto 9%;
+	color: #ffffff;
+	font-size: 18px;
+	line-height: 1.4;
+	text-align: center;
+	text-shadow: 0 3px 3px #000000;
+}
+
+.support-link {
+	padding: 0 22px;
+}
+
 @media (max-width: 340px) {
 	.profile-link {
 		gap: 7px;
