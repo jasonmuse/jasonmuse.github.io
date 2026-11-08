@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://jasonmuse.github.io/</loc>
+    <loc>https://jasonmuse.pages.dev/</loc>
     <lastmod>2026-10-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://jasonmuse.github.io/documents/Jason_Muse_Software_Engineer_Resume.pdf</loc>
+    <loc>https://jasonmuse.pages.dev/documents/Jason_Muse_Software_Engineer_Resume.pdf</loc>
     <lastmod>2026-08-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://jasonmuse.github.io/muse-jukebox/</loc>
+    <loc>https://muse-jukebox.pages.dev/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://jasonmuse.github.io/frog-quest-support/</loc>
+    <loc>https://frog-quest-support.pages.dev/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://jasonmuse.github.io/muse-media-tracker-support/</loc>
+    <loc>https://muse-media-tracker-support.pages.dev/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
