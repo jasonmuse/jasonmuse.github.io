@@ -24,6 +24,7 @@
   color-scheme:dark;
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html,body{margin:0;background:var(--bg);color:var(--fg)}
 body{font-family:var(--font);font-size:16px;line-height:1.4;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;
   padding-top:max(14px,env(safe-area-inset-top));padding-bottom:max(24px,env(safe-area-inset-bottom));
@@ -35,15 +36,40 @@ button{cursor:pointer}
 .muted{color:var(--muted)}
 .small{font-size:13px}
 
-/* top bar */
-.top{display:flex;align-items:center;gap:10px}
-.route{flex:1;min-width:0;display:flex;align-items:center;gap:10px;font-size:15px}
-.route b{font-weight:650}
-.route .names{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ol{flex:none;width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-size:11px;font-weight:800;letter-spacing:.02em}
-.arrow{color:var(--muted);padding:0 2px}
+/* top: search bar, then the route chips */
+.top{display:flex;flex-direction:column;gap:10px}
+.searchbox{position:relative}
+.search{display:flex;align-items:center;gap:8px;height:50px;padding:0 6px 0 15px;border-radius:999px;background:var(--card);border:1px solid var(--line);transition:border-color .2s}
+.search:focus-within{border-color:var(--accent)}
+.search .mag{flex:none;color:var(--muted)}
+.search input{flex:1;min-width:0;height:100%;border:0;background:transparent;font-size:16px;color:var(--fg);outline:none;-webkit-appearance:none;appearance:none;padding:0}
+.search input::placeholder{color:var(--muted)}
+.search input::-webkit-search-cancel-button{-webkit-appearance:none}
+.loc{flex:none;width:38px;height:38px;border-radius:50%;border:0;background:var(--card-2);color:var(--accent);display:grid;place-items:center}
+.loc:active{background:var(--line)}
+.loc.busy svg{animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.cancel{flex:none;border:0;background:none;color:var(--accent);font-size:15px;font-weight:600;padding:0 12px;height:38px}
+.sugg{position:absolute;left:0;right:0;top:56px;z-index:30;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:6px;max-height:min(58vh,460px);overflow:auto;-webkit-overflow-scrolling:touch;box-shadow:0 18px 44px rgba(0,0,0,.55)}
+.sg{display:flex;align-items:center;gap:12px;width:100%;min-height:52px;padding:8px 10px;border:0;border-radius:14px;background:none;text-align:left}
+.sg:active,.sg:focus-visible{background:var(--card-2)}
+.sg-ic{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--card-2);color:var(--accent)}
+.sg-ic.ol{background:var(--accent);color:var(--accent-ink);font-size:10px;font-weight:800}
+.sg-main{display:flex;flex-direction:column;min-width:0}
+.sg-main b{font-weight:600;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sg-sub{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sg-note{padding:10px 12px;font-size:13px;color:var(--muted)}
+.route{display:flex;align-items:center;gap:8px}
+.stn{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:8px 12px;min-height:56px;border-radius:16px;border:0;background:var(--card);text-align:left}
+.stn:active{background:var(--card-2)}
+.stn-lbl{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.stn-name{font-size:15px;font-weight:650;line-height:1.15;max-width:100%;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.route .arrow{flex:none;color:var(--muted)}
 .icon-btn{flex:none;width:44px;height:44px;border-radius:50%;border:0;background:var(--card);display:grid;place-items:center;color:var(--fg)}
 .icon-btn:active{background:var(--card-2)}
+.getthere{display:flex;align-items:center;gap:6px 10px;flex-wrap:wrap;font-size:13px;color:var(--muted);padding:0 4px;min-height:18px}
+.getthere a{color:var(--accent);font-weight:600;text-decoration:none}
+.getthere .warn{color:var(--warn)}
 
 /* alerts */
 .alert{display:flex;gap:10px;align-items:flex-start;padding:11px 13px;border-radius:14px;background:#2A1D10;color:#FFE2BD;font-size:14px}
@@ -123,6 +149,7 @@ button{cursor:pointer}
 /* settings */
 .settings .row{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px}
 .settings label,.settings .lbl{font-size:15px}
+.lbl-sub{display:block;font-size:12px;color:var(--muted)}
 .settings select{appearance:none;-webkit-appearance:none;background:var(--card-2);border:0;border-radius:12px;padding:10px 34px 10px 12px;font-size:15px;max-width:62%;
   background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);
   background-position:calc(100% - 17px) 52%,calc(100% - 12px) 52%;background-size:5px 5px;background-repeat:no-repeat}
@@ -143,13 +170,26 @@ button{cursor:pointer}
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="route">
-      <span class="ol" aria-hidden="true">OL</span>
-      <span class="names"><b id="fromName">…</b><span class="arrow" aria-label="to">→</span><b id="toName">…</b></span>
+    <div class="searchbox" id="searchbox">
+      <div class="search">
+        <svg class="mag" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+        <input id="q" type="search" placeholder="Where to?" aria-label="Where to?" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="go" role="combobox" aria-controls="sugg" aria-expanded="false">
+        <button class="loc" id="locBtn" type="button" aria-label="Start from the stop nearest to me">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 3L3 10.5l7.2 2.3L12.5 20z"></path></svg>
+        </button>
+        <button class="cancel" id="cancelBtn" type="button" hidden>Cancel</button>
+      </div>
+      <div class="sugg" id="sugg" role="listbox" aria-label="Stations" hidden></div>
     </div>
-    <button class="icon-btn" id="swapBtn" type="button" aria-label="Swap direction">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4v16"></path><path d="M3 8l4-4 4 4"></path><path d="M17 20V4"></path><path d="M21 16l-4 4-4-4"></path></svg>
-    </button>
+    <div class="route">
+      <button class="stn" id="fromBtn" type="button" aria-label="Change where you start"><span class="stn-lbl">From</span><span class="stn-name" id="fromName">…</span></button>
+      <svg class="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg>
+      <button class="stn" id="toBtn" type="button" aria-label="Change where you're going"><span class="stn-lbl">To</span><span class="stn-name" id="toName">…</span></button>
+      <button class="icon-btn" id="swapBtn" type="button" aria-label="Swap direction">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4v16"></path><path d="M3 8l4-4 4 4"></path><path d="M17 20V4"></path><path d="M21 16l-4 4-4-4"></path></svg>
+      </button>
+    </div>
+    <div class="getthere" id="getThere"></div>
   </header>
 
   <div id="alerts"></div>
@@ -179,9 +219,7 @@ button{cursor:pointer}
   </section>
 
   <section class="card settings" aria-label="Settings">
-    <div class="row"><label for="fromSel">From</label><select id="fromSel"></select></div>
-    <div class="row"><label for="toSel">To</label><select id="toSel"></select></div>
-    <div class="row"><span class="lbl" id="walkLbl">Walk to the platform</span>
+    <div class="row"><span class="lbl" id="walkLbl">Walk to the platform<span class="lbl-sub" id="walkSrc"></span></span>
       <div class="stepper" role="group" aria-labelledby="walkLbl">
         <button type="button" id="walkMinus" aria-label="One minute less">−</button>
         <output id="walkOut" aria-live="polite">6 min</output>
@@ -190,7 +228,7 @@ button{cursor:pointer}
     </div>
     <div class="row"><label for="soundChk">Chime when it's time to go</label><input type="checkbox" class="switch" id="soundChk"></div>
     <div class="row"><label for="awakeChk">Keep screen on</label><input type="checkbox" class="switch" id="awakeChk"></div>
-    <p class="hint">Count your walk from your desk or door to the train. Your stations and walk time are saved in this page's link: tap Share, then Add to Home Screen, and it opens like an app.</p>
+    <p class="hint">Tap From or To at the top to change a stop, or search where you're going and it starts you at the stop nearest you. Your location stays on your phone. Your stations and walk time are saved in this page's link: tap Share, then Add to Home Screen, and it opens like an app.</p>
   </section>
 
   <footer class="foot"><span id="statusLine">Connecting to the MBTA…</span><span>Live data: <a href="https://www.mbta.com/developers" target="_blank" rel="noopener">MBTA</a></span></footer>
@@ -231,9 +269,49 @@ button{cursor:pointer}
   STATIONS.forEach(function (s, i) { s[3].forEach(function (p) { PLATFORM[p] = i; }); PLATFORM['place-' + s[0]] = i; });
   function keyIndex(k) { for (var i = 0; i < STATIONS.length; i++) if (STATIONS[i][0] === k) return i; return -1; }
 
+  // Where each station is (MBTA), and other names people use for it
+  var GEO = {
+    forhl: [42.30071, -71.11394, ['fh']],
+    grnst: [42.31052, -71.10741, ['jp', 'jamaica plain']],
+    sbmnl: [42.31706, -71.10425, []],
+    jaksn: [42.32313, -71.09959, ['jackson']],
+    rcmnl: [42.33140, -71.09545, ['roxbury', 'mission hill']],
+    rugg: [42.33638, -71.08896, ['northeastern', 'neu']],
+    masta: [42.34151, -71.08342, ['mass ave', 'symphony', 'berklee']],
+    bbsta: [42.34735, -71.07573, ['copley', 'copley place', 'south end']],
+    tumnl: [42.34966, -71.06392, ['tufts', 'theater district']],
+    chncl: [42.35255, -71.06275, []],
+    dwnxg: [42.35552, -71.06023, ['dtx', 'downtown', 'boston common', 'macys']],
+    state: [42.35898, -71.05760, ['state street', 'faneuil hall', 'old state house', 'financial district']],
+    haecl: [42.36302, -71.05829, ['north end']],
+    north: [42.36558, -71.06129, ['td garden', 'garden']],
+    ccmnl: [42.37362, -71.06953, ['bunker hill', 'charlestown']],
+    sull: [42.38397, -71.07699, ['sullivan']],
+    astao: [42.39281, -71.07726, ['assembly row', 'somerville']],
+    welln: [42.40237, -71.07708, ['medford']],
+    mlmnl: [42.42663, -71.07411, ['malden']],
+    ogmnl: [42.43668, -71.07110, []]
+  };
+  function stLat(i) { return GEO[STATIONS[i][0]][0]; }
+  function stLon(i) { return GEO[STATIONS[i][0]][1]; }
+  function meters(aLat, aLon, bLat, bLon) {
+    var R = 6371000, r = Math.PI / 180, dLat = (bLat - aLat) * r, dLon = (bLon - aLon) * r;
+    var x = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(aLat * r) * Math.cos(bLat * r) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    return 2 * R * Math.asin(Math.min(1, Math.sqrt(x)));
+  }
+  function nearest(lat, lon) {
+    var best = 0, bestM = Infinity;
+    STATIONS.forEach(function (s, i) { var m = meters(lat, lon, stLat(i), stLon(i)); if (m < bestM) { bestM = m; best = i; } });
+    return { i: best, m: bestM };
+  }
+  // On foot: about 80 m a minute on real streets (30% longer than a straight line), plus 1.5 min down to the platform.
+  function streetMin(m) { return Math.max(1, Math.round(m * 1.3 / 80)); }
+  function walkFor(m) { return Math.max(1, Math.min(30, Math.round(m * 1.3 / 80 + 1.5))); }
+
   var state = {
     from: keyIndex('north'), to: keyIndex('forhl'), walk: 5, sound: false, awake: false,
-    trains: [], alerts: [], fetchedAt: 0, error: '', backoffUntil: 0
+    trains: [], alerts: [], fetchedAt: 0, error: '', backoffUntil: 0,
+    here: null, place: null, fromSource: 'auto', walkSource: 'manual', locMsg: ''
   };
   var chimed = {};
   var $ = function (id) { return document.getElementById(id); };
@@ -247,6 +325,7 @@ button{cursor:pointer}
       if (STATIONS[saved.to]) state.to = saved.to;
       if (saved.walk >= 1 && saved.walk <= 30) state.walk = saved.walk;
       state.sound = !!saved.sound; state.awake = !!saved.awake;
+      if (saved.walkSource) state.walkSource = saved.walkSource;
     }
     var h = new URLSearchParams(location.hash.slice(1));
     var f = keyIndex(h.get('from') || ''), t = keyIndex(h.get('to') || ''), w = parseInt(h.get('walk') || '', 10);
@@ -256,7 +335,7 @@ button{cursor:pointer}
     if (state.from === state.to) state.to = state.from === 0 ? 1 : state.from - 1;
   }
   function saveSettings() {
-    try { localStorage.setItem('muse-commute', JSON.stringify({ from: state.from, to: state.to, walk: state.walk, sound: state.sound, awake: state.awake })); } catch (e) {}
+    try { localStorage.setItem('muse-commute', JSON.stringify({ from: state.from, to: state.to, walk: state.walk, sound: state.sound, awake: state.awake, walkSource: state.walkSource })); } catch (e) {}
     var q = 'from=' + STATIONS[state.from][0] + '&to=' + STATIONS[state.to][0] + '&walk=' + state.walk;
     try { history.replaceState(null, '', '#' + q); } catch (e) {}
   }
@@ -475,6 +554,8 @@ button{cursor:pointer}
     $('toName').textContent = toS[2];
     $('walkOut').textContent = state.walk + ' min';
     $('walkNote').textContent = state.walk + ' min walk';
+    $('walkSrc').textContent = state.walkSource === 'location' ? 'Worked out from where you are' : state.walkSource === 'place' ? 'Worked out from that place' : '';
+    renderGetThere();
 
     // alerts
     var al = relevantAlerts();
@@ -602,27 +683,205 @@ button{cursor:pointer}
   function releaseScreen() { if (lock) { try { lock.release(); } catch (e) {} lock = null; } }
 
   // ---------- controls ----------
-  function fillSelects() {
-    ['fromSel', 'toSel'].forEach(function (id) {
-      $(id).innerHTML = STATIONS.map(function (s, i) { return '<option value="' + i + '">' + esc(s[1]) + '</option>'; }).join('');
-    });
-    $('fromSel').value = String(state.from);
-    $('toSel').value = String(state.to);
+  function initToggles() {
     $('soundChk').checked = state.sound;
     $('awakeChk').checked = state.awake;
   }
   function routeChanged() {
     state.trains = []; state.fetchedAt = 0; state.error = ''; chimed = {}; stripKey = '';
-    saveSettings(); fillSelects(); render(); loadTrains();
+    saveSettings(); render(); loadTrains();
   }
-  $('swapBtn').addEventListener('click', function () { var f = state.from; state.from = state.to; state.to = f; routeChanged(); });
-  $('fromSel').addEventListener('change', function () {
-    state.from = +this.value; if (state.from === state.to) state.to = state.from === 0 ? 1 : state.from - 1; routeChanged();
+  $('swapBtn').addEventListener('click', function () {
+    var f = state.from; state.from = state.to; state.to = f; state.place = null; state.fromSource = 'manual'; routeChanged();
   });
-  $('toSel').addEventListener('change', function () {
-    state.to = +this.value; if (state.from === state.to) state.from = state.to === 0 ? 1 : state.to - 1; routeChanged();
+
+  // ---------- how to get there ----------
+  function mapsLink(fromLat, fromLon, toLat, toLon) {
+    var u = 'https://maps.apple.com/?dirflg=w&daddr=' + toLat.toFixed(5) + ',' + toLon.toFixed(5);
+    if (fromLat != null) u += '&saddr=' + fromLat.toFixed(5) + ',' + fromLon.toFixed(5);
+    return u;
+  }
+  function renderGetThere() {
+    var f = state.from, t = state.to, html;
+    if (state.locMsg) html = '<span class="warn">' + esc(state.locMsg) + '</span>';
+    else {
+      html = '<span>' + (state.walkSource === 'location' ? 'Walk about ' + state.walk + ' min to ' : state.walk + ' min walk to ') + esc(STATIONS[f][2]) + '</span>'
+        + '<a href="' + mapsLink(null, null, stLat(f), stLon(f)) + '" target="_blank" rel="noopener">Directions</a>';
+      if (state.place) {
+        html += '<span>Then ' + streetMin(state.place.m) + ' min from ' + esc(STATIONS[t][2]) + ' to ' + esc(state.place.name) + '</span>'
+          + '<a href="' + mapsLink(stLat(t), stLon(t), state.place.lat, state.place.lon) + '" target="_blank" rel="noopener">Map</a>';
+      }
+    }
+    $('getThere').innerHTML = html;
+  }
+  var flashTimer = 0;
+  function flash(msg) {
+    state.locMsg = msg; renderGetThere();
+    clearTimeout(flashTimer);
+    flashTimer = setTimeout(function () { state.locMsg = ''; renderGetThere(); }, 7000);
+  }
+
+  // ---------- your location: start from the nearest stop ----------
+  function useMyLocation(explicit) {
+    if (!('geolocation' in navigator)) { flash('This browser can\'t share your location. Tap From to pick your stop.'); return; }
+    var btn = $('locBtn');
+    btn.classList.add('busy'); clearTimeout(flashTimer); state.locMsg = 'Finding the stop nearest you…'; renderGetThere();
+    navigator.geolocation.getCurrentPosition(function (pos) {
+      btn.classList.remove('busy'); state.locMsg = '';
+      var here = state.here = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+      var n = nearest(here.lat, here.lon), name = STATIONS[n.i][2];
+      if (n.m > 5000) { flash('You\'re ' + (n.m / 1609).toFixed(1) + ' mi from the Orange Line. Tap From to pick your stop.'); return; }
+      var flipped = false;
+      if (n.i === state.to) {
+        if (!explicit) { flash('You\'re already closest to ' + name + ', about ' + walkFor(n.m) + ' min away.'); return; }
+        state.to = state.from; state.place = null; flipped = true;   // you're at your destination's stop: go the other way
+      }
+      state.from = n.i; state.walk = walkFor(n.m); state.walkSource = 'location'; state.fromSource = 'auto';
+      if (state.from === state.to) state.to = state.from === 0 ? 1 : state.from - 1;
+      routeChanged();
+      if (flipped) flash('You\'re nearest ' + name + ', so it flipped the direction.');
+    }, function (err) {
+      btn.classList.remove('busy'); state.locMsg = '';
+      flash(err && err.code === 1 ? 'Location is off for this page. Allow it in Safari\'s settings, or tap From to pick your stop.' : 'Couldn\'t find you just now. Tap From to pick your stop.');
+    }, { enableHighAccuracy: true, timeout: 12000, maximumAge: 10000 });
+  }
+  $('locBtn').addEventListener('click', function () { useMyLocation(true); });
+
+  // ---------- search: "Where to?" ----------
+  var mode = 'to', placeResults = null, q = $('q'), sugg = $('sugg');
+  var PIN = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 3L3 10.5l7.2 2.3L12.5 20z"></path></svg>';
+  var PLACE = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"></path><circle cx="12" cy="9.5" r="2.5"></circle></svg>';
+  function norm(x) { return String(x).toLowerCase().replace(/['\u2019.]/g, '').replace(/[^a-z0-9]+/g, ' ').trim(); }
+  function nice(a) { return a.length <= 3 ? a.toUpperCase() : a.replace(/\b\w/g, function (c) { return c.toUpperCase(); }); }
+  function stationMatches(query) {
+    var nq = norm(query), out = [];
+    STATIONS.forEach(function (s, i) {
+      if (!nq) { out.push({ i: i, score: 1, alias: '' }); return; }
+      var best = 0, alias = '';
+      [s[1], s[2]].concat(GEO[s[0]][2]).forEach(function (a, k) {
+        var na = norm(a), sc = 0;
+        if (na === nq) sc = 100;
+        else if (na.indexOf(nq) === 0) sc = 80;
+        else if ((' ' + na).indexOf(' ' + nq) >= 0) sc = 60;
+        else if (nq.length >= 3 && na.indexOf(nq) >= 0) sc = 40;
+        if (sc > best) { best = sc; alias = k >= 2 ? a : ''; }
+      });
+      if (best) out.push({ i: i, score: best, alias: alias });
+    });
+    var here = state.here, byDistance = here && (nq || mode === 'from');
+    out.sort(function (a, b) {
+      if (b.score !== a.score) return b.score - a.score;
+      if (byDistance) return meters(here.lat, here.lon, stLat(a.i), stLon(a.i)) - meters(here.lat, here.lon, stLat(b.i), stLon(b.i));
+      return a.i - b.i;
+    });
+    return out;
+  }
+  function renderSugg() {
+    var query = q.value.trim(), html = '';
+    if (placeResults === 'loading') html = '<div class="sg-note">Searching places…</div>';
+    else if (placeResults === 'error') html = '<div class="sg-note">Couldn\'t search places right now. Try a station name.</div>';
+    else if (placeResults && !placeResults.length) html = '<div class="sg-note">No places found around Boston. Try a station name.</div>';
+    else if (placeResults) {
+      html = placeResults.map(function (p, k) {
+        var n = nearest(p.lat, p.lon);
+        return '<button class="sg" type="button" role="option" data-act="place" data-k="' + k + '"><span class="sg-ic">' + PLACE + '</span><span class="sg-main"><b>' + esc(p.name) + '</b><span class="sg-sub">'
+          + esc(STATIONS[n.i][2] + ' + ' + streetMin(n.m) + ' min walk' + (p.area ? ' · ' + p.area : '')) + '</span></span></button>';
+      }).join('') + '<div class="sg-note">Places from OpenStreetMap</div>';
+    } else {
+      if (mode === 'from' && !query) {
+        html += '<button class="sg" type="button" role="option" data-act="near"><span class="sg-ic">' + PIN + '</span><span class="sg-main"><b>Nearest stop to me</b><span class="sg-sub">Uses your location, which stays on your phone</span></span></button>';
+      }
+      var list = stationMatches(query);
+      html += list.map(function (m) {
+        var i = m.i, sub = [];
+        if (m.alias) sub.push(nice(m.alias));
+        if (state.here) sub.push(walkFor(meters(state.here.lat, state.here.lon, stLat(i), stLon(i))) + ' min walk from you');
+        if (i === state.from) sub.push('your start');
+        if (i === state.to) sub.push('your stop');
+        return '<button class="sg" type="button" role="option" data-act="station" data-i="' + i + '"><span class="sg-ic ol">OL</span><span class="sg-main"><b>' + esc(STATIONS[i][1]) + '</b>'
+          + (sub.length ? '<span class="sg-sub">' + esc(sub.join(' · ')) + '</span>' : '') + '</span></button>';
+      }).join('');
+      if (query.length >= 3) {
+        html += '<button class="sg" type="button" role="option" data-act="places"><span class="sg-ic">' + PLACE + '</span><span class="sg-main"><b>Search places for \u201c' + esc(query) + '\u201d</b><span class="sg-sub">Finds the Orange Line stop closest to it</span></span></button>';
+      } else if (!list.length) html += '<div class="sg-note">Type a station or a place</div>';
+    }
+    sugg.innerHTML = html;
+  }
+  function openSearch(m) {
+    mode = m; placeResults = null;
+    q.placeholder = m === 'from' ? 'Where from?' : 'Where to?';
+    q.setAttribute('aria-label', q.placeholder);
+    sugg.hidden = false; q.setAttribute('aria-expanded', 'true');
+    $('locBtn').hidden = true; $('cancelBtn').hidden = false;
+    renderSugg();
+  }
+  function closeSearch() {
+    q.value = ''; placeResults = null; mode = 'to';
+    q.placeholder = 'Where to?'; q.setAttribute('aria-label', 'Where to?');
+    sugg.hidden = true; q.setAttribute('aria-expanded', 'false');
+    $('locBtn').hidden = false; $('cancelBtn').hidden = true;
+    if (document.activeElement === q) q.blur();
+  }
+  function searchPlaces(query) {
+    if (!query) return;
+    placeResults = 'loading'; renderSugg();
+    var u = 'https://nominatim.openstreetmap.org/search?format=jsonv2&limit=6&bounded=1&viewbox=-71.20,42.47,-70.95,42.27&q=' + encodeURIComponent(query);
+    fetch(u, { headers: { Accept: 'application/json' } })
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function (list) {
+        placeResults = (list || []).map(function (p) {
+          var parts = String(p.display_name || '').split(',').map(function (x) { return x.trim(); })
+            .filter(function (x) { return x && !/^\d+[a-z]?$/i.test(x); });
+          var name = p.name || parts[0] || query;
+          var area = parts.filter(function (x) { return x !== name; }).slice(0, 2).join(', ');
+          return { name: name, area: area, lat: parseFloat(p.lat), lon: parseFloat(p.lon) };
+        }).filter(function (p) { return isFinite(p.lat) && isFinite(p.lon); }).slice(0, 5);
+        if (!sugg.hidden) renderSugg();
+      })
+      .catch(function () { placeResults = 'error'; if (!sugg.hidden) renderSugg(); });
+  }
+  function pickStation(i, place) {
+    var m = mode;
+    closeSearch();
+    if (m === 'from') {
+      state.from = i; state.fromSource = 'manual';
+      if (place) { state.walk = walkFor(place.m); state.walkSource = 'place'; }
+      if (state.from === state.to) { state.to = i === 0 ? 1 : i - 1; state.place = null; }
+      routeChanged();
+      return;
+    }
+    state.to = i; state.place = place || null;
+    if (state.from === state.to) state.from = i === 0 ? 1 : i - 1;
+    routeChanged();
+    if (state.fromSource !== 'manual') useMyLocation(false);   // start from the stop nearest you
+  }
+  q.addEventListener('focus', function () { if (sugg.hidden) openSearch(mode); });
+  q.addEventListener('input', function () { placeResults = null; renderSugg(); });
+  q.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') { closeSearch(); return; }
+    if (e.key === 'Enter') { e.preventDefault(); var first = sugg.querySelector('.sg'); if (first) first.click(); }
   });
-  function setWalk(n) { state.walk = Math.max(1, Math.min(30, n)); chimed = {}; saveSettings(); render(); }
+  sugg.addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('.sg') : null; if (!b) return;
+    var act = b.getAttribute('data-act');
+    if (act === 'station') pickStation(+b.getAttribute('data-i'), null);
+    else if (act === 'near') { closeSearch(); useMyLocation(true); }
+    else if (act === 'places') searchPlaces(q.value.trim());
+    else if (act === 'place' && Array.isArray(placeResults)) {
+      var p = placeResults[+b.getAttribute('data-k')], n = nearest(p.lat, p.lon);
+      pickStation(n.i, { name: p.name, lat: p.lat, lon: p.lon, m: n.m });
+    }
+  });
+  $('cancelBtn').addEventListener('click', closeSearch);
+  $('fromBtn').addEventListener('click', function () { openSearch('from'); q.focus(); });
+  $('toBtn').addEventListener('click', function () { openSearch('to'); q.focus(); });
+  document.addEventListener('pointerdown', function (e) {
+    if (sugg.hidden) return;
+    if ($('searchbox').contains(e.target) || $('fromBtn').contains(e.target) || $('toBtn').contains(e.target)) return;
+    closeSearch();
+  }, true);
+
+  function setWalk(n) { state.walk = Math.max(1, Math.min(30, n)); state.walkSource = 'manual'; chimed = {}; saveSettings(); render(); }
   $('walkMinus').addEventListener('click', function () { setWalk(state.walk - 1); });
   $('walkPlus').addEventListener('click', function () { setWalk(state.walk + 1); });
   $('soundChk').addEventListener('change', function () {
@@ -638,12 +897,12 @@ button{cursor:pointer}
   document.addEventListener('visibilitychange', function () {
     if (document.visibilityState === 'visible') { holdScreen(); loadTrains(); loadAlerts(); render(); }
   });
-  window.addEventListener('hashchange', function () { loadSettings(); routeChanged(); });
+  window.addEventListener('hashchange', function () { state.place = null; loadSettings(); routeChanged(); });
 
   // ---------- go ----------
   loadSettings();
   saveSettings();
-  fillSelects();
+  initToggles();
   render();
   loadTrains();
   loadAlerts();
