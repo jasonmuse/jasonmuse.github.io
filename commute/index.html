@@ -237,6 +237,7 @@ button{cursor:pointer}
 <script>
 (function () {
   'use strict';
+  var VERSION = '2026-11-17-5';
   var API = 'https://api-v3.mbta.com';
   var POLL_MS = 15000, ALERT_MS = 120000;
   var CUSHION = 45000;   // aim to be on the platform this long before the train pulls in
@@ -311,7 +312,8 @@ button{cursor:pointer}
   var state = {
     from: keyIndex('north'), to: keyIndex('forhl'), walk: 5, sound: false, awake: false,
     trains: [], alerts: [], fetchedAt: 0, error: '', backoffUntil: 0,
-    here: null, place: null, fromSource: 'auto', walkSource: 'manual', locMsg: ''
+    here: null, place: null, fromSource: 'auto', walkSource: 'manual', locMsg: '',
+    startFix: null, placedOnce: false, riding: null, boardCandidate: null, destArr: {}
   };
   var chimed = {};
   var $ = function (id) { return document.getElementById(id); };
@@ -372,11 +374,11 @@ button{cursor:pointer}
       }, function (err) { clearTimeout(timer); throw err; });
   }
 
-  var loading = false;
+  var loading = false, loadingKey = '';
   function loadTrains() {
-    if (loading || Date.now() < state.backoffUntil) return;
-    loading = true;
-    var from = state.from, to = state.to, d = dir();
+    var from = state.from, to = state.to, d = dir(), key = from + '-' + to;
+    if ((loading && loadingKey === key) || Date.now() < state.backoffUntil) return;
+    loading = true; loadingKey = key;
     api('/predictions', {
       'filter[stop]': 'place-' + STATIONS[from][0] + ',place-' + STATIONS[to][0],
       'filter[route]': 'Orange',
@@ -407,6 +409,7 @@ button{cursor:pointer}
         var vid = r.vehicle && r.vehicle.data && r.vehicle.data.id;
         if (vid) t.vehicleId = vid;
       });
+      Object.keys(byTrip).forEach(function (k) { if (byTrip[k].destArr) state.destArr[k] = byTrip[k].destArr; });
       state.trains = Object.keys(byTrip).map(function (k) { return byTrip[k]; })
         .filter(function (t) { return t.arr; })
         .map(function (t) { t.vehicle = t.vehicleId ? vehicles[t.vehicleId] || null : null; return t; })
@@ -418,7 +421,7 @@ button{cursor:pointer}
       if (e && e.code === 429) { state.backoffUntil = Date.now() + 30000; state.error = 'busy'; }
       else state.error = 'offline';
       render();
-    }).then(function () { loading = false; });
+    }).then(function () { if (loadingKey === key) loading = false; });
   }
 
   var KEEP_EFFECTS = { DELAY: 1, SUSPENSION: 1, SHUTTLE: 1, DETOUR: 1, STOP_CLOSURE: 1, STATION_CLOSURE: 1, CANCELLATION: 1, SNOW_ROUTE: 1, TRACK_CHANGE: 1, STOP_MOVE: 1, SERVICE_CHANGE: 3, NOTICE: 5, STATION_ISSUE: 5, EXTRA_SERVICE: 9 };
@@ -469,8 +472,8 @@ button{cursor:pointer}
   }
 
   // ---------- when to leave ----------
-  function plan(t, now) {
-    var walk = state.walk * 60000;
+  function plan(t, now, walkMs) {
+    var walk = walkMs;
     var comfy = t.arr - CUSHION - walk;
     var last = (t.dep != null ? t.dep : t.arr + 40000) - LAST_CALL - walk;
     if (now <= comfy) return { kind: 'leave', at: comfy, slack: comfy - now };
@@ -547,16 +550,41 @@ button{cursor:pointer}
     return '<div class="cars-row">' + bars + '</div><div class="cars-cap">How full each car is right now. The green outline is the emptiest.</div>';
   }
 
+  // ---------- where you are, live ----------
+  function freshFix() { return state.here && Date.now() - state.here.at < 120000 ? state.here : null; }
+  function distTo(i, h) { return meters(h.lat, h.lon, stLat(i), stLon(i)); }
+  // Your walk to the platform: from where you are when we know it, else your setting.
+  function walkMs() {
+    var h = freshFix();
+    if (h && state.walkSource === 'location') {
+      var m = distTo(state.from, h);
+      return m <= 150 ? 45000 : (m * 1.3 / 80 * 60 + 60) * 1000;
+    }
+    return state.walk * 60000;
+  }
+  // wait: not left yet · way: walking to the station · at: at the station · ride: on the train
+  function locMode() {
+    if (state.riding) return 'ride';
+    var h = freshFix();
+    if (!h || h.acc > 250) return 'wait';
+    var m = distTo(state.from, h);
+    if (m <= 150) return 'at';
+    var s0 = state.startFix;
+    if (s0 && meters(s0.lat, s0.lon, h.lat, h.lon) > 60 && m < distTo(state.from, s0) - 40) return 'way';
+    return 'wait';
+  }
+
   function render() {
     var now = Date.now();
+    var mode = locMode(), wms = walkMs();
     var fromS = STATIONS[state.from], toS = STATIONS[state.to];
     $('fromName').textContent = fromS[2];
     $('toName').textContent = toS[2];
     $('walkOut').textContent = state.walk + ' min';
-    $('walkNote').textContent = state.walk + ' min walk';
+    $('walkNote').textContent = mode === 'at' ? 'you\'re here' : Math.max(1, Math.round(wms / 60000)) + ' min walk';
     $('listHead').textContent = 'Next trains at ' + fromS[2];
     $('walkSrc').textContent = state.walkSource === 'location' ? 'Worked out from where you are' : state.walkSource === 'place' ? 'Worked out from that place' : '';
-    renderGetThere();
+    renderGetThere(mode, wms);
 
     // alerts
     var al = relevantAlerts();
@@ -568,19 +596,54 @@ button{cursor:pointer}
 
     // pick the train you can make
     var target = null, tp = null, upcoming = [];
+    var platformAt = now + wms;
     state.trains.forEach(function (t) {
       if (t.arr < now - 120000) return;
-      var p = plan(t, now);
+      var p;
+      if (mode === 'at') p = { kind: t.dep - 15000 > now ? 'ok' : 'missed' };
+      else if (mode === 'way') p = { kind: platformAt <= t.dep - 10000 ? (platformAt <= t.arr - 20000 ? 'pace' : 'hurry') : 'missed' };
+      else if (mode === 'ride') p = { kind: 'ride' };
+      else p = plan(t, now, wms);
       upcoming.push({ t: t, p: p });
-      if (!target && p.kind !== 'missed') { target = t; tp = p; }
+      if (!target && mode !== 'ride' && p.kind !== 'missed') { target = t; tp = p; }
     });
+    trackRide(mode, target, now);
 
     // hero
     var hero = $('hero'), label = '', big = '', sub = '', alt = '', cls = 'calm';
-    if (!state.fetchedAt && !state.error) { label = 'Loading live trains'; big = '…'; }
+    if (mode === 'ride') {
+      var arrive = state.destArr[state.riding.trip] || state.riding.destArr;
+      label = 'Arriving at ' + toS[2] + ' in';
+      big = arrive && arrive > now ? mmss(arrive - now) : 'Now';
+      sub = 'On the ' + clock(state.riding.dep) + ' from ' + fromS[2] + (arrive ? ' · at ' + toS[2] + ' ' + clock(arrive) : '');
+    }
+    else if (!state.fetchedAt && !state.error) { label = 'Loading live trains'; big = '…'; }
     else if (!target) {
       cls = 'none'; label = 'No trains to catch right now'; big = 'No trains';
       sub = state.error ? 'Can\'t reach the MBTA. Check your signal.' : 'The Orange Line runs about 5 AM to 1 AM.';
+    } else if (mode === 'at') {
+      var nextOne = null;
+      upcoming.forEach(function (u) { if (!nextOne && u.t.arr > target.arr) nextOne = u.t; });
+      var tpos = position(target);
+      if (tpos && tpos.idx === state.from && tpos.status === 'STOPPED_AT') {
+        cls = 'now'; label = 'Your train is here'; big = 'Board';
+        sub = 'Train at ' + fromS[2] + ': ' + clock(target.arr) + ', doors open';
+        maybeChime(target.trip, 'now');
+      } else {
+        cls = target.arr - now <= 60000 ? 'soon' : 'calm';
+        label = 'You\'re at ' + fromS[2] + '. Next train in';
+        big = target.arr > now ? mmss(target.arr - now) : 'Now';
+        sub = 'Train at ' + fromS[2] + ': ' + clock(target.arr) + (nextOne ? ' · then ' + clock(nextOne.arr) : '');
+        maybeChime(target.trip, target.arr - now <= 60000 ? 'soon' : '');
+      }
+    } else if (mode === 'way') {
+      var pace = tp.kind === 'pace';
+      cls = pace ? 'calm' : 'rush';
+      label = 'Train in';
+      big = target.arr > now ? mmss(target.arr - now) : 'Now';
+      sub = 'Train at ' + fromS[2] + ': ' + clock(target.arr);
+      alt = pace ? 'You\'re on pace: about ' + Math.max(1, Math.round(wms / 60000)) + ' min to the platform' : 'Walk faster to make it';
+      if (!pace) maybeChime(target.trip, 'now');
     } else {
       var trainAt = 'Train at ' + fromS[2] + ': ' + clock(target.arr);
       if (tp.kind === 'leave') {
@@ -609,7 +672,7 @@ button{cursor:pointer}
 
     // your train
     var card = $('trainCard');
-    if (target) {
+    if (target && mode !== 'ride') {
       card.hidden = false;
       var w = where(target);
       $('trainTime').textContent = clock(target.arr);
@@ -630,7 +693,15 @@ button{cursor:pointer}
     // next trains
     var rows = upcoming.slice(0, 5).map(function (u) {
       var t = u.t, p = u.p, cls = '', tag = '';
-      if (t === target) { cls = p.kind === 'rush' ? 'you rush' : 'you'; tag = p.kind === 'leave' ? 'Yours · leave ' + clock(p.at) : p.kind === 'go' ? 'Yours · leave now' : 'Yours · walk fast'; }
+      if (mode === 'ride') { tag = ''; }
+      else if (mode === 'at') {
+        if (t === target) { cls = 'you'; tag = 'Yours · next one'; }
+        else if (p.kind === 'missed') { cls = 'missed'; tag = 'Gone'; }
+      } else if (mode === 'way') {
+        if (t === target) { cls = p.kind === 'pace' ? 'you' : 'you rush'; tag = p.kind === 'pace' ? 'Yours · on pace' : 'Yours · walk fast'; }
+        else if (p.kind === 'missed') { cls = 'missed'; tag = 'Too soon'; }
+      }
+      else if (t === target) { cls = p.kind === 'rush' ? 'you rush' : 'you'; tag = p.kind === 'leave' ? 'Yours · leave ' + clock(p.at) : p.kind === 'go' ? 'Yours · leave now' : 'Yours · walk fast'; }
       else if (p.kind === 'missed') { cls = 'missed'; tag = 'Too soon'; }
       else if (p.kind === 'leave') tag = 'Leave ' + clock(p.at);
       else { cls = 'rush'; tag = 'Walk fast'; }
@@ -693,6 +764,7 @@ button{cursor:pointer}
   }
   function routeChanged() {
     state.trains = []; state.fetchedAt = 0; state.error = ''; chimed = {}; stripKey = '';
+    state.startFix = state.here; state.riding = null; state.boardCandidate = null;
     saveSettings(); render(); loadTrains();
   }
   $('swapBtn').addEventListener('click', function () {
@@ -705,9 +777,14 @@ button{cursor:pointer}
     if (fromLat != null) u += '&saddr=' + fromLat.toFixed(5) + ',' + fromLon.toFixed(5);
     return u;
   }
-  function renderGetThere() {
+  function renderGetThere(mode, wms) {
+    if (mode == null) { mode = locMode(); wms = walkMs(); }
     var f = state.from, t = state.to, html;
     if (state.locMsg) html = '<span class="warn">' + esc(state.locMsg) + '</span>';
+    else if (mode === 'ride') html = '<span>On your way to ' + esc(STATIONS[t][2]) + '</span>';
+    else if (mode === 'at') html = '<span>You\'re at ' + esc(STATIONS[f][2]) + ' · ' + Math.abs(t - f) + (Math.abs(t - f) === 1 ? ' stop' : ' stops') + ' to ' + esc(STATIONS[t][2]) + '</span>';
+    else if (mode === 'way') html = '<span>About ' + Math.max(1, Math.round(wms / 60000)) + ' min to ' + esc(STATIONS[f][2]) + '</span>'
+        + '<a href="' + mapsLink(null, null, stLat(f), stLon(f)) + '" target="_blank" rel="noopener">Directions</a>';
     else {
       html = '<span>' + (state.walkSource === 'location' ? 'Walk about ' + state.walk + ' min to ' : state.walk + ' min walk to ') + esc(STATIONS[f][2]) + '</span>'
         + '<a href="' + mapsLink(null, null, stLat(f), stLon(f)) + '" target="_blank" rel="noopener">Directions</a>';
@@ -732,7 +809,8 @@ button{cursor:pointer}
     btn.classList.add('busy'); clearTimeout(flashTimer); state.locMsg = 'Finding the stop nearest you…'; renderGetThere();
     navigator.geolocation.getCurrentPosition(function (pos) {
       btn.classList.remove('busy'); state.locMsg = '';
-      var here = state.here = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+      var here = state.here = { lat: pos.coords.latitude, lon: pos.coords.longitude, acc: pos.coords.accuracy || 0, at: Date.now() };
+      state.placedOnce = true;
       var n = nearest(here.lat, here.lon), name = STATIONS[n.i][2];
       if (n.m > 5000) { flash('You\'re ' + (n.m / 1609).toFixed(1) + ' mi from the Orange Line. Tap From to pick your stop.'); return; }
       var flipped = false;
@@ -749,7 +827,77 @@ button{cursor:pointer}
       flash(err && err.code === 1 ? 'Location is off for this page. Allow it in Safari\'s settings, or tap From to pick your stop.' : 'Couldn\'t find you just now. Tap From to pick your stop.');
     }, { enableHighAccuracy: true, timeout: 12000, maximumAge: 10000 });
   }
-  $('locBtn').addEventListener('click', function () { useMyLocation(true); });
+  $('locBtn').addEventListener('click', function () { state.fromSource = 'auto'; startWatching(); useMyLocation(true); });
+
+  // ---------- following you while the page is open ----------
+  var watchId = null;
+  function startWatching() {
+    if (watchId != null || !('geolocation' in navigator)) return;
+    watchId = navigator.geolocation.watchPosition(onFix, function (err) {
+      if (err && err.code === 1) { watchId = null; }   // location's off: everything stays as you set it
+    }, { enableHighAccuracy: true, maximumAge: 5000, timeout: 30000 });
+  }
+  function onFix(pos) {
+    var h = { lat: pos.coords.latitude, lon: pos.coords.longitude, acc: pos.coords.accuracy || 0, at: Date.now() };
+    state.here = h;
+    if (!state.startFix) state.startFix = h;
+    autoPlace(h);
+    if (state.walkSource === 'location') {
+      var mins = Math.max(1, Math.round(walkMs() / 60000));
+      if (mins !== state.walk) { state.walk = mins; saveSettings(); }
+    }
+    render();
+  }
+  // Start you at the stop you're nearest (on the first fix, or when you're standing at another
+  // station), and if that's where you were going, flip the trip. A start you picked yourself stays.
+  function autoPlace(h) {
+    if (state.fromSource === 'manual' || state.riding) return;
+    var n = nearest(h.lat, h.lon);
+    if (n.m > 5000) return;
+    if (state.placedOnce && !(n.m <= 150 && n.i !== state.from)) return;
+    state.placedOnce = true;
+    var flipped = false;
+    if (n.i === state.to) { state.to = state.from; state.place = null; flipped = true; }
+    var changed = flipped || n.i !== state.from;
+    state.from = n.i;
+    if (state.from === state.to) state.to = state.from === 0 ? 1 : state.from - 1;
+    state.walkSource = 'location';
+    if (changed) {
+      routeChanged();
+      flash('You\'re ' + (n.m <= 150 ? 'at ' : 'nearest ') + STATIONS[n.i][2] + ', so it\'s ' + STATIONS[state.from][2] + ' \u2192 ' + STATIONS[state.to][2] + '.');
+    } else saveSettings();
+  }
+  // At the station when your train pulls out: you're on it, so it counts down to your stop.
+  // Still standing there a minute later: you missed it, and it shows the next one.
+  function trackRide(mode, target, now) {
+    var h = freshFix();
+    if (state.riding) {
+      var r = state.riding, arrive = state.destArr[r.trip] || r.destArr;
+      if (h && distTo(state.from, h) <= 150 && now > r.dep + 60000) { state.riding = null; return; }
+      if ((arrive && now > arrive + 90000) || (h && distTo(state.to, h) <= 150)) {
+        state.riding = null; state.placedOnce = false;   // arrived: the next fix starts the trip back
+      }
+      return;
+    }
+    if (mode === 'at' && target) state.boardCandidate = { trip: target.trip, dep: target.dep, destArr: target.destArr || null, at: now };
+    var c = state.boardCandidate;
+    if (!c) return;
+    var gone = !state.trains.some(function (t) { return t.trip === c.trip; });
+    if (gone && now > c.dep - 10000 && now - c.at < 180000) { state.riding = { trip: c.trip, dep: c.dep, destArr: c.destArr }; state.boardCandidate = null; }
+    else if (now - c.at > 180000) state.boardCandidate = null;
+  }
+  // The newest version of this page loads by itself (GitHub Pages keeps old copies for 10 minutes).
+  var versionAt = 0;
+  function checkVersion() {
+    if (Date.now() - versionAt < 60000) return;
+    versionAt = Date.now();
+    fetch('version.txt?t=' + Date.now(), { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.text() : ''; })
+      .then(function (v) {
+        v = (v || '').trim();
+        if (v && v !== VERSION) location.replace(location.pathname + '?v=' + encodeURIComponent(v) + location.hash);
+      }).catch(function () {});
+  }
 
   // ---------- search: "Where to?" ----------
   var mode = 'to', placeResults = null, q = $('q'), sugg = $('sugg');
@@ -848,7 +996,7 @@ button{cursor:pointer}
     var m = mode;
     closeSearch();
     if (m === 'from') {
-      state.from = i; state.fromSource = 'manual';
+      state.from = i; state.fromSource = 'manual'; state.walkSource = 'manual';
       if (place) { state.walk = walkFor(place.m); state.walkSource = 'place'; }
       if (state.from === state.to) { state.to = i === 0 ? 1 : i - 1; state.place = null; }
       routeChanged();
@@ -899,7 +1047,7 @@ button{cursor:pointer}
   // Browsers only allow sound and screen-on after a tap, so any tap re-arms them.
   document.addEventListener('pointerdown', function () { if (state.sound) unlockAudio(); holdScreen(); }, { passive: true });
   document.addEventListener('visibilitychange', function () {
-    if (document.visibilityState === 'visible') { holdScreen(); loadTrains(); loadAlerts(); render(); }
+    if (document.visibilityState === 'visible') { holdScreen(); checkVersion(); startWatching(); loadTrains(); loadAlerts(); render(); }
   });
   window.addEventListener('hashchange', function () { state.place = null; loadSettings(); routeChanged(); });
 
@@ -911,6 +1059,8 @@ button{cursor:pointer}
   loadTrains();
   loadAlerts();
   holdScreen();
+  startWatching();
+  checkVersion();
   setInterval(function () { if (document.visibilityState === 'visible') loadTrains(); }, POLL_MS);
   setInterval(function () { if (document.visibilityState === 'visible') loadAlerts(); }, ALERT_MS);
   setInterval(function () { if (document.visibilityState === 'visible') render(); }, 1000);
