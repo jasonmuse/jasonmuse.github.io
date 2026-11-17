@@ -113,34 +113,57 @@ button{cursor:pointer}
 .where{font-size:22px;font-weight:650;line-height:1.2}
 .stops{font-size:14px;color:var(--muted)}
 
-/* car crowding */
-.cars-row{display:flex;gap:5px}
-.car{flex:1;height:30px;border-radius:7px;background:var(--card-2);position:relative;overflow:hidden;border:1px solid transparent}
-.car i{position:absolute;left:0;right:0;bottom:0;background:#3B4456}
-.car.l1 i{background:#3E6B54}
-.car.l2 i{background:#8A6A2E}
-.car.l3 i,.car.l4 i{background:#8F3A31}
-.car.best{border-color:var(--good)}
-.cars-cap{font-size:12px;color:var(--muted)}
+/* your train, coming up the line to you (it travels left to right, toward the You dot) */
+.away{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.away-big{font-family:var(--num);font-size:30px;font-weight:700;letter-spacing:-.3px;line-height:1.1}
+.away-sub{font-size:15px;color:var(--muted)}
+.approach{position:relative;height:76px;margin:2px 16px 0 48px}
+.ap-rail{position:absolute;left:-48px;right:0;top:30px;height:4px;border-radius:2px;background:var(--line)}
+.ap-flow{position:absolute;right:0;top:30px;height:4px;border-radius:2px;background:repeating-linear-gradient(90deg,var(--accent) 0 9px,rgba(237,139,0,.22) 9px 16px);transition:left 1.4s cubic-bezier(.2,.8,.2,1)}
+.ap-dot{position:absolute;top:26px;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:var(--card);border:3px solid #4A5366;box-sizing:border-box}
+.ap-dot.you{top:21px;width:22px;height:22px;margin-left:-11px;background:var(--accent);border:3px solid #FFFFFF;box-shadow:0 0 0 6px rgba(237,139,0,.16)}
+.ap-tag{position:absolute;top:-2px;transform:translateX(-50%);font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:999px;background:var(--accent);color:var(--accent-ink);white-space:nowrap}
+.ap-name{position:absolute;top:52px;font-size:12px;color:var(--muted);white-space:nowrap}
+.ap-name.first{left:-6px}
+.ap-name.last{right:-16px;color:var(--fg);font-weight:650}
+.ap-train{position:absolute;top:22px;width:46px;height:20px;margin-left:-46px;box-sizing:border-box;border-radius:5px 12px 12px 5px;background:#7C8597;display:flex;align-items:center;justify-content:flex-end;padding-right:5px;transition:left 1.4s cubic-bezier(.2,.8,.2,1),opacity .4s}
+.ap-train::before{content:"";position:absolute;left:5px;right:13px;top:5px;height:5px;border-radius:2px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.6) 0 5px,transparent 5px 8px)}
+.ap-train::after{content:"";width:4px;height:4px;border-radius:50%;background:#FFF4D6}
+.ap-train.other{top:25px;width:34px;height:14px;margin-left:-34px;opacity:.75}
+.ap-train.other::before{top:4px;height:3px;right:10px}
+.ap-train.you{background:var(--accent);box-shadow:0 0 16px rgba(237,139,0,.5);z-index:2}
+.ap-train.far{opacity:.5}
+@media (prefers-reduced-motion:no-preference){
+  .ap-flow{animation:flow .8s linear infinite}
+  @keyframes flow{to{background-position:16px 0}}
+  .ap-train.here{animation:here 1.2s ease-in-out infinite}
+  @keyframes here{50%{box-shadow:0 0 0 8px rgba(237,139,0,.25)}}
+}
+@media (prefers-reduced-motion:reduce){.ap-train,.ap-flow{transition:none}}
 
-/* the line */
-.strip{position:relative}
-.rail{position:absolute;left:79px;width:4px;border-radius:2px;background:var(--accent);opacity:.9}
-.st{position:relative;height:40px;display:flex;align-items:center;padding-left:98px;gap:8px}
-.st-dot{position:absolute;left:74px;width:14px;height:14px;border-radius:50%;background:var(--bg);border:3px solid var(--accent)}
-.st-name{font-size:15px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
-.st.origin .st-name,.st.dest .st-name{color:var(--fg);font-weight:650}
-.st.origin .st-dot{background:var(--accent)}
-.st.dest .st-dot{background:var(--fg);border-color:var(--fg)}
-.st-tag{margin-left:auto;flex:none;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:var(--card-2);color:var(--muted)}
-.st.origin .st-tag{background:rgba(237,139,0,.16);color:var(--accent)}
-.tm{position:absolute;left:0;width:81px;height:24px;margin-top:-12px;display:flex;align-items:center;justify-content:flex-end;gap:6px;transition:top 1.4s ease;pointer-events:none}
-.tm-time{font-family:var(--num);font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;padding:2px 7px;border-radius:999px;background:var(--card-2);color:var(--muted)}
-.tm-dot{width:16px;height:16px;border-radius:50%;background:#C9CED8;border:3px solid var(--card);margin-right:-7px;flex:none}
-.tm.you{z-index:2}
-.tm.you .tm-time{background:var(--accent);color:var(--accent-ink)}
-.tm.you .tm-dot{background:#FFFFFF;border-color:var(--accent);width:20px;height:20px;margin-right:-9px}
-@media (prefers-reduced-motion:reduce){.tm{transition:none}}
+/* the cars: back on the left, front on the right (the end that pulls in first) */
+.consist{display:flex;flex-direction:column;gap:7px;margin-top:2px}
+.cars2{display:flex;gap:4px;padding-top:18px}
+.car2{position:relative;flex:1 1 0;min-width:0;height:40px}
+.car2 .body{position:absolute;inset:0;border-radius:6px;background:#222937;border:1px solid #2E3646;overflow:hidden}
+.car2.nose .body{border-radius:6px 17px 17px 6px}
+.car2 .body::before{content:"";position:absolute;left:6px;right:6px;top:7px;height:8px;border-radius:2px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.22) 0 7px,transparent 7px 11px);z-index:1}
+.car2.nose .body::before{right:15px}
+.car2 i{position:absolute;left:0;right:0;bottom:0;transition:height .6s ease}
+.car2.l0 i{background:#3A4252}
+.car2.l1 i{background:#2F7A55}
+.car2.l2 i{background:#B07E26}
+.car2.l3 i,.car2.l4 i{background:#B8463B}
+.car2.best .body{border-color:var(--good);box-shadow:0 0 0 2px rgba(91,217,138,.35)}
+.car2 em{position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-style:normal;font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--good);white-space:nowrap}
+.consist-ends{display:flex;justify-content:space-between;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.consist-ends .front{color:var(--fg)}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.legend .l1{background:#2F7A55}
+.legend .l2{background:#B07E26}
+.legend .l3{background:#B8463B}
+.ride-note{font-size:13px;color:var(--muted)}
 
 /* next trains */
 .list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
@@ -218,14 +241,10 @@ button{cursor:pointer}
 
   <section class="card" id="trainCard" hidden>
     <div class="card-head"><span class="eyebrow" id="trainHead">Your train</span><span class="pill you" id="trainTime"></span></div>
-    <div class="where" id="trainWhere"></div>
-    <div class="stops" id="trainStops"></div>
+    <div class="away"><span class="away-big" id="awayBig"></span><span class="away-sub" id="awaySub"></span></div>
+    <div class="approach" id="approach" role="img"></div>
     <div id="trainCars"></div>
-  </section>
-
-  <section class="card">
-    <div class="card-head"><span class="eyebrow">On the line</span><span class="muted small" id="dirLabel"></span></div>
-    <div class="strip" id="strip"></div>
+    <div class="ride-note" id="rideNote"></div>
   </section>
 
   <section class="card">
@@ -252,7 +271,7 @@ button{cursor:pointer}
 <script>
 (function () {
   'use strict';
-  var VERSION = '2026-11-17-6';
+  var VERSION = '2026-11-17-7';
   var API = 'https://api-v3.mbta.com';
   var POLL_MS = 15000, ALERT_MS = 120000;
   var CUSHION = 45000;   // aim to be on the platform this long before the train pulls in
@@ -497,72 +516,77 @@ button{cursor:pointer}
   }
 
   // ---------- render ----------
-  var stripKey = '';
-  function renderStripRows() {
-    var s = sgn(), from = state.from, to = state.to;
-    var start = Math.max(0, Math.min(19, from - 5 * s));
-    var end = to;
-    if (Math.abs(end - start) + 1 > 10) end = start + 9 * s;
-    var key = start + ':' + end + ':' + from + ':' + to;
-    if (key === stripKey) return;
-    stripKey = key;
-    var rows = [];
-    for (var i = start; s > 0 ? i <= end : i >= end; i += s) rows.push(i);
-    var html = '<div class="rail" style="top:20px;height:' + ((rows.length - 1) * 40) + 'px"></div>';
-    rows.forEach(function (i) {
-      var cls = i === from ? ' origin' : i === to ? ' dest' : '';
-      var tag = i === from ? '<span class="st-tag">Board</span>' : i === to ? '<span class="st-tag">Get off</span>' : '';
-      html += '<div class="st' + cls + '" data-i="' + i + '"><span class="st-dot"></span><span class="st-name">' + esc(STATIONS[i][2]) + '</span>' + tag + '</div>';
-    });
-    var strip = $('strip');
-    strip.innerHTML = html;
-    strip.dataset.start = start;
-    strip.dataset.len = rows.length;
-    $('dirLabel').textContent = 'toward ' + STATIONS[dir() === 1 ? 19 : 0][1];
-  }
-  function renderMarkers(targetTrip) {
-    var strip = $('strip'), start = +strip.dataset.start, len = +strip.dataset.len, s = sgn();
-    var seen = {};
-    state.trains.slice(0, 6).forEach(function (t) {
-      var p = position(t); if (!p) return;
-      var k = (p.pos - start) * s;
-      if (k < -0.6 || k > len - 0.4) return;
-      var id = 'tm-' + t.trip.replace(/[^\w-]/g, '_');
-      seen[id] = 1;
-      var el = document.getElementById(id);
-      if (!el) {
-        el = document.createElement('div');
-        el.id = id;
-        el.innerHTML = '<span class="tm-time"></span><span class="tm-dot"></span>';
-        el.style.top = (Math.max(0, k) * 40 + 20) + 'px';
-        strip.appendChild(el);
+  // Your train coming up the line: the last few stops before yours, left to right, with your train
+  // (orange, its front to the right) and the ones around it (grey), gliding as they move.
+  var trackKey = '';
+  function renderApproach(target, now) {
+    var el = $('approach'), s = sgn(), from = state.from;
+    var start = Math.max(0, Math.min(19, from - 4 * s));
+    var n = Math.abs(from - start) + 1;
+    var key = start + ':' + from;
+    if (key !== trackKey) {
+      trackKey = key;
+      var html = '<div class="ap-rail"></div><div class="ap-flow" id="apFlow"></div>';
+      for (var k = 0; k < n; k++) {
+        var i = start + k * s;
+        html += '<span class="ap-dot' + (i === from ? ' you' : '') + '" style="left:' + (n === 1 ? 100 : k / (n - 1) * 100) + '%"></span>';
       }
-      el.className = 'tm' + (t.trip === targetTrip ? ' you' : '');
-      el.firstChild.textContent = clock(t.arr);
-      el.style.top = (k * 40 + 20) + 'px';
+      html += '<span class="ap-tag" style="left:100%">You</span>';
+      if (n > 1) html += '<span class="ap-name first">' + esc(STATIONS[start][2]) + '</span>';
+      html += '<span class="ap-name last">' + esc(STATIONS[from][2]) + '</span>';
+      el.innerHTML = html;
+    }
+    var shown = state.trains.filter(function (t) { return t.dep > now - 15000; }).slice(0, 3);
+    if (target && shown.indexOf(target) < 0) shown.push(target);
+    var seen = {}, flowAt = null;
+    shown.forEach(function (t) {
+      var p = position(t), yours = !!target && t.trip === target.trip, x = 0, far = false, here = false;
+      if (!p) far = true;
+      else {
+        x = n === 1 ? 100 : (p.pos - start) * s / (n - 1) * 100;
+        if (x < 0) { x = 0; far = true; }
+        if (x > 100) x = 100;
+        here = p.idx === from && p.status === 'STOPPED_AT';
+      }
+      var id = 'ap-' + t.trip.replace(/[^\w-]/g, '_');
+      seen[id] = 1;
+      var m = document.getElementById(id);
+      if (!m) { m = document.createElement('span'); m.id = id; m.style.left = x + '%'; el.appendChild(m); }
+      m.className = 'ap-train ' + (yours ? 'you' : 'other') + (far ? ' far' : '') + (yours && here ? ' here' : '');
+      m.style.left = x + '%';
+      if (yours) flowAt = x;
     });
-    Array.prototype.slice.call(strip.querySelectorAll('.tm')).forEach(function (el) { if (!seen[el.id]) el.remove(); });
+    Array.prototype.slice.call(el.querySelectorAll('.ap-train')).forEach(function (m) { if (!seen[m.id]) m.remove(); });
+    var flow = $('apFlow');
+    if (flow) {
+      flow.style.left = (flowAt == null ? 100 : flowAt) + '%';
+      flow.style.display = flowAt == null || flowAt >= 100 ? 'none' : '';
+    }
   }
 
-  function carsHTML(v) {
+  var LEVEL = { EMPTY: 1, MANY_SEATS_AVAILABLE: 1, FEW_SEATS_AVAILABLE: 2, STANDING_ROOM_ONLY: 3, CRUSHED_STANDING_ROOM_ONLY: 4, FULL: 4 };
+  var FILL = [12, 34, 62, 86, 100];
+  // The train itself: the T lists its cars front first (the end that pulls in first, in the
+  // direction it's going), so it's drawn back-to-front, left to right, nose on the right.
+  function consistHTML(v) {
     var cs = v && v.attributes && v.attributes.carriages;
     if (!cs || !cs.length) return '';
-    var LV = { MANY_SEATS_AVAILABLE: 1, FEW_SEATS_AVAILABLE: 2, STANDING_ROOM_ONLY: 3, CRUSHED_STANDING_ROOM_ONLY: 4, FULL: 4 };
-    var FILL = [10, 34, 62, 86, 100];
-    var best = -1, bestVal = Infinity, known = 0;
-    cs.forEach(function (c, i) {
-      var lv = LV[c.occupancy_status] || 0;
-      if (lv) known++;
-      var val = c.occupancy_percentage != null ? c.occupancy_percentage : (lv ? lv * 25 : null);
-      if (val != null && val < bestVal) { bestVal = val; best = i; }
+    var cars = cs.map(function (c, i) { return { lv: LEVEL[c.occupancy_status] || 0, pct: c.occupancy_percentage, fromFront: i + 1 }; });
+    var best = null;
+    cars.forEach(function (c) {
+      if (c.lv && (!best || c.lv < best.lv || (c.lv === best.lv && (c.pct || 0) < (best.pct || 0)))) best = c;
     });
-    if (!known) return '';
-    var bars = cs.map(function (c, i) {
-      var lv = LV[c.occupancy_status] || 0;
-      var label = lv === 1 ? 'lots of seats' : lv === 2 ? 'a few seats' : lv === 3 ? 'standing room' : lv === 4 ? 'packed' : 'no data';
-      return '<span class="car l' + lv + (i === best ? ' best' : '') + '" role="img" aria-label="Car ' + (i + 1) + ': ' + label + '"><i style="height:' + FILL[lv] + '%"></i></span>';
-    }).join('');
-    return '<div class="cars-row">' + bars + '</div><div class="cars-cap">How full each car is right now. The green outline is the emptiest.</div>';
+    if (!best) return '';
+    var ord = ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th'];
+    var words = ['no data', 'seats', 'a few seats', 'standing room', 'packed'];
+    var aria = 'The train, front first: ' + cars.map(function (c) { return words[c.lv]; }).join(', ') + '. Emptiest: the ' + (ord[best.fromFront - 1] || best.fromFront + 'th') + ' car from the front.';
+    var html = '<div class="consist" role="img" aria-label="' + esc(aria) + '"><div class="cars2">';
+    cars.slice().reverse().forEach(function (c) {
+      html += '<span class="car2 l' + c.lv + (c.fromFront === 1 ? ' nose' : '') + (c === best ? ' best' : '') + '"><span class="body"><i style="height:' + FILL[c.lv] + '%"></i></span>' + (c === best ? '<em>Emptiest</em>' : '') + '</span>';
+    });
+    html += '</div><div class="consist-ends"><span>Back</span><span class="front">Front \u2192</span></div>';
+    html += '<div class="legend"><span><i class="l1"></i>Seats</span><span><i class="l2"></i>A few seats</span><span><i class="l3"></i>Standing</span></div></div>';
+    return html;
   }
 
   // ---------- where you are, live ----------
@@ -689,21 +713,27 @@ button{cursor:pointer}
     var card = $('trainCard');
     if (target && mode !== 'ride') {
       card.hidden = false;
-      var w = where(target);
+      var tp2 = position(target), away = tp2 ? stopsAway(tp2) : null, big2, sub2;
+      if (!tp2) {
+        var startName = STATIONS[dir() === 1 ? 0 : 19][2];
+        big2 = target.vehicle ? 'Turning around' : 'On its way';
+        sub2 = (target.vehicle ? 'at ' : 'from ') + startName + ' · here ' + inMin(target.arr - now);
+      } else if (away <= 0) {
+        big2 = tp2.status === 'STOPPED_AT' ? 'It\'s here' : 'Pulling in';
+        sub2 = tp2.status === 'STOPPED_AT' ? 'doors open' : 'right now';
+      } else {
+        big2 = away + (away === 1 ? ' stop away' : ' stops away');
+        sub2 = 'here ' + inMin(target.arr - now);
+      }
+      $('awayBig').textContent = big2;
+      $('awaySub').textContent = sub2;
       $('trainTime').textContent = clock(target.arr);
-      $('trainWhere').textContent = w.text;
-      var bits = [];
-      if (w.sub) bits.push(w.sub);
-      bits.push('at ' + fromS[2] + ' ' + inMin(target.arr - now));
-      if (target.destArr) bits.push('you\'re at ' + toS[2] + ' by ' + clock(target.destArr));
-      $('trainStops').textContent = bits.join(' · ');
       $('trainHead').textContent = 'Your train at ' + fromS[2];
-      $('trainCars').innerHTML = carsHTML(target.vehicle);
+      renderApproach(target, now);
+      $('approach').setAttribute('aria-label', 'Your train, ' + big2 + ', ' + sub2 + ', coming up to ' + fromS[2] + '.');
+      $('trainCars').innerHTML = consistHTML(target.vehicle);
+      $('rideNote').textContent = target.destArr ? 'Gets you to ' + toS[2] + ' at ' + clock(target.destArr) + '.' : '';
     } else card.hidden = true;
-
-    // the line
-    renderStripRows();
-    renderMarkers(target && target.trip);
 
     // next trains
     var rows = upcoming.slice(0, 5).map(function (u) {
@@ -778,7 +808,7 @@ button{cursor:pointer}
     $('awakeChk').checked = state.awake;
   }
   function routeChanged() {
-    state.trains = []; state.fetchedAt = 0; state.error = ''; chimed = {}; stripKey = '';
+    state.trains = []; state.fetchedAt = 0; state.error = ''; chimed = {}; trackKey = '';
     state.startFix = state.here; state.riding = null; state.boardCandidate = null;
     saveSettings(); render(); loadTrains();
   }
