@@ -50,7 +50,7 @@ button{cursor:pointer}
 .loc.busy svg{animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .cancel{flex:none;border:0;background:none;color:var(--accent);font-size:15px;font-weight:600;padding:0 12px;height:38px}
-.sugg{position:absolute;left:0;right:0;top:56px;z-index:30;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:6px;max-height:min(58vh,460px);overflow:auto;-webkit-overflow-scrolling:touch;box-shadow:0 18px 44px rgba(0,0,0,.55)}
+.sugg{position:absolute;left:0;right:0;top:56px;z-index:30;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:6px;max-height:min(58vh,460px);overflow:auto;-webkit-overflow-scrolling:touch;box-shadow:0 18px 44px rgba(0,0,0,.55);transform-origin:50% 0;view-transition-name:sugg}
 .sg{display:flex;align-items:center;gap:12px;width:100%;min-height:52px;padding:8px 10px;border:0;border-radius:14px;background:none;text-align:left}
 .sg:active,.sg:focus-visible{background:var(--card-2)}
 .sg-ic{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--card-2);color:var(--accent)}
@@ -61,16 +61,19 @@ button{cursor:pointer}
 .sg-note{padding:10px 12px;font-size:13px;color:var(--muted)}
 .route{display:flex;align-items:stretch;gap:8px}
 .route .arrow,.route .icon-btn{align-self:center}
-.stn{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:2px;padding:9px 12px;min-height:64px;border-radius:16px;border:0;background:var(--card);text-align:left}
+.stn{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:2px;padding:9px 12px;min-height:64px;border-radius:16px;border:0;background:var(--card);text-align:left;transition:background .2s,box-shadow .2s}
 .stn:active{background:var(--card-2)}
-.stn-lbl{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.stn.editing{background:var(--card-2);box-shadow:inset 0 0 0 1.5px var(--accent)}
+.stn-lbl{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);transition:color .2s}
+.stn.editing .stn-lbl{color:var(--accent)}
 .stn-name{font-size:15px;font-weight:650;line-height:1.15;max-width:100%;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .route .arrow{flex:none;color:var(--muted)}
 .icon-btn{flex:none;width:44px;height:44px;border-radius:50%;border:0;background:var(--card);display:grid;place-items:center;color:var(--fg)}
 .icon-btn:active{background:var(--card-2)}
+#swapIcon{transition:transform .55s cubic-bezier(.3,1.35,.5,1);view-transition-name:swap-icon}
 .plan{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;margin:0 -2px;padding:2px}
 .plan::-webkit-scrollbar{display:none}
-.pchip{flex:none;position:relative;display:inline-flex;align-items:center;gap:6px;min-height:38px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--fg);font-size:14px;font-weight:600;white-space:nowrap}
+.pchip{flex:none;position:relative;display:inline-flex;align-items:center;gap:6px;min-height:38px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--fg);font-size:14px;font-weight:600;white-space:nowrap;transition:background .25s,border-color .25s,color .25s}
 .pchip.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .pchip.pick input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;-webkit-appearance:none;appearance:none}
 .pchip svg{flex:none}
@@ -92,22 +95,57 @@ button{cursor:pointer}
 .okline{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);padding:0 2px}
 .okline i{width:8px;height:8px;border-radius:50%;background:var(--good);display:inline-block}
 
-/* hero: the Live Activity, on the web */
-.hero{border-radius:26px;background:var(--card);padding:18px 20px 20px;display:flex;flex-direction:column;gap:4px;transition:background .4s ease}
-.hero-label{font-size:14px;font-weight:600;color:var(--muted)}
-.hero-big{font-family:var(--num);font-size:76px;line-height:1;font-weight:700;letter-spacing:-1px;font-variant-numeric:tabular-nums;color:var(--fg)}
-.hero-sub{font-size:15px;color:var(--fg)}
-.hero-alt{font-size:13px;color:var(--muted);margin-top:4px}
+/* hero: the Live Activity, on the web. Big: your train coming in (Train, the default) or when to
+   leave (Leave). The other one sits in the pill under it; tap the pill or the switch to swap them. */
+.hero{position:relative;border-radius:26px;background:var(--card);padding:14px 16px 18px 20px;display:flex;flex-direction:column;gap:4px;transition:background .45s ease,box-shadow .45s ease}
+.hero-top{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:36px}
+.hero-label{flex:1;min-width:0;font-size:14px;font-weight:600;color:var(--muted);transition:color .3s}
+.hero-big{font-family:var(--num);font-size:76px;line-height:1;min-height:76px;font-weight:700;letter-spacing:-1px;font-variant-numeric:tabular-nums;color:var(--fg);transform-origin:0 100%;transition:color .3s}
+.hero-big small{font-size:26px;font-weight:700;letter-spacing:0;margin-left:6px;color:var(--muted)}
+.hero-sub{font-size:15px;color:var(--fg);transition:color .3s}
+.hero-alt{font-size:13px;color:var(--muted);margin-top:2px;transition:color .3s}
+.hero-alt:empty{display:none}
+.hero-second{align-self:flex-start;display:inline-flex;align-items:center;gap:8px;max-width:100%;margin-top:8px;padding:8px 14px 8px 11px;border-radius:18px;background:var(--card-2);font-size:15px;font-weight:600;line-height:1.25;color:var(--fg);transform-origin:0 50%;transition:background .35s,color .35s}
+.hero-second.tap{cursor:pointer}
+.hero-second.tap:active{filter:brightness(1.15)}
+.hero-second svg{flex:none;color:var(--accent);transition:color .35s}
+.hero-second .n{font-family:var(--num);font-weight:700;font-variant-numeric:tabular-nums}
+.hero-second .m{color:var(--muted);font-weight:500;transition:color .35s}
+.hero-second.soon{background:rgba(237,139,0,.18);color:#FFD9A8}
+.hero-second.soon .m{color:#E8B373}
+.hero-second.now{background:var(--accent);color:var(--accent-ink)}
+.hero-second.now svg,.hero-second.now .m{color:var(--accent-ink)}
+.hero-second.rush{background:#C2410C;color:#FFF4EC}
+.hero-second.rush svg,.hero-second.rush .m{color:#FFE2D1}
 .hero.calm .hero-big{color:var(--fg)}
 .hero.soon .hero-big{color:var(--accent)}
 .hero.now{background:var(--accent)}
-.hero.now .hero-label,.hero.now .hero-sub,.hero.now .hero-big,.hero.now .hero-alt{color:var(--accent-ink)}
+.hero.now .hero-label,.hero.now .hero-sub,.hero.now .hero-big,.hero.now .hero-big small,.hero.now .hero-alt{color:var(--accent-ink)}
 .hero.rush{background:#C2410C}
-.hero.rush .hero-label,.hero.rush .hero-sub,.hero.rush .hero-big,.hero.rush .hero-alt{color:#FFF4EC}
-.hero.none .hero-big{font-size:34px;letter-spacing:0}
+.hero.rush .hero-label,.hero.rush .hero-sub,.hero.rush .hero-big,.hero.rush .hero-big small,.hero.rush .hero-alt{color:#FFF4EC}
+.hero.now .hero-second{background:rgba(0,0,0,.14);color:var(--accent-ink)}
+.hero.rush .hero-second{background:rgba(0,0,0,.18);color:#FFF4EC}
+.hero.now .hero-second svg,.hero.now .hero-second .m{color:var(--accent-ink)}
+.hero.rush .hero-second svg,.hero.rush .hero-second .m{color:#FFE2D1}
+.hero.none .hero-big{font-size:34px;min-height:0;letter-spacing:0}
+.hero.alarm{box-shadow:0 0 0 2px rgba(237,139,0,.85)}
+/* the switch: which number is big */
+.seg{position:relative;flex:none;display:grid;grid-template-columns:1fr 1fr;padding:3px;border-radius:999px;background:var(--card-2);transition:background .35s}
+.seg::before{content:"";position:absolute;top:3px;bottom:3px;left:3px;width:calc(50% - 3px);border-radius:999px;background:#384152;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .4s cubic-bezier(.3,1.3,.5,1),background .35s}
+.seg.leave::before{transform:translateX(100%)}
+.seg button{position:relative;z-index:1;min-height:30px;padding:0 12px;border:0;border-radius:999px;background:none;font-size:13px;font-weight:700;color:var(--muted);transition:color .25s}
+.seg button[aria-pressed="true"]{color:var(--fg)}
+.hero.now .seg,.hero.rush .seg{background:rgba(0,0,0,.16)}
+.hero.now .seg::before,.hero.rush .seg::before{background:rgba(255,255,255,.32);box-shadow:none}
+.hero.now .seg button{color:rgba(26,18,6,.6)}
+.hero.now .seg button[aria-pressed="true"]{color:var(--accent-ink)}
+.hero.rush .seg button{color:rgba(255,244,236,.7)}
+.hero.rush .seg button[aria-pressed="true"]{color:#FFF4EC}
 @media (prefers-reduced-motion:no-preference){
   .hero.now{animation:pulse 1.6s ease-in-out infinite}
+  .hero-second.now{animation:pillPulse 1.6s ease-in-out infinite}
   @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(237,139,0,.55)}50%{box-shadow:0 0 0 10px rgba(237,139,0,0)}}
+  @keyframes pillPulse{0%,100%{box-shadow:0 0 0 0 rgba(237,139,0,.55)}50%{box-shadow:0 0 0 8px rgba(237,139,0,0)}}
 }
 
 /* cards */
@@ -116,6 +154,7 @@ button{cursor:pointer}
 .eyebrow{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .pill{font-family:var(--num);font-weight:700;font-size:15px;padding:4px 10px;border-radius:999px;background:var(--card-2);font-variant-numeric:tabular-nums}
 .pill.you{background:var(--accent);color:var(--accent-ink)}
+.pill:empty{visibility:hidden}
 .where{font-size:22px;font-weight:650;line-height:1.2}
 .stops{font-size:14px;color:var(--muted)}
 
@@ -183,6 +222,7 @@ button{cursor:pointer}
 .list li.you .tag{color:var(--accent);font-weight:650}
 .list li.rush .tag{color:var(--warn);font-weight:650}
 .list li.missed{opacity:.5}
+.list li.skrow{display:block;padding:14px 0}
 
 /* settings */
 .settings .row{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px}
@@ -203,6 +243,32 @@ button{cursor:pointer}
 .foot{display:flex;justify-content:space-between;gap:12px;font-size:12px;color:var(--muted);padding:0 4px}
 .foot a{color:var(--muted)}
 .stale{color:var(--warn)}
+
+/* loading: soft placeholders instead of a blank card */
+.sk{display:inline-block;vertical-align:middle;border-radius:12px;background:linear-gradient(100deg,var(--card-2) 30%,#2A3243 50%,var(--card-2) 70%);background-size:300% 100%;background-position:100% 0}
+.sk.big{width:170px;height:62px;margin:7px 0}
+.sk.line{width:62%;height:13px;border-radius:7px}
+@media (prefers-reduced-motion:no-preference){
+  .sk{animation:sk 1.4s ease-in-out infinite}
+  @keyframes sk{to{background-position:0 0}}
+}
+.sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* smooth changes (swap, a new stop, a new time): the station names glide to their new spots,
+   the cards grow or shrink in place, and everything else crossfades */
+#hero{view-transition-name:hero}
+#trainCard{view-transition-name:train-card}
+#listCard{view-transition-name:list-card}
+@media (prefers-reduced-motion:no-preference){
+  ::view-transition-group(*){animation-duration:.45s;animation-timing-function:cubic-bezier(.2,.8,.2,1)}
+  ::view-transition-old(root),::view-transition-new(root){animation-duration:.3s}
+  ::view-transition-new(*):only-child{animation:vt-in .4s cubic-bezier(.2,.8,.2,1) both}
+  ::view-transition-old(*):only-child{animation:vt-out .22s ease-in both}
+  ::view-transition-old(swap-icon){animation:none;opacity:0}
+  ::view-transition-new(swap-icon){animation:none}
+  @keyframes vt-in{from{opacity:0;transform:translateY(12px)}}
+  @keyframes vt-out{to{opacity:0;transform:translateY(-10px)}}
+}
 </style>
 </head>
 <body>
@@ -224,7 +290,7 @@ button{cursor:pointer}
       <svg class="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg>
       <button class="stn" id="toBtn" type="button" aria-label="Change where you're going"><span class="stn-lbl">To</span><span class="stn-name" id="toName">…</span></button>
       <button class="icon-btn" id="swapBtn" type="button" aria-label="Swap direction">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4v16"></path><path d="M3 8l4-4 4 4"></path><path d="M17 20V4"></path><path d="M21 16l-4 4-4-4"></path></svg>
+        <svg id="swapIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4v16"></path><path d="M3 8l4-4 4 4"></path><path d="M17 20V4"></path><path d="M21 16l-4 4-4-4"></path></svg>
       </button>
     </div>
     <div class="plan" id="planRow" role="group" aria-label="When you're leaving">
@@ -250,11 +316,19 @@ button{cursor:pointer}
 
   <div id="alerts"></div>
 
-  <section class="hero calm" id="hero" aria-live="polite">
-    <div class="hero-label" id="heroLabel">Loading live trains</div>
-    <div class="hero-big" id="heroBig">…</div>
-    <div class="hero-sub" id="heroSub">&nbsp;</div>
+  <section class="hero calm" id="hero">
+    <div class="hero-top">
+      <div class="hero-label" id="heroLabel">Finding your train</div>
+      <div class="seg" id="heroSeg" role="group" aria-label="The big number shows">
+        <button type="button" id="segTrain" aria-pressed="true">Train</button>
+        <button type="button" id="segLeave" aria-pressed="false">Leave</button>
+      </div>
+    </div>
+    <div class="hero-big" id="heroBig"><span class="sk big"></span></div>
+    <div class="hero-sub" id="heroSub"><span class="sk line"></span></div>
+    <div class="hero-second" id="heroSecond" hidden></div>
     <div class="hero-alt" id="heroAlt"></div>
+    <p class="sr" id="heroSr" aria-live="polite"></p>
   </section>
 
   <section class="card" id="trainCard" hidden>
@@ -265,7 +339,7 @@ button{cursor:pointer}
     <div class="ride-note" id="rideNote"></div>
   </section>
 
-  <section class="card">
+  <section class="card" id="listCard">
     <div class="card-head"><span class="eyebrow" id="listHead">Next trains</span><span class="muted small" id="walkNote"></span></div>
     <ol class="list" id="list"></ol>
   </section>
@@ -280,7 +354,7 @@ button{cursor:pointer}
     </div>
     <div class="row"><label for="soundChk">Chime when it's time to go</label><input type="checkbox" class="switch" id="soundChk"></div>
     <div class="row"><label for="awakeChk">Keep screen on</label><input type="checkbox" class="switch" id="awakeChk"></div>
-    <p class="hint">Tap From or To at the top to change a stop, or search where you're going and it starts you at the stop nearest you. Your location stays on your phone. Your stations and walk time are saved in this page's link: tap Share, then Add to Home Screen, and it opens like an app.</p>
+    <p class="hint">The big number is your train. Tap Leave (or the line under it) to make it when to leave instead. Tap From or To at the top to change a stop, or search where you're going and it starts you at the stop nearest you. Your location stays on your phone. Your stations and walk time are saved in this page's link: tap Share, then Add to Home Screen, and it opens like an app.</p>
   </section>
 
   <footer class="foot"><span id="statusLine">Connecting to the MBTA…</span><span>Live data: <a href="https://www.mbta.com/developers" target="_blank" rel="noopener">MBTA</a></span></footer>
@@ -289,7 +363,7 @@ button{cursor:pointer}
 <script>
 (function () {
   'use strict';
-  var VERSION = '2026-11-17-8';
+  var VERSION = '2026-11-17-9';
   var API = 'https://api-v3.mbta.com';
   var POLL_MS = 15000, ALERT_MS = 120000;
   var CUSHION = 45000;   // aim to be on the platform this long before the train pulls in
@@ -366,10 +440,46 @@ button{cursor:pointer}
     trains: [], alerts: [], fetchedAt: 0, error: '', backoffUntil: 0,
     here: null, place: null, fromSource: 'auto', walkSource: 'manual', locMsg: '',
     startFix: null, placedOnce: false, riding: null, boardCandidate: null, destArr: {}, locDenied: false,
-    planAt: null, manualWalk: 6, sched: [], schedKey: '', schedAt: 0
+    planAt: null, manualWalk: 6, sched: [], schedKey: '', schedAt: 0,
+    bigShows: 'train'   // the big number: 'train' (when your train comes in) or 'leave' (when to leave)
   };
   var chimed = {};
   var $ = function (id) { return document.getElementById(id); };
+
+  // ---------- motion ----------
+  var EASE = 'cubic-bezier(.2,.8,.2,1)';
+  var RISE = [{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }];
+  var motionQuery = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+  function reduced() { return !!(motionQuery && motionQuery.matches); }
+  function anim(el, frames, opts) {
+    if (!el || !el.animate || reduced()) return null;
+    try { return el.animate(frames, opts); } catch (e) { return null; }
+  }
+  function showEl(el, on) {
+    if (!on) { el.hidden = true; return; }
+    if (!el.hidden) return;
+    el.hidden = false;
+    if (!inVT) anim(el, [{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }], { duration: 380, easing: EASE });
+  }
+  // A change you make (swap, a new stop, a new time) paints as one smooth transition: the station
+  // names glide to their new spots and the rest crossfades. Until it paints, other repaints wait.
+  var vtPending = false, inVT = false, vtQueue = [];
+  function smooth(before) {
+    if (before) vtQueue.push(before);
+    if (vtPending) return;
+    var done = false, useVT = !!document.startViewTransition && !reduced() && document.visibilityState === 'visible';
+    var run = function () {
+      if (done) return;
+      done = true; vtPending = false; inVT = useVT;
+      try { var queued = vtQueue; vtQueue = []; queued.forEach(function (f) { f(); }); paintAll(); }
+      finally { inVT = false; }
+    };
+    if (!useVT) { run(); return; }
+    vtPending = true;
+    try { document.startViewTransition(run); } catch (e) { run(); }
+    setTimeout(run, 700);   // never leave a change unpainted
+  }
+  function paintAll() { renderPlanRow(); render(); }
 
   // ---------- settings: link first, then this device, then defaults ----------
   function loadSettings() {
@@ -383,6 +493,7 @@ button{cursor:pointer}
       if (saved.walkSource) state.walkSource = saved.walkSource;
       if (saved.manualWalk >= 1 && saved.manualWalk <= 30) state.manualWalk = saved.manualWalk;
       if (typeof saved.planAt === 'string' && /^\d\d:\d\d$/.test(saved.planAt)) state.planAt = saved.planAt;
+      if (saved.bigShows === 'train' || saved.bigShows === 'leave') state.bigShows = saved.bigShows;
     }
     var h = new URLSearchParams(location.hash.slice(1));
     var f = keyIndex(h.get('from') || ''), t = keyIndex(h.get('to') || ''), w = parseInt(h.get('walk') || '', 10);
@@ -395,7 +506,7 @@ button{cursor:pointer}
     if (state.from === state.to) state.to = state.from === 0 ? 1 : state.from - 1;
   }
   function saveSettings() {
-    try { localStorage.setItem('muse-commute', JSON.stringify({ from: state.from, to: state.to, walk: state.walk, sound: state.sound, awake: state.awake, walkSource: state.walkSource, manualWalk: state.manualWalk, planAt: state.planAt })); } catch (e) {}
+    try { localStorage.setItem('muse-commute', JSON.stringify({ from: state.from, to: state.to, walk: state.walk, sound: state.sound, awake: state.awake, walkSource: state.walkSource, manualWalk: state.manualWalk, planAt: state.planAt, bigShows: state.bigShows })); } catch (e) {}
     var q = 'from=' + STATIONS[state.from][0] + '&to=' + STATIONS[state.to][0] + '&walk=' + state.walk + (state.planAt ? '&at=' + state.planAt.replace(':', '') : '');
     try { history.replaceState(null, '', '#' + q); } catch (e) {}
   }
@@ -433,47 +544,53 @@ button{cursor:pointer}
       }, function (err) { clearTimeout(timer); throw err; });
   }
 
-  var loading = false, loadingKey = '';
+  // One request brings both directions at both of your stops, so a swap shows trains right away.
+  var loading = false, loadingKey = '', routeCache = {};
   function loadTrains() {
-    var from = state.from, to = state.to, d = dir(), key = from + '-' + to;
+    var lo = Math.min(state.from, state.to), hi = Math.max(state.from, state.to), key = lo + '-' + hi;
     if ((loading && loadingKey === key) || Date.now() < state.backoffUntil) return;
     loading = true; loadingKey = key;
     api('/predictions', {
-      'filter[stop]': 'place-' + STATIONS[from][0] + ',place-' + STATIONS[to][0],
+      'filter[stop]': 'place-' + STATIONS[lo][0] + ',place-' + STATIONS[hi][0],
       'filter[route]': 'Orange',
-      'filter[direction_id]': String(d),
       'include': 'vehicle'
     }).then(function (j) {
-      if (from !== state.from || to !== state.to) return; // settings changed meanwhile
-      var vehicles = {};
+      var vehicles = {}, byDir = [{}, {}];
       (j.included || []).forEach(function (v) { if (v.type === 'vehicle') vehicles[v.id] = v; });
-      var byTrip = {};
       (j.data || []).forEach(function (p) {
-        var a = p.attributes || {}, r = p.relationships || {};
+        var a = p.attributes || {}, r = p.relationships || {}, d = a.direction_id;
+        if (d !== 0 && d !== 1) return;
         if (a.schedule_relationship === 'SKIPPED' || a.schedule_relationship === 'CANCELLED') return;
         var tripId = r.trip && r.trip.data && r.trip.data.id;
         var stopId = r.stop && r.stop.data && r.stop.data.id;
         if (!tripId || !(stopId in PLATFORM)) return;
-        var si = PLATFORM[stopId];
-        var t = byTrip[tripId] || (byTrip[tripId] = { trip: tripId, vehicleId: null });
+        var si = PLATFORM[stopId], start = d === 1 ? lo : hi, end = d === 1 ? hi : lo;
+        var t = byDir[d][tripId] || (byDir[d][tripId] = { trip: tripId, vehicleId: null });
         var arr = a.arrival_time ? Date.parse(a.arrival_time) : null;
         var dep = a.departure_time ? Date.parse(a.departure_time) : null;
-        if (si === from) {
+        if (si === start) {
           t.arr = arr != null ? arr : dep;
           t.dep = dep != null ? dep : (arr != null ? arr + 40000 : null);
           t.status = a.status || '';
-        } else if (si === to) {
+        } else if (si === end) {
           t.destArr = arr != null ? arr : dep;
         }
         var vid = r.vehicle && r.vehicle.data && r.vehicle.data.id;
         if (vid) t.vehicleId = vid;
       });
-      Object.keys(byTrip).forEach(function (k) { if (byTrip[k].destArr) state.destArr[k] = byTrip[k].destArr; });
-      state.trains = Object.keys(byTrip).map(function (k) { return byTrip[k]; })
-        .filter(function (t) { return t.arr; })
-        .map(function (t) { t.vehicle = t.vehicleId ? vehicles[t.vehicleId] || null : null; return t; })
-        .sort(function (a, b) { return a.arr - b.arr; });
-      state.fetchedAt = Date.now();
+      var at = Date.now();
+      [0, 1].forEach(function (d) {
+        var byTrip = byDir[d];
+        Object.keys(byTrip).forEach(function (k) { if (byTrip[k].destArr) state.destArr[k] = byTrip[k].destArr; });
+        routeCache[d === 1 ? lo + '-' + hi : hi + '-' + lo] = { at: at, trains: Object.keys(byTrip).map(function (k) { return byTrip[k]; })
+          .filter(function (t) { return t.arr; })
+          .map(function (t) { t.vehicle = t.vehicleId ? vehicles[t.vehicleId] || null : null; return t; })
+          .sort(function (a, b) { return a.arr - b.arr; }) };
+      });
+      var c = routeCache[state.from + '-' + state.to];
+      if (!c || c.at !== at) return;   // your stops changed meanwhile
+      state.trains = c.trains;
+      state.fetchedAt = at;
       state.error = '';
       render();
     }).catch(function (e) {
@@ -563,7 +680,7 @@ button{cursor:pointer}
     }
     var shown = state.trains.filter(function (t) { return t.dep > now - 15000; }).slice(0, 3);
     if (target && shown.indexOf(target) < 0) shown.push(target);
-    var seen = {}, flowAt = null;
+    var seen = {}, flowAt = null, fresh = [];
     shown.forEach(function (t) {
       var p = position(t), yours = !!target && t.trip === target.trip, x = 0, far = false, here = false;
       if (!p) far = true;
@@ -576,12 +693,14 @@ button{cursor:pointer}
       var id = 'ap-' + t.trip.replace(/[^\w-]/g, '_');
       seen[id] = 1;
       var m = document.getElementById(id);
-      if (!m) { m = document.createElement('span'); m.id = id; m.style.left = x + '%'; el.appendChild(m); }
+      if (!m) { m = document.createElement('span'); m.id = id; m.style.left = x + '%'; m.style.opacity = '0'; el.appendChild(m); fresh.push(m); }
       m.className = 'ap-train ' + (yours ? 'you' : 'other') + (far ? ' far' : '') + (yours && here ? ' here' : '');
       m.style.left = x + '%';
       if (yours) flowAt = x;
     });
     Array.prototype.slice.call(el.querySelectorAll('.ap-train')).forEach(function (m) { if (!seen[m.id]) m.remove(); });
+    // trains that just showed up fade in
+    if (fresh.length) requestAnimationFrame(function () { requestAnimationFrame(function () { fresh.forEach(function (f) { f.style.opacity = ''; }); }); });
     var flow = $('apFlow');
     if (flow) {
       flow.style.left = (flowAt == null ? 100 : flowAt) + '%';
@@ -641,9 +760,10 @@ button{cursor:pointer}
   function setPlan(v) {
     state.planAt = v || null;
     chimed = {}; state.sched = []; state.schedKey = '';
-    saveSettings(); renderPlanRow(); loadSchedule(); render();
+    saveSettings(); loadSchedule(); smooth();
   }
   function renderPlanRow() {
+    if (vtPending) return;
     var chips = document.querySelectorAll('#planRow .pchip[data-plan]'), custom = !!state.planAt;
     Array.prototype.forEach.call(chips, function (c) {
       var on = (c.getAttribute('data-plan') || null) === state.planAt;
@@ -715,12 +835,162 @@ button{cursor:pointer}
     return 'wait';
   }
 
+  // ---------- the big card ----------
+  // Big: your train coming in (Train, the default), or when to leave (Leave). The other one sits in
+  // the pill under it, and tapping the pill (or the switch) swaps them.
+  var ICON = {
+    walk: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13" cy="4.5" r="2"></circle><path d="M12 8.5l-1.5 5.5L8 21"></path><path d="M10.5 14l3 3 .5 4"></path><path d="M8.5 12l3.3-2.5 3.2 2.5"></path></svg>',
+    train: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="14" rx="3.5"></rect><path d="M5 10h14"></path><path d="M8.5 21l2-4"></path><path d="M15.5 21l-2-4"></path></svg>'
+  };
+  function ampm(ms) { return clockFmt.format(ms).slice(-2); }
+  function heroModel(now, mode, t, tp, upcoming, planned, ps, wms, fromS, toS) {
+    var m = { cls: 'calm', label: '', big: '', unit: '', sub: '', second: null, alt: '', toggle: mode === 'wait', alarm: false, chime: '', bigKey: '', secondKey: '' };
+    if (mode === 'ride') {
+      var arrive = state.destArr[state.riding.trip] || state.riding.destArr;
+      m.label = 'Arriving at ' + toS[2] + ' in';
+      m.big = arrive && arrive > now ? mmss(arrive - now) : 'Now';
+      m.sub = 'On the ' + clock(state.riding.dep) + ' from ' + fromS[2] + (arrive ? ' · at ' + toS[2] + ' ' + clock(arrive) : '');
+      m.bigKey = 'ride|' + state.riding.trip;
+      return m;
+    }
+    if (!state.fetchedAt && !state.error) { m.cls = 'loading'; m.label = 'Finding your train'; m.bigKey = 'loading'; return m; }
+    if (!t) {
+      m.cls = 'none'; m.toggle = false; m.label = 'No trains to catch right now'; m.big = 'No trains';
+      m.sub = state.error ? 'Can\'t reach the MBTA. Check your signal.' : 'The Orange Line runs about 5 AM to 1 AM.';
+      m.bigKey = 'none|' + (state.error ? 1 : 0);
+      return m;
+    }
+    var train = headsign() + ' train', walkMin = Math.max(1, Math.round(wms / 60000));
+    var trainIn = t.arr > now ? mmss(t.arr - now) : 'Now';
+    var pullsIn = train + ' · pulls into ' + fromS[2] + ' at ' + clock(t.arr);
+    if (mode === 'at') {
+      var p = position(t), next = null;
+      upcoming.forEach(function (u) { if (!next && u.t.arr > t.arr && u.p.kind !== 'missed') next = u.t; });
+      if (p && p.idx === state.from && p.status === 'STOPPED_AT') {
+        m.cls = 'now'; m.label = 'Your train is here'; m.big = 'Board'; m.sub = train + ' · doors open'; m.chime = 'now';
+      } else {
+        m.cls = t.arr - now <= 60000 ? 'soon' : 'calm';
+        m.label = 'You\'re at ' + fromS[2] + '. Next train in'; m.big = trainIn; m.sub = pullsIn;
+        m.chime = t.arr - now <= 60000 ? 'soon' : '';
+      }
+      if (next) m.second = { icon: 'train', html: 'Then the <span class="n">' + clock(next.arr) + '</span> <span class="m">· ' + inMin(next.arr - now) + '</span>' };
+      m.bigKey = 'at|' + t.trip + '|' + m.cls; m.secondKey = next ? 'then|' + next.trip : '';
+      return m;
+    }
+    if (mode === 'way') {
+      var pace = tp.kind === 'pace';
+      m.label = 'Your train in'; m.big = trainIn; m.sub = pullsIn;
+      m.second = pace ? { icon: 'walk', html: 'On pace <span class="m">· ' + walkMin + ' min to the platform</span>' }
+                      : { icon: 'walk', html: 'Walk faster to make it', cls: 'rush' };
+      m.alarm = !pace; m.chime = pace ? '' : 'now';
+      m.bigKey = 'train|' + t.trip; m.secondKey = 'pace|' + pace;
+      return m;
+    }
+    // Not on your way yet: when your train comes in, and when to leave for it.
+    var lead = state.bigShows;
+    if (planned && tp.kind === 'leave' && tp.slack > 60 * 60000) {   // a while off: clock times read better
+      var trainAt = { label: 'Planned: your train at ' + fromS[2], big: clock(t.arr), unit: ampm(t.arr), sub: train + ' · in ' + dur(t.arr - now),
+        pill: { icon: 'train', html: 'Train at <span class="n">' + clock(t.arr) + '</span> <span class="m">· in ' + dur(t.arr - now) + '</span>' } };
+      var leaveAt = { label: 'Planned: leave at', big: clock(tp.at), unit: ampm(tp.at), sub: 'for the ' + clock(t.arr) + ' ' + train + ' at ' + fromS[2],
+        pill: { icon: 'walk', html: 'Leave at <span class="n">' + clock(tp.at) + '</span> <span class="m">· ' + walkMin + ' min walk</span>' } };
+      var front = lead === 'leave' ? leaveAt : trainAt, back = lead === 'leave' ? trainAt : leaveAt;
+      m.label = front.label; m.big = front.big; m.unit = front.unit; m.sub = front.sub; m.second = back.pill;
+      if (t.scheduled) m.alt = 'From the schedule. Live times take over about an hour before.';
+      m.bigKey = 'far|' + lead + '|' + t.trip; m.secondKey = m.bigKey;
+      return m;
+    }
+    var leaveCls, leaveLabel, leaveBig, leavePill;
+    if (tp.kind === 'leave') {
+      var soon = tp.slack <= 60000;
+      leaveCls = soon ? 'soon' : 'calm';
+      leaveLabel = soon ? 'Get ready. Leave in' : 'Leave in';
+      leaveBig = mmss(tp.slack);
+      leavePill = soon ? 'Get ready: leave in <span class="n">' + mmss(tp.slack) + '</span>'
+                       : 'Leave in <span class="n">' + mmss(tp.slack) + '</span> <span class="m">· at ' + clock(tp.at) + '</span>';
+    } else if (tp.kind === 'go') {
+      leaveCls = 'now'; leaveLabel = 'Leave now'; leaveBig = 'Go';
+      leavePill = 'Leave now <span class="m">· ' + walkMin + ' min walk</span>';
+    } else {
+      leaveCls = 'rush'; leaveLabel = 'Leave now and walk fast'; leaveBig = 'Hustle';
+      leavePill = 'Leave now and walk fast';
+    }
+    if (lead === 'leave') {
+      m.cls = leaveCls; m.label = leaveLabel; m.big = leaveBig; m.sub = pullsIn;
+      m.second = { icon: 'train', html: 'Train in <span class="n">' + trainIn + '</span>' };
+      m.bigKey = 'leave|' + t.trip + '|' + leaveCls; m.secondKey = 'train|' + t.trip;
+    } else {
+      m.label = 'Your train in'; m.big = trainIn; m.sub = pullsIn;
+      m.second = { icon: 'walk', html: leavePill, cls: leaveCls };
+      m.alarm = leaveCls === 'now' || leaveCls === 'rush';   // the card lights up so "leave now" can't be missed
+      m.bigKey = 'train|' + t.trip; m.secondKey = 'leave|' + t.trip + '|' + leaveCls;
+    }
+    if (tp.kind === 'rush') {
+      var nextOk = null;
+      upcoming.forEach(function (u) { if (!nextOk && u.t !== t && u.p.kind === 'leave') nextOk = u; });
+      if (nextOk) m.alt = 'Or relax: the ' + clock(nextOk.t.arr) + ', leave in ' + mmss(nextOk.p.slack);
+    } else if (planned) m.alt = 'You planned to leave after ' + clock(ps) + '.';
+    m.chime = tp.kind === 'leave' ? (tp.slack <= 60000 ? 'soon' : '') : 'now';
+    return m;
+  }
+
+  var heroBigKey = '', heroSecondKey = '', heroAnim = '';
+  function paintHero(m) {
+    var hero = $('hero'), label = $('heroLabel'), big = $('heroBig'), sub = $('heroSub'), sec = $('heroSecond'), seg = $('heroSeg');
+    var first = !heroBigKey, bigChanged = m.bigKey !== heroBigKey, secChanged = m.secondKey !== heroSecondKey;
+    heroBigKey = m.bigKey; heroSecondKey = m.secondKey;
+    hero.className = 'hero ' + m.cls + (m.alarm ? ' alarm' : '');
+    label.textContent = m.label;
+    if (m.cls === 'loading') {
+      if (bigChanged) { big.innerHTML = '<span class="sk big"></span>'; sub.innerHTML = '<span class="sk line"></span>'; }
+    } else {
+      big.innerHTML = esc(m.big) + (m.unit ? '<small>' + m.unit + '</small>' : '');
+      sub.textContent = m.sub || ' ';
+    }
+    if (m.second) {
+      sec.hidden = false;
+      sec.className = 'hero-second' + (m.second.cls ? ' ' + m.second.cls : '') + (m.toggle ? ' tap' : '');
+      sec.innerHTML = ICON[m.second.icon] + '<span>' + m.second.html + '</span>';
+    } else { sec.hidden = true; sec.innerHTML = ''; }
+    $('heroAlt').textContent = m.alt;
+    var segAppears = seg.hidden && m.toggle;
+    seg.hidden = !m.toggle;
+    seg.classList.toggle('leave', state.bigShows === 'leave');
+    $('segTrain').setAttribute('aria-pressed', state.bigShows === 'train' ? 'true' : 'false');
+    $('segLeave').setAttribute('aria-pressed', state.bigShows === 'leave' ? 'true' : 'false');
+    if (bigChanged || secChanged) $('heroSr').textContent = m.cls === 'loading' ? '' : m.label + ' ' + m.big + (m.unit ? ' ' + m.unit : '') + '. ' + (m.second ? sec.textContent + '.' : '');
+    var how = heroAnim; heroAnim = '';
+    if (first || inVT) return;
+    if (segAppears) anim(seg, [{ opacity: 0, transform: 'scale(.9)' }, { opacity: 1, transform: 'none' }], { duration: 260, easing: EASE });
+    if (how === 'swap' && bigChanged) {
+      // the two numbers trade places: the big one rises from the pill, the pill drops in from above
+      anim(big, [{ opacity: 0, transform: 'translateY(34px) scale(.78)' }, { opacity: 1, transform: 'none' }], { duration: 460, easing: 'cubic-bezier(.2,.9,.25,1.04)' });
+      anim(sec, [{ opacity: 0, transform: 'translateY(-30px) scale(1.06)' }, { opacity: 1, transform: 'none' }], { duration: 460, easing: EASE });
+      anim(label, [{ opacity: 0 }, { opacity: 1 }], { duration: 280 });
+      anim(sub, [{ opacity: 0 }, { opacity: 1 }], { duration: 320, delay: 80, fill: 'backwards' });
+      return;
+    }
+    if (bigChanged) [label, big, sub].forEach(function (el, i) { anim(el, RISE, { duration: 380, delay: i * 45, easing: EASE, fill: 'backwards' }); });
+    if (secChanged && !sec.hidden) anim(sec, RISE, { duration: 380, delay: bigChanged ? 140 : 0, easing: EASE, fill: 'backwards' });
+  }
+  function setBig(v) {
+    if (state.bigShows === v) return;
+    state.bigShows = v; saveSettings();
+    heroAnim = 'swap'; render();
+  }
+
+  var swapTurns = 0, listSkel = false;
   function render() {
+    if (vtPending) return;   // a smooth change is about to paint this
     var now = Date.now();
     var mode = locMode(), wms = walkMs();
     var fromS = STATIONS[state.from], toS = STATIONS[state.to];
     $('fromName').textContent = fromS[2];
     $('toName').textContent = toS[2];
+    // each station name carries its own name for smooth changes, so on a swap it glides to the other box
+    $('fromName').style.viewTransitionName = 'st-' + fromS[0];
+    $('toName').style.viewTransitionName = 'st-' + toS[0];
+    var rot = 'rotate(' + swapTurns * 180 + 'deg)';
+    if ($('swapIcon').style.transform !== rot) $('swapIcon').style.transform = rot;
     $('walkOut').textContent = state.walk + ' min';
     $('walkNote').textContent = mode === 'at' ? 'you\'re here' : Math.max(1, Math.round(wms / 60000)) + ' min walk';
     $('listHead').textContent = 'Next trains at ' + fromS[2];
@@ -765,75 +1035,25 @@ button{cursor:pointer}
     trackRide(mode, target, now);
 
     // hero
-    var hero = $('hero'), label = '', big = '', sub = '', alt = '', cls = 'calm';
-    if (mode === 'ride') {
-      var arrive = state.destArr[state.riding.trip] || state.riding.destArr;
-      label = 'Arriving at ' + toS[2] + ' in';
-      big = arrive && arrive > now ? mmss(arrive - now) : 'Now';
-      sub = 'On the ' + clock(state.riding.dep) + ' from ' + fromS[2] + (arrive ? ' · at ' + toS[2] + ' ' + clock(arrive) : '');
-    }
-    else if (!state.fetchedAt && !state.error) { label = 'Loading live trains'; big = '…'; }
-    else if (!target) {
-      cls = 'none'; label = 'No trains to catch right now'; big = 'No trains';
-      sub = state.error ? 'Can\'t reach the MBTA. Check your signal.' : 'The Orange Line runs about 5 AM to 1 AM.';
-    } else if (mode === 'at') {
-      var nextOne = null;
-      upcoming.forEach(function (u) { if (!nextOne && u.t.arr > target.arr) nextOne = u.t; });
-      var tpos = position(target);
-      if (tpos && tpos.idx === state.from && tpos.status === 'STOPPED_AT') {
-        cls = 'now'; label = 'Your train is here'; big = 'Board';
-        sub = 'Train at ' + fromS[2] + ': ' + clock(target.arr) + ', doors open';
-        maybeChime(target.trip, 'now');
-      } else {
-        cls = target.arr - now <= 60000 ? 'soon' : 'calm';
-        label = 'You\'re at ' + fromS[2] + '. Next train in';
-        big = target.arr > now ? mmss(target.arr - now) : 'Now';
-        sub = 'Train at ' + fromS[2] + ': ' + clock(target.arr) + (nextOne ? ' · then ' + clock(nextOne.arr) : '');
-        maybeChime(target.trip, target.arr - now <= 60000 ? 'soon' : '');
-      }
-    } else if (mode === 'way') {
-      var pace = tp.kind === 'pace';
-      cls = pace ? 'calm' : 'rush';
-      label = 'Train in';
-      big = target.arr > now ? mmss(target.arr - now) : 'Now';
-      sub = 'Train at ' + fromS[2] + ': ' + clock(target.arr);
-      alt = pace ? 'You\'re on pace: about ' + Math.max(1, Math.round(wms / 60000)) + ' min to the platform' : 'Walk faster to make it';
-      if (!pace) maybeChime(target.trip, 'now');
-    } else if (planned && tp.kind === 'leave' && tp.slack > 60 * 60000) {
-      label = 'Planned: leave at';
-      big = clock(tp.at);
-      sub = 'for the ' + clock(target.arr) + ' ' + headsign() + ' train at ' + fromS[2];
-      alt = 'That\'s in ' + dur(tp.slack) + (target.scheduled ? '. It switches to live times about an hour before.' : '.');
-    } else {
-      var trainAt = 'Train at ' + fromS[2] + ': ' + clock(target.arr) + ' · ' + headsign() + ' train';
-      if (tp.kind === 'leave') {
-        cls = tp.slack <= 60000 ? 'soon' : 'calm';
-        label = tp.slack <= 60000 ? 'Get ready. Leave in' : 'Leave in';
-        big = mmss(tp.slack);
-        sub = trainAt;
-        alt = planned ? 'You planned to leave after ' + clock(ps) + ': leave at ' + clock(tp.at) + ' and walk right onto it' : 'Leave by ' + clock(tp.at) + ' and you\'re on the platform a minute early';
-      } else if (tp.kind === 'go') {
-        cls = 'now'; label = 'Leave now'; big = 'Go';
-        sub = trainAt + ' (' + inMin(target.arr - now) + ')';
-      } else {
-        cls = 'rush'; label = 'Leave now and walk fast'; big = 'Hustle';
-        sub = trainAt + ' (' + inMin(target.arr - now) + ')';
-        var nextOk = null;
-        upcoming.forEach(function (u) { if (!nextOk && u.t !== target && u.p.kind === 'leave') nextOk = u; });
-        if (nextOk) alt = 'Or relax: the ' + clock(nextOk.t.arr) + ', leave in ' + mmss(nextOk.p.slack);
-      }
-      maybeChime(target.trip, tp.kind === 'leave' ? (tp.slack <= 60000 ? 'soon' : '') : 'now');
-    }
-    hero.className = 'hero ' + cls;
-    $('heroLabel').textContent = label;
-    $('heroBig').textContent = big;
-    $('heroSub').textContent = sub || ' ';
-    $('heroAlt').textContent = alt;
+    var hm = heroModel(now, mode, target, tp, upcoming, planned, ps, wms, fromS, toS);
+    paintHero(hm);
+    if (target && hm.chime) maybeChime(target.trip, hm.chime);
 
     // your train
-    var card = $('trainCard');
-    if (target && mode !== 'ride' && !target.scheduled) {
-      card.hidden = false;
+    var card = $('trainCard'), waiting = !state.fetchedAt && !state.error && mode !== 'ride';
+    if (waiting) {
+      // the stops are known before the trains are: draw the track now, and the trains fade in when they load
+      showEl(card, true);
+      $('trainHead').textContent = 'Your ' + headsign() + ' train · ' + fromS[2];
+      $('trainTime').textContent = '';
+      $('awayBig').innerHTML = '<span class="sk line" style="width:160px;height:22px"></span>';
+      $('awaySub').textContent = '';
+      renderApproach(null, now);
+      $('approach').setAttribute('aria-label', 'Finding your train');
+      $('trainCars').innerHTML = '';
+      $('rideNote').textContent = '';
+    } else if (target && mode !== 'ride' && !target.scheduled) {
+      showEl(card, true);
       var tp2 = position(target), away = tp2 ? stopsAway(tp2) : null, big2, sub2;
       if (!tp2) {
         var startName = STATIONS[dir() === 1 ? 0 : 19][2];
@@ -874,7 +1094,17 @@ button{cursor:pointer}
       else { cls = 'rush'; tag = 'Walk fast'; }
       return '<li class="' + cls + '"><span class="t">' + clock(t.arr) + '</span><span class="in">' + inMin(t.arr - now) + '</span><span class="tag">' + tag + '</span></li>';
     });
-    $('list').innerHTML = rows.length ? rows.join('') : '<li><span class="muted">No predictions yet.</span></li>';
+    var list = $('list');
+    if (waiting) {
+      list.innerHTML = '<li class="skrow"><span class="sk line" style="width:72%"></span></li><li class="skrow"><span class="sk line" style="width:56%"></span></li><li class="skrow"><span class="sk line" style="width:64%"></span></li>';
+      listSkel = true;
+    } else {
+      list.innerHTML = rows.length ? rows.join('') : '<li><span class="muted">No predictions yet.</span></li>';
+      if (listSkel && !inVT) Array.prototype.forEach.call(list.children, function (li, i) {
+        anim(li, RISE, { duration: 340, delay: i * 40, easing: EASE, fill: 'backwards' });
+      });
+      listSkel = false;
+    }
     if (fromSched) $('listHead').textContent = 'Scheduled at ' + fromS[2];
 
     // status
@@ -930,14 +1160,20 @@ button{cursor:pointer}
     $('soundChk').checked = state.sound;
     $('awakeChk').checked = state.awake;
   }
+  // A new route paints as one smooth change. Trains already loaded for it (a swap) show right away.
   function routeChanged() {
-    state.trains = []; state.fetchedAt = 0; state.error = ''; chimed = {}; trackKey = '';
+    var c = routeCache[state.from + '-' + state.to];
+    if (c && Date.now() - c.at < 60000) { state.trains = c.trains; state.fetchedAt = c.at; }
+    else { state.trains = []; state.fetchedAt = 0; }
+    state.error = ''; chimed = {}; trackKey = '';
     state.sched = []; state.schedKey = ''; setTimeout(loadSchedule, 0);
     state.startFix = state.here; state.riding = null; state.boardCandidate = null;
-    saveSettings(); render(); loadTrains();
+    saveSettings(); smooth(); loadTrains();
   }
   $('swapBtn').addEventListener('click', function () {
-    var f = state.from; state.from = state.to; state.to = f; state.place = null; state.fromSource = 'manual'; routeChanged();
+    var f = state.from; state.from = state.to; state.to = f; state.place = null; state.fromSource = 'manual';
+    swapTurns++;
+    routeChanged();
   });
 
   // ---------- how to get there ----------
@@ -947,6 +1183,7 @@ button{cursor:pointer}
     return u;
   }
   function renderGetThere(mode, wms) {
+    if (vtPending) return;
     if (mode == null) { mode = locMode(); wms = walkMs(); }
     var f = state.from, t = state.to, html;
     if (state.locMsg) html = '<span class="warn">' + esc(state.locMsg) + '</span>';
@@ -1002,6 +1239,11 @@ button{cursor:pointer}
     c.addEventListener('click', function () { setPlan(c.getAttribute('data-plan')); });
   });
   $('planTime').addEventListener('change', function () { if (this.value) setPlan(this.value); });
+  $('segTrain').addEventListener('click', function () { setBig('train'); });
+  $('segLeave').addEventListener('click', function () { setBig('leave'); });
+  $('heroSecond').addEventListener('click', function () {
+    if (this.classList.contains('tap')) setBig(state.bigShows === 'train' ? 'leave' : 'train');
+  });
   $('locHelpBtn').addEventListener('click', function () {
     var steps = $('locSteps'), open = steps.hidden;
     steps.hidden = !open;
@@ -1023,7 +1265,7 @@ button{cursor:pointer}
   }
   function showLocHelp(on) {
     state.locDenied = on;
-    $('locHelp').hidden = !on;
+    showEl($('locHelp'), on);
   }
   // When it's turned on in Settings and you come back, pick it up without a reload.
   function watchPermission() {
@@ -1101,7 +1343,7 @@ button{cursor:pointer}
   }
 
   // ---------- search: "Where to?" ----------
-  var mode = 'to', placeResults = null, q = $('q'), sugg = $('sugg');
+  var mode = 'to', placeResults = null, q = $('q'), sugg = $('sugg'), searchOpen = false;
   var PIN = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 3L3 10.5l7.2 2.3L12.5 20z"></path></svg>';
   var PLACE = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"></path><circle cx="12" cy="9.5" r="2.5"></circle></svg>';
   function norm(x) { return String(x).toLowerCase().replace(/['\u2019.]/g, '').replace(/[^a-z0-9]+/g, ' ').trim(); }
@@ -1164,16 +1406,28 @@ button{cursor:pointer}
     mode = m; placeResults = null;
     q.placeholder = m === 'from' ? 'Where from?' : 'Where to?';
     q.setAttribute('aria-label', q.placeholder);
+    $('fromBtn').classList.toggle('editing', m === 'from');   // the box you're changing lights up
+    $('toBtn').classList.toggle('editing', m === 'to');
+    renderSugg();
+    if (searchOpen) return;
+    searchOpen = true;
     sugg.hidden = false; q.setAttribute('aria-expanded', 'true');
     $('locBtn').hidden = true; $('cancelBtn').hidden = false;
-    renderSugg();
+    anim(sugg, [{ opacity: 0, transform: 'translateY(-8px) scale(.98)' }, { opacity: 1, transform: 'none' }], { duration: 220, easing: EASE });
+    anim($('cancelBtn'), [{ opacity: 0, transform: 'translateX(8px)' }, { opacity: 1, transform: 'none' }], { duration: 200, easing: EASE });
   }
-  function closeSearch() {
+  // instant: hide it now, because a smooth change is about to fade it out
+  function closeSearch(instant) {
+    searchOpen = false;
     q.value = ''; placeResults = null; mode = 'to';
     q.placeholder = 'Where to?'; q.setAttribute('aria-label', 'Where to?');
-    sugg.hidden = true; q.setAttribute('aria-expanded', 'false');
+    q.setAttribute('aria-expanded', 'false');
+    $('fromBtn').classList.remove('editing'); $('toBtn').classList.remove('editing');
     $('locBtn').hidden = false; $('cancelBtn').hidden = true;
     if (document.activeElement === q) q.blur();
+    var a = instant ? null : anim(sugg, [{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateY(-6px) scale(.98)' }], { duration: 160, easing: 'ease-in' });
+    if (a) a.onfinish = function () { if (!searchOpen) sugg.hidden = true; };
+    else sugg.hidden = true;
   }
   function searchPlaces(query) {
     if (!query) return;
@@ -1189,13 +1443,15 @@ button{cursor:pointer}
           var area = parts.filter(function (x) { return x !== name; }).slice(0, 2).join(', ');
           return { name: name, area: area, lat: parseFloat(p.lat), lon: parseFloat(p.lon) };
         }).filter(function (p) { return isFinite(p.lat) && isFinite(p.lon); }).slice(0, 5);
-        if (!sugg.hidden) renderSugg();
+        if (searchOpen) renderSugg();
       })
-      .catch(function () { placeResults = 'error'; if (!sugg.hidden) renderSugg(); });
+      .catch(function () { placeResults = 'error'; if (searchOpen) renderSugg(); });
   }
+  // One smooth change: the list fades away while the station names glide into their boxes.
   function pickStation(i, place) {
     var m = mode;
-    closeSearch();
+    searchOpen = false;
+    smooth(function () { closeSearch(true); });
     if (m === 'from') {
       state.from = i; state.fromSource = 'manual'; state.walkSource = 'manual';
       if (place) { state.walk = walkFor(place.m); state.walkSource = 'place'; }
@@ -1208,7 +1464,7 @@ button{cursor:pointer}
     routeChanged();
     if (state.fromSource !== 'manual') useMyLocation(false);   // start from the stop nearest you
   }
-  q.addEventListener('focus', function () { if (sugg.hidden) openSearch(mode); });
+  q.addEventListener('focus', function () { if (!searchOpen) openSearch(mode); });
   q.addEventListener('input', function () { placeResults = null; renderSugg(); });
   q.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') { closeSearch(); return; }
@@ -1229,7 +1485,7 @@ button{cursor:pointer}
   $('fromBtn').addEventListener('click', function () { openSearch('from'); q.focus(); });
   $('toBtn').addEventListener('click', function () { openSearch('to'); q.focus(); });
   document.addEventListener('pointerdown', function (e) {
-    if (sugg.hidden) return;
+    if (!searchOpen) return;
     if ($('searchbox').contains(e.target) || $('fromBtn').contains(e.target) || $('toBtn').contains(e.target)) return;
     closeSearch();
   }, true);
