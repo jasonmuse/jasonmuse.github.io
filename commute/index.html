@@ -1,0 +1,657 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Muse Commute</title>
+<meta name="description" content="Live Orange Line trains, timed from your walk.">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#0A0D13">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Commute">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="icon" type="image/png" href="icon.png">
+<style>
+/* Layout: one phone-width column. The live "leave" card on top, your train, the line, then the controls. */
+:root{
+  --bg:#0A0D13; --card:#141922; --card-2:#1C222D; --line:#2B3240;
+  --fg:#F3F4F6; --muted:#A3AAB7; --accent:#ED8B00; --accent-ink:#1A1206;
+  --good:#5BD98A; --warn:#FFB547; --bad:#FF8A7A;
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,"Segoe UI",Roboto,sans-serif;
+  --num:ui-rounded,"SF Pro Rounded",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--fg)}
+body{font-family:var(--font);font-size:16px;line-height:1.4;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;
+  padding-top:max(14px,env(safe-area-inset-top));padding-bottom:max(24px,env(safe-area-inset-bottom));
+  padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}
+.wrap{max-width:460px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+
+/* top bar */
+.top{display:flex;align-items:center;gap:10px}
+.route{flex:1;min-width:0;display:flex;align-items:center;gap:10px;font-size:15px}
+.route b{font-weight:650}
+.route .names{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ol{flex:none;width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-size:11px;font-weight:800;letter-spacing:.02em}
+.arrow{color:var(--muted);padding:0 2px}
+.icon-btn{flex:none;width:44px;height:44px;border-radius:50%;border:0;background:var(--card);display:grid;place-items:center;color:var(--fg)}
+.icon-btn:active{background:var(--card-2)}
+
+/* alerts */
+.alert{display:flex;gap:10px;align-items:flex-start;padding:11px 13px;border-radius:14px;background:#2A1D10;color:#FFE2BD;font-size:14px}
+.alert.bad{background:#2E1715;color:#FFD3CC}
+.alert .chip{flex:none;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 7px;border-radius:999px;background:rgba(255,181,71,.18);color:var(--warn);margin-top:1px}
+.alert.bad .chip{background:rgba(255,138,122,.18);color:var(--bad)}
+.okline{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);padding:0 2px}
+.okline i{width:8px;height:8px;border-radius:50%;background:var(--good);display:inline-block}
+
+/* hero: the Live Activity, on the web */
+.hero{border-radius:26px;background:var(--card);padding:18px 20px 20px;display:flex;flex-direction:column;gap:4px;transition:background .4s ease}
+.hero-label{font-size:14px;font-weight:600;color:var(--muted)}
+.hero-big{font-family:var(--num);font-size:76px;line-height:1;font-weight:700;letter-spacing:-1px;font-variant-numeric:tabular-nums;color:var(--fg)}
+.hero-sub{font-size:15px;color:var(--fg)}
+.hero-alt{font-size:13px;color:var(--muted);margin-top:4px}
+.hero.calm .hero-big{color:var(--fg)}
+.hero.soon .hero-big{color:var(--accent)}
+.hero.now{background:var(--accent)}
+.hero.now .hero-label,.hero.now .hero-sub,.hero.now .hero-big,.hero.now .hero-alt{color:var(--accent-ink)}
+.hero.rush{background:#C2410C}
+.hero.rush .hero-label,.hero.rush .hero-sub,.hero.rush .hero-big,.hero.rush .hero-alt{color:#FFF4EC}
+.hero.none .hero-big{font-size:34px;letter-spacing:0}
+@media (prefers-reduced-motion:no-preference){
+  .hero.now{animation:pulse 1.6s ease-in-out infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(237,139,0,.55)}50%{box-shadow:0 0 0 10px rgba(237,139,0,0)}}
+}
+
+/* cards */
+.card{border-radius:22px;background:var(--card);padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.pill{font-family:var(--num);font-weight:700;font-size:15px;padding:4px 10px;border-radius:999px;background:var(--card-2);font-variant-numeric:tabular-nums}
+.pill.you{background:var(--accent);color:var(--accent-ink)}
+.where{font-size:22px;font-weight:650;line-height:1.2}
+.stops{font-size:14px;color:var(--muted)}
+
+/* car crowding */
+.cars-row{display:flex;gap:5px}
+.car{flex:1;height:30px;border-radius:7px;background:var(--card-2);position:relative;overflow:hidden;border:1px solid transparent}
+.car i{position:absolute;left:0;right:0;bottom:0;background:#3B4456}
+.car.l1 i{background:#3E6B54}
+.car.l2 i{background:#8A6A2E}
+.car.l3 i,.car.l4 i{background:#8F3A31}
+.car.best{border-color:var(--good)}
+.cars-cap{font-size:12px;color:var(--muted)}
+
+/* the line */
+.strip{position:relative}
+.rail{position:absolute;left:79px;width:4px;border-radius:2px;background:var(--accent);opacity:.9}
+.st{position:relative;height:40px;display:flex;align-items:center;padding-left:98px;gap:8px}
+.st-dot{position:absolute;left:74px;width:14px;height:14px;border-radius:50%;background:var(--bg);border:3px solid var(--accent)}
+.st-name{font-size:15px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.st.origin .st-name,.st.dest .st-name{color:var(--fg);font-weight:650}
+.st.origin .st-dot{background:var(--accent)}
+.st.dest .st-dot{background:var(--fg);border-color:var(--fg)}
+.st-tag{margin-left:auto;flex:none;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:var(--card-2);color:var(--muted)}
+.st.origin .st-tag{background:rgba(237,139,0,.16);color:var(--accent)}
+.tm{position:absolute;left:0;width:81px;height:24px;margin-top:-12px;display:flex;align-items:center;justify-content:flex-end;gap:6px;transition:top 1.4s ease;pointer-events:none}
+.tm-time{font-family:var(--num);font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;padding:2px 7px;border-radius:999px;background:var(--card-2);color:var(--muted)}
+.tm-dot{width:16px;height:16px;border-radius:50%;background:#C9CED8;border:3px solid var(--card);margin-right:-7px;flex:none}
+.tm.you{z-index:2}
+.tm.you .tm-time{background:var(--accent);color:var(--accent-ink)}
+.tm.you .tm-dot{background:#FFFFFF;border-color:var(--accent);width:20px;height:20px;margin-right:-9px}
+@media (prefers-reduced-motion:reduce){.tm{transition:none}}
+
+/* next trains */
+.list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.list li{display:grid;grid-template-columns:64px 74px 1fr;align-items:center;gap:8px;padding:10px 0;border-top:1px solid var(--line);font-size:15px}
+.list li:first-child{border-top:0}
+.list .t{font-family:var(--num);font-weight:700;font-variant-numeric:tabular-nums}
+.list .in{color:var(--muted);font-variant-numeric:tabular-nums}
+.list .tag{justify-self:end;text-align:right;font-size:13px;color:var(--muted)}
+.list li.you .tag{color:var(--accent);font-weight:650}
+.list li.rush .tag{color:var(--warn);font-weight:650}
+.list li.missed{opacity:.5}
+
+/* settings */
+.settings .row{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px}
+.settings label,.settings .lbl{font-size:15px}
+.settings select{appearance:none;-webkit-appearance:none;background:var(--card-2);border:0;border-radius:12px;padding:10px 34px 10px 12px;font-size:15px;max-width:62%;
+  background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);
+  background-position:calc(100% - 17px) 52%,calc(100% - 12px) 52%;background-size:5px 5px;background-repeat:no-repeat}
+.stepper{display:flex;align-items:center;gap:6px}
+.stepper button{width:44px;height:40px;border-radius:12px;border:0;background:var(--card-2);font-size:20px;line-height:1}
+.stepper button:active{background:var(--line)}
+.stepper output{min-width:62px;text-align:center;font-family:var(--num);font-weight:700;font-variant-numeric:tabular-nums}
+.switch{appearance:none;-webkit-appearance:none;width:51px;height:31px;border-radius:999px;background:var(--line);position:relative;flex:none;transition:background .2s;margin:0}
+.switch::after{content:"";position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;background:#fff;transition:transform .2s}
+.switch:checked{background:var(--accent)}
+.switch:checked::after{transform:translateX(20px)}
+.hint{margin:4px 0 0;font-size:13px;color:var(--muted)}
+.foot{display:flex;justify-content:space-between;gap:12px;font-size:12px;color:var(--muted);padding:0 4px}
+.foot a{color:var(--muted)}
+.stale{color:var(--warn)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="route">
+      <span class="ol" aria-hidden="true">OL</span>
+      <span class="names"><b id="fromName">…</b><span class="arrow" aria-label="to">→</span><b id="toName">…</b></span>
+    </div>
+    <button class="icon-btn" id="swapBtn" type="button" aria-label="Swap direction">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4v16"></path><path d="M3 8l4-4 4 4"></path><path d="M17 20V4"></path><path d="M21 16l-4 4-4-4"></path></svg>
+    </button>
+  </header>
+
+  <div id="alerts"></div>
+
+  <section class="hero calm" id="hero" aria-live="polite">
+    <div class="hero-label" id="heroLabel">Loading live trains</div>
+    <div class="hero-big" id="heroBig">…</div>
+    <div class="hero-sub" id="heroSub">&nbsp;</div>
+    <div class="hero-alt" id="heroAlt"></div>
+  </section>
+
+  <section class="card" id="trainCard" hidden>
+    <div class="card-head"><span class="eyebrow">Your train</span><span class="pill you" id="trainTime"></span></div>
+    <div class="where" id="trainWhere"></div>
+    <div class="stops" id="trainStops"></div>
+    <div id="trainCars"></div>
+  </section>
+
+  <section class="card">
+    <div class="card-head"><span class="eyebrow">On the line</span><span class="muted small" id="dirLabel"></span></div>
+    <div class="strip" id="strip"></div>
+  </section>
+
+  <section class="card">
+    <div class="card-head"><span class="eyebrow">Next trains</span><span class="muted small" id="walkNote"></span></div>
+    <ol class="list" id="list"></ol>
+  </section>
+
+  <section class="card settings" aria-label="Settings">
+    <div class="row"><label for="fromSel">From</label><select id="fromSel"></select></div>
+    <div class="row"><label for="toSel">To</label><select id="toSel"></select></div>
+    <div class="row"><span class="lbl" id="walkLbl">Walk to the platform</span>
+      <div class="stepper" role="group" aria-labelledby="walkLbl">
+        <button type="button" id="walkMinus" aria-label="One minute less">−</button>
+        <output id="walkOut" aria-live="polite">6 min</output>
+        <button type="button" id="walkPlus" aria-label="One minute more">+</button>
+      </div>
+    </div>
+    <div class="row"><label for="soundChk">Chime when it's time to go</label><input type="checkbox" class="switch" id="soundChk"></div>
+    <div class="row"><label for="awakeChk">Keep screen on</label><input type="checkbox" class="switch" id="awakeChk"></div>
+    <p class="hint">Count your walk from your desk or door to the train. Your stations and walk time are saved in this page's link: tap Share, then Add to Home Screen, and it opens like an app.</p>
+  </section>
+
+  <footer class="foot"><span id="statusLine">Connecting to the MBTA…</span><span>Live data: <a href="https://www.mbta.com/developers" target="_blank" rel="noopener">MBTA</a></span></footer>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var API = 'https://api-v3.mbta.com';
+  var POLL_MS = 15000, ALERT_MS = 120000;
+  var CUSHION = 45000;   // aim to be on the platform this long before the train pulls in
+  var LAST_CALL = 10000; // the latest you can reach the platform before it leaves
+
+  // Orange Line, south to north: [key, name, short name, platform ids]
+  var STATIONS = [
+    ['forhl', 'Forest Hills', 'Forest Hills', ['70001', 'Forest Hills-01', 'Forest Hills-02']],
+    ['grnst', 'Green Street', 'Green St', ['70002', '70003']],
+    ['sbmnl', 'Stony Brook', 'Stony Brook', ['70004', '70005']],
+    ['jaksn', 'Jackson Square', 'Jackson Sq', ['70006', '70007']],
+    ['rcmnl', 'Roxbury Crossing', 'Roxbury Crossing', ['70008', '70009']],
+    ['rugg', 'Ruggles', 'Ruggles', ['70010', '70011']],
+    ['masta', 'Massachusetts Avenue', 'Mass Ave', ['70012', '70013']],
+    ['bbsta', 'Back Bay', 'Back Bay', ['70014', '70015']],
+    ['tumnl', 'Tufts Medical Center', 'Tufts Medical', ['70016', '70017']],
+    ['chncl', 'Chinatown', 'Chinatown', ['70018', '70019']],
+    ['dwnxg', 'Downtown Crossing', 'Downtown Crossing', ['70020', '70021']],
+    ['state', 'State', 'State', ['70022', '70023']],
+    ['haecl', 'Haymarket', 'Haymarket', ['70024', '70025']],
+    ['north', 'North Station', 'North Station', ['70026', '70027']],
+    ['ccmnl', 'Community College', 'Community College', ['70028', '70029']],
+    ['sull', 'Sullivan Square', 'Sullivan Sq', ['70030', '70031']],
+    ['astao', 'Assembly', 'Assembly', ['70278', '70279']],
+    ['welln', 'Wellington', 'Wellington', ['70032', '70033']],
+    ['mlmnl', 'Malden Center', 'Malden Center', ['70034', '70035']],
+    ['ogmnl', 'Oak Grove', 'Oak Grove', ['70036', 'Oak Grove-01', 'Oak Grove-02']]
+  ];
+  var PLATFORM = {};
+  STATIONS.forEach(function (s, i) { s[3].forEach(function (p) { PLATFORM[p] = i; }); PLATFORM['place-' + s[0]] = i; });
+  function keyIndex(k) { for (var i = 0; i < STATIONS.length; i++) if (STATIONS[i][0] === k) return i; return -1; }
+
+  var state = {
+    from: keyIndex('north'), to: keyIndex('forhl'), walk: 5, sound: false, awake: false,
+    trains: [], alerts: [], fetchedAt: 0, error: '', backoffUntil: 0
+  };
+  var chimed = {};
+  var $ = function (id) { return document.getElementById(id); };
+
+  // ---------- settings: link first, then this device, then defaults ----------
+  function loadSettings() {
+    var saved = null;
+    try { saved = JSON.parse(localStorage.getItem('muse-commute') || 'null'); } catch (e) { saved = null; }
+    if (saved) {
+      if (STATIONS[saved.from]) state.from = saved.from;
+      if (STATIONS[saved.to]) state.to = saved.to;
+      if (saved.walk >= 1 && saved.walk <= 30) state.walk = saved.walk;
+      state.sound = !!saved.sound; state.awake = !!saved.awake;
+    }
+    var h = new URLSearchParams(location.hash.slice(1));
+    var f = keyIndex(h.get('from') || ''), t = keyIndex(h.get('to') || ''), w = parseInt(h.get('walk') || '', 10);
+    if (f >= 0) state.from = f;
+    if (t >= 0) state.to = t;
+    if (w >= 1 && w <= 30) state.walk = w;
+    if (state.from === state.to) state.to = state.from === 0 ? 1 : state.from - 1;
+  }
+  function saveSettings() {
+    try { localStorage.setItem('muse-commute', JSON.stringify({ from: state.from, to: state.to, walk: state.walk, sound: state.sound, awake: state.awake })); } catch (e) {}
+    var q = 'from=' + STATIONS[state.from][0] + '&to=' + STATIONS[state.to][0] + '&walk=' + state.walk;
+    try { history.replaceState(null, '', '#' + q); } catch (e) {}
+  }
+  function dir() { return state.to > state.from ? 1 : 0; }      // 1 = toward Oak Grove
+  function sgn() { return dir() === 1 ? 1 : -1; }
+
+  // ---------- time helpers ----------
+  var clockFmt = new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/New_York' });
+  function clock(ms) { return clockFmt.format(ms).replace(/\s?[AP]M$/, ''); }
+  function mmss(ms) {
+    var s = Math.max(0, Math.round(ms / 1000));
+    if (s >= 3600) { var h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60); return h + ':' + String(m).padStart(2, '0') + ' h'; }
+    return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+  }
+  function inMin(ms) {
+    if (ms < 30000) return 'now';
+    var m = Math.round(ms / 60000);
+    return m < 1 ? 'now' : 'in ' + m + ' min';
+  }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
+  // ---------- MBTA ----------
+  function api(path, params) {
+    var u = new URL(API + path);
+    Object.keys(params).forEach(function (k) { u.searchParams.set(k, params[k]); });
+    var ctl = ('AbortController' in window) ? new AbortController() : null;
+    var timer = ctl ? setTimeout(function () { ctl.abort(); }, 10000) : 0;
+    return fetch(u.toString(), { signal: ctl ? ctl.signal : undefined, headers: { Accept: 'application/vnd.api+json' } })
+      .then(function (r) {
+        clearTimeout(timer);
+        if (r.status === 429) { var e = new Error('busy'); e.code = 429; throw e; }
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      }, function (err) { clearTimeout(timer); throw err; });
+  }
+
+  var loading = false;
+  function loadTrains() {
+    if (loading || Date.now() < state.backoffUntil) return;
+    loading = true;
+    var from = state.from, to = state.to, d = dir();
+    api('/predictions', {
+      'filter[stop]': 'place-' + STATIONS[from][0] + ',place-' + STATIONS[to][0],
+      'filter[route]': 'Orange',
+      'filter[direction_id]': String(d),
+      'include': 'vehicle'
+    }).then(function (j) {
+      if (from !== state.from || to !== state.to) return; // settings changed meanwhile
+      var vehicles = {};
+      (j.included || []).forEach(function (v) { if (v.type === 'vehicle') vehicles[v.id] = v; });
+      var byTrip = {};
+      (j.data || []).forEach(function (p) {
+        var a = p.attributes || {}, r = p.relationships || {};
+        if (a.schedule_relationship === 'SKIPPED' || a.schedule_relationship === 'CANCELLED') return;
+        var tripId = r.trip && r.trip.data && r.trip.data.id;
+        var stopId = r.stop && r.stop.data && r.stop.data.id;
+        if (!tripId || !(stopId in PLATFORM)) return;
+        var si = PLATFORM[stopId];
+        var t = byTrip[tripId] || (byTrip[tripId] = { trip: tripId, vehicleId: null });
+        var arr = a.arrival_time ? Date.parse(a.arrival_time) : null;
+        var dep = a.departure_time ? Date.parse(a.departure_time) : null;
+        if (si === from) {
+          t.arr = arr != null ? arr : dep;
+          t.dep = dep != null ? dep : (arr != null ? arr + 40000 : null);
+          t.status = a.status || '';
+        } else if (si === to) {
+          t.destArr = arr != null ? arr : dep;
+        }
+        var vid = r.vehicle && r.vehicle.data && r.vehicle.data.id;
+        if (vid) t.vehicleId = vid;
+      });
+      state.trains = Object.keys(byTrip).map(function (k) { return byTrip[k]; })
+        .filter(function (t) { return t.arr; })
+        .map(function (t) { t.vehicle = t.vehicleId ? vehicles[t.vehicleId] || null : null; return t; })
+        .sort(function (a, b) { return a.arr - b.arr; });
+      state.fetchedAt = Date.now();
+      state.error = '';
+      render();
+    }).catch(function (e) {
+      if (e && e.code === 429) { state.backoffUntil = Date.now() + 30000; state.error = 'busy'; }
+      else state.error = 'offline';
+      render();
+    }).then(function () { loading = false; });
+  }
+
+  var KEEP_EFFECTS = { DELAY: 1, SUSPENSION: 1, SHUTTLE: 1, DETOUR: 1, STOP_CLOSURE: 1, STATION_CLOSURE: 1, CANCELLATION: 1, SNOW_ROUTE: 1, TRACK_CHANGE: 1, STOP_MOVE: 1, SERVICE_CHANGE: 3, NOTICE: 5, STATION_ISSUE: 5, EXTRA_SERVICE: 9 };
+  function loadAlerts() {
+    api('/alerts', { 'filter[route]': 'Orange', 'filter[datetime]': 'NOW', 'filter[activity]': 'BOARD,EXIT,RIDE' })
+      .then(function (j) { state.alerts = j.data || []; render(); })
+      .catch(function () { /* keep what we had */ });
+  }
+  function relevantAlerts() {
+    var lo = Math.min(state.from, state.to), hi = Math.max(state.from, state.to);
+    return state.alerts.filter(function (al) {
+      var a = al.attributes || {};
+      var need = KEEP_EFFECTS[a.effect];
+      if (!need || (a.severity || 0) < need) return false;
+      return (a.informed_entity || []).some(function (e) {
+        if (e.route && e.route !== 'Orange') return false;
+        if (!e.stop) return true;                       // the whole line
+        var i = PLATFORM[e.stop];
+        return i != null && i >= lo && i <= hi;          // a stop on your ride
+      });
+    }).sort(function (a, b) { return (b.attributes.severity || 0) - (a.attributes.severity || 0); }).slice(0, 2);
+  }
+
+  // ---------- where is a train ----------
+  // A train still finishing its trip the other way (it turns around at the end) isn't on your side yet.
+  function onThisTrip(t) {
+    var v = t.vehicle, r = v && v.relationships;
+    return !!(r && r.trip && r.trip.data && r.trip.data.id === t.trip);
+  }
+  function position(t) {
+    var v = t.vehicle; if (!v || !onThisTrip(t)) return null;
+    var sid = v.relationships && v.relationships.stop && v.relationships.stop.data && v.relationships.stop.data.id;
+    if (!(sid in PLATFORM)) return null;
+    var idx = PLATFORM[sid], st = (v.attributes && v.attributes.current_status) || 'IN_TRANSIT_TO';
+    var back = st === 'STOPPED_AT' ? 0 : st === 'INCOMING_AT' ? 0.25 : 0.55;
+    return { idx: idx, status: st, pos: idx - sgn() * back };
+  }
+  function stopsAway(p) { return (state.from - p.idx) * sgn(); }
+  function where(t) {
+    var p = position(t), startName = STATIONS[dir() === 1 ? 0 : 19][1];
+    if (!p && t.vehicle) return { text: 'Turning around at ' + startName, sub: 'Then it heads your way' };
+    if (!p) return { text: t.status || 'Not on the line yet', sub: 'It starts at ' + startName };
+    var name = STATIONS[p.idx][1], n = stopsAway(p);
+    if (n === 0) return p.status === 'STOPPED_AT' ? { text: 'Boarding at ' + name, sub: 'Doors open now' } : { text: 'Pulling into ' + name, sub: 'Almost there' };
+    if (n < 0) return { text: 'Just left ' + STATIONS[state.from][1], sub: '' };
+    var lead = p.status === 'STOPPED_AT' ? 'At ' : p.status === 'INCOMING_AT' ? 'Pulling into ' : 'Heading to ';
+    return { text: lead + name, sub: n === 1 ? '1 stop away' : n + ' stops away' };
+  }
+
+  // ---------- when to leave ----------
+  function plan(t, now) {
+    var walk = state.walk * 60000;
+    var comfy = t.arr - CUSHION - walk;
+    var last = (t.dep != null ? t.dep : t.arr + 40000) - LAST_CALL - walk;
+    if (now <= comfy) return { kind: 'leave', at: comfy, slack: comfy - now };
+    if (now <= last) return { kind: now - comfy < 20000 ? 'go' : 'rush', at: last, slack: last - now };
+    return { kind: 'missed' };
+  }
+
+  // ---------- render ----------
+  var stripKey = '';
+  function renderStripRows() {
+    var s = sgn(), from = state.from, to = state.to;
+    var start = Math.max(0, Math.min(19, from - 5 * s));
+    var end = to;
+    if (Math.abs(end - start) + 1 > 10) end = start + 9 * s;
+    var key = start + ':' + end + ':' + from + ':' + to;
+    if (key === stripKey) return;
+    stripKey = key;
+    var rows = [];
+    for (var i = start; s > 0 ? i <= end : i >= end; i += s) rows.push(i);
+    var html = '<div class="rail" style="top:20px;height:' + ((rows.length - 1) * 40) + 'px"></div>';
+    rows.forEach(function (i) {
+      var cls = i === from ? ' origin' : i === to ? ' dest' : '';
+      var tag = i === from ? '<span class="st-tag">Board</span>' : i === to ? '<span class="st-tag">Get off</span>' : '';
+      html += '<div class="st' + cls + '" data-i="' + i + '"><span class="st-dot"></span><span class="st-name">' + esc(STATIONS[i][2]) + '</span>' + tag + '</div>';
+    });
+    var strip = $('strip');
+    strip.innerHTML = html;
+    strip.dataset.start = start;
+    strip.dataset.len = rows.length;
+    $('dirLabel').textContent = 'toward ' + STATIONS[dir() === 1 ? 19 : 0][1];
+  }
+  function renderMarkers(targetTrip) {
+    var strip = $('strip'), start = +strip.dataset.start, len = +strip.dataset.len, s = sgn();
+    var seen = {};
+    state.trains.slice(0, 6).forEach(function (t) {
+      var p = position(t); if (!p) return;
+      var k = (p.pos - start) * s;
+      if (k < -0.6 || k > len - 0.4) return;
+      var id = 'tm-' + t.trip.replace(/[^\w-]/g, '_');
+      seen[id] = 1;
+      var el = document.getElementById(id);
+      if (!el) {
+        el = document.createElement('div');
+        el.id = id;
+        el.innerHTML = '<span class="tm-time"></span><span class="tm-dot"></span>';
+        el.style.top = (Math.max(0, k) * 40 + 20) + 'px';
+        strip.appendChild(el);
+      }
+      el.className = 'tm' + (t.trip === targetTrip ? ' you' : '');
+      el.firstChild.textContent = clock(t.arr);
+      el.style.top = (k * 40 + 20) + 'px';
+    });
+    Array.prototype.slice.call(strip.querySelectorAll('.tm')).forEach(function (el) { if (!seen[el.id]) el.remove(); });
+  }
+
+  function carsHTML(v) {
+    var cs = v && v.attributes && v.attributes.carriages;
+    if (!cs || !cs.length) return '';
+    var LV = { MANY_SEATS_AVAILABLE: 1, FEW_SEATS_AVAILABLE: 2, STANDING_ROOM_ONLY: 3, CRUSHED_STANDING_ROOM_ONLY: 4, FULL: 4 };
+    var FILL = [10, 34, 62, 86, 100];
+    var best = -1, bestVal = Infinity, known = 0;
+    cs.forEach(function (c, i) {
+      var lv = LV[c.occupancy_status] || 0;
+      if (lv) known++;
+      var val = c.occupancy_percentage != null ? c.occupancy_percentage : (lv ? lv * 25 : null);
+      if (val != null && val < bestVal) { bestVal = val; best = i; }
+    });
+    if (!known) return '';
+    var bars = cs.map(function (c, i) {
+      var lv = LV[c.occupancy_status] || 0;
+      var label = lv === 1 ? 'lots of seats' : lv === 2 ? 'a few seats' : lv === 3 ? 'standing room' : lv === 4 ? 'packed' : 'no data';
+      return '<span class="car l' + lv + (i === best ? ' best' : '') + '" role="img" aria-label="Car ' + (i + 1) + ': ' + label + '"><i style="height:' + FILL[lv] + '%"></i></span>';
+    }).join('');
+    return '<div class="cars-row">' + bars + '</div><div class="cars-cap">How full each car is right now. The green outline is the emptiest.</div>';
+  }
+
+  function render() {
+    var now = Date.now();
+    var fromS = STATIONS[state.from], toS = STATIONS[state.to];
+    $('fromName').textContent = fromS[2];
+    $('toName').textContent = toS[2];
+    $('walkOut').textContent = state.walk + ' min';
+    $('walkNote').textContent = state.walk + ' min walk';
+
+    // alerts
+    var al = relevantAlerts();
+    $('alerts').innerHTML = al.length ? al.map(function (x) {
+      var a = x.attributes, bad = (a.severity || 0) >= 7 || a.effect === 'SUSPENSION' || a.effect === 'SHUTTLE';
+      var chip = a.effect === 'DELAY' ? 'Delays' : a.effect === 'SHUTTLE' ? 'Shuttle' : a.effect === 'SUSPENSION' ? 'No trains' : 'Heads up';
+      return '<div class="alert' + (bad ? ' bad' : '') + '"><span class="chip">' + chip + '</span><span>' + esc(a.short_header || a.header) + '</span></div>';
+    }).join('') : (state.fetchedAt ? '<div class="okline"><i></i>No delays reported on your ride</div>' : '');
+
+    // pick the train you can make
+    var target = null, tp = null, upcoming = [];
+    state.trains.forEach(function (t) {
+      if (t.arr < now - 120000) return;
+      var p = plan(t, now);
+      upcoming.push({ t: t, p: p });
+      if (!target && p.kind !== 'missed') { target = t; tp = p; }
+    });
+
+    // hero
+    var hero = $('hero'), label = '', big = '', sub = '', alt = '', cls = 'calm';
+    if (!state.fetchedAt && !state.error) { label = 'Loading live trains'; big = '…'; }
+    else if (!target) {
+      cls = 'none'; label = 'No trains to catch right now'; big = 'No trains';
+      sub = state.error ? 'Can\'t reach the MBTA. Check your signal.' : 'The Orange Line runs about 5 AM to 1 AM.';
+    } else {
+      var dest = target.destArr ? ' · gets to ' + toS[2] + ' ' + clock(target.destArr) : '';
+      if (tp.kind === 'leave') {
+        cls = tp.slack <= 60000 ? 'soon' : 'calm';
+        label = tp.slack <= 60000 ? 'Get ready. Leave in' : 'Leave in';
+        big = mmss(tp.slack);
+        sub = 'for the ' + clock(target.arr) + ' at ' + fromS[2] + dest;
+      } else if (tp.kind === 'go') {
+        cls = 'now'; label = 'Leave now'; big = 'Go';
+        sub = 'You\'ll make the ' + clock(target.arr) + dest;
+      } else {
+        cls = 'rush'; label = 'Leave now and walk fast'; big = 'Hustle';
+        sub = 'The ' + clock(target.arr) + ' pulls in ' + inMin(target.arr - now) + dest;
+        var nextOk = null;
+        upcoming.forEach(function (u) { if (!nextOk && u.t !== target && u.p.kind === 'leave') nextOk = u; });
+        if (nextOk) alt = 'Or relax: the ' + clock(nextOk.t.arr) + ', leave in ' + mmss(nextOk.p.slack);
+      }
+      maybeChime(target.trip, tp.kind === 'leave' ? (tp.slack <= 60000 ? 'soon' : '') : 'now');
+    }
+    hero.className = 'hero ' + cls;
+    $('heroLabel').textContent = label;
+    $('heroBig').textContent = big;
+    $('heroSub').textContent = sub || ' ';
+    $('heroAlt').textContent = alt;
+
+    // your train
+    var card = $('trainCard');
+    if (target) {
+      card.hidden = false;
+      var w = where(target);
+      $('trainTime').textContent = clock(target.arr);
+      $('trainWhere').textContent = w.text;
+      var bits = [];
+      if (w.sub) bits.push(w.sub);
+      bits.push('at ' + fromS[2] + ' ' + inMin(target.arr - now));
+      $('trainStops').textContent = bits.join(' · ');
+      $('trainCars').innerHTML = carsHTML(target.vehicle);
+    } else card.hidden = true;
+
+    // the line
+    renderStripRows();
+    renderMarkers(target && target.trip);
+
+    // next trains
+    var rows = upcoming.slice(0, 5).map(function (u) {
+      var t = u.t, p = u.p, cls = '', tag = '';
+      if (t === target) { cls = p.kind === 'rush' ? 'you rush' : 'you'; tag = p.kind === 'leave' ? 'Yours · leave ' + clock(p.at) : p.kind === 'go' ? 'Yours · leave now' : 'Yours · walk fast'; }
+      else if (p.kind === 'missed') { cls = 'missed'; tag = 'Too soon'; }
+      else if (p.kind === 'leave') tag = 'Leave ' + clock(p.at);
+      else { cls = 'rush'; tag = 'Walk fast'; }
+      return '<li class="' + cls + '"><span class="t">' + clock(t.arr) + '</span><span class="in">' + inMin(t.arr - now) + '</span><span class="tag">' + tag + '</span></li>';
+    });
+    $('list').innerHTML = rows.length ? rows.join('') : '<li><span class="muted">No predictions yet.</span></li>';
+
+    // status
+    var line = $('statusLine'), age = state.fetchedAt ? Math.round((now - state.fetchedAt) / 1000) : null;
+    if (state.error === 'busy') { line.textContent = 'MBTA is busy. Trying again shortly.'; line.className = 'stale'; }
+    else if (state.error && state.fetchedAt) { line.textContent = 'Offline. Last update ' + clock(state.fetchedAt) + '.'; line.className = 'stale'; }
+    else if (state.error) { line.textContent = 'Can\'t reach the MBTA. Retrying.'; line.className = 'stale'; }
+    else if (age != null) { line.textContent = 'Live · updated ' + (age < 5 ? 'just now' : age + ' s ago'); line.className = age > 60 ? 'stale' : ''; }
+  }
+
+  // ---------- chime ----------
+  var actx = null;
+  function unlockAudio() {
+    try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}
+    try {
+      if (!actx) { var AC = window.AudioContext || window.webkitAudioContext; if (AC) actx = new AC(); }
+      if (actx && actx.state === 'suspended') actx.resume();
+    } catch (e) {}
+  }
+  function ding(strong) {
+    if (navigator.vibrate) { try { navigator.vibrate(strong ? [180, 90, 180] : 120); } catch (e) {} }
+    if (!actx) return;
+    var t0 = actx.currentTime + 0.03, notes = strong ? [784, 988, 1319] : [988];
+    notes.forEach(function (f, i) {
+      var o = actx.createOscillator(), g = actx.createGain(), st = t0 + i * 0.17;
+      o.type = 'sine'; o.frequency.value = f;
+      g.gain.setValueAtTime(0.0001, st);
+      g.gain.exponentialRampToValueAtTime(0.4, st + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, st + 0.7);
+      o.connect(g); g.connect(actx.destination);
+      o.start(st); o.stop(st + 0.75);
+    });
+  }
+  function maybeChime(trip, phase) {
+    if (!state.sound || !phase) return;
+    var d = chimed[trip] || (chimed[trip] = {});
+    if (phase === 'soon' && !d.soon) { d.soon = true; ding(false); }
+    if (phase === 'now' && !d.now) { d.now = true; d.soon = true; ding(true); }
+  }
+
+  // ---------- keep the screen on ----------
+  var lock = null;
+  function holdScreen() {
+    if (!state.awake || lock || !('wakeLock' in navigator) || document.visibilityState !== 'visible') return;
+    navigator.wakeLock.request('screen').then(function (l) {
+      lock = l; l.addEventListener('release', function () { lock = null; });
+    }).catch(function () {});
+  }
+  function releaseScreen() { if (lock) { try { lock.release(); } catch (e) {} lock = null; } }
+
+  // ---------- controls ----------
+  function fillSelects() {
+    ['fromSel', 'toSel'].forEach(function (id) {
+      $(id).innerHTML = STATIONS.map(function (s, i) { return '<option value="' + i + '">' + esc(s[1]) + '</option>'; }).join('');
+    });
+    $('fromSel').value = String(state.from);
+    $('toSel').value = String(state.to);
+    $('soundChk').checked = state.sound;
+    $('awakeChk').checked = state.awake;
+  }
+  function routeChanged() {
+    state.trains = []; state.fetchedAt = 0; state.error = ''; chimed = {}; stripKey = '';
+    saveSettings(); fillSelects(); render(); loadTrains();
+  }
+  $('swapBtn').addEventListener('click', function () { var f = state.from; state.from = state.to; state.to = f; routeChanged(); });
+  $('fromSel').addEventListener('change', function () {
+    state.from = +this.value; if (state.from === state.to) state.to = state.from === 0 ? 1 : state.from - 1; routeChanged();
+  });
+  $('toSel').addEventListener('change', function () {
+    state.to = +this.value; if (state.from === state.to) state.from = state.to === 0 ? 1 : state.to - 1; routeChanged();
+  });
+  function setWalk(n) { state.walk = Math.max(1, Math.min(30, n)); chimed = {}; saveSettings(); render(); }
+  $('walkMinus').addEventListener('click', function () { setWalk(state.walk - 1); });
+  $('walkPlus').addEventListener('click', function () { setWalk(state.walk + 1); });
+  $('soundChk').addEventListener('change', function () {
+    state.sound = this.checked; saveSettings();
+    if (state.sound) { unlockAudio(); ding(false); }
+  });
+  $('awakeChk').addEventListener('change', function () {
+    state.awake = this.checked; saveSettings();
+    if (state.awake) holdScreen(); else releaseScreen();
+  });
+  // Browsers only allow sound and screen-on after a tap, so any tap re-arms them.
+  document.addEventListener('pointerdown', function () { if (state.sound) unlockAudio(); holdScreen(); }, { passive: true });
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'visible') { holdScreen(); loadTrains(); loadAlerts(); render(); }
+  });
+  window.addEventListener('hashchange', function () { loadSettings(); routeChanged(); });
+
+  // ---------- go ----------
+  loadSettings();
+  saveSettings();
+  fillSelects();
+  render();
+  loadTrains();
+  loadAlerts();
+  holdScreen();
+  setInterval(function () { if (document.visibilityState === 'visible') loadTrains(); }, POLL_MS);
+  setInterval(function () { if (document.visibilityState === 'visible') loadAlerts(); }, ALERT_MS);
+  setInterval(function () { if (document.visibilityState === 'visible') render(); }, 1000);
+})();
+</script>
+</body>
+</html>
