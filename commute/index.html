@@ -202,7 +202,7 @@ button{cursor:pointer}
   </section>
 
   <section class="card" id="trainCard" hidden>
-    <div class="card-head"><span class="eyebrow">Your train</span><span class="pill you" id="trainTime"></span></div>
+    <div class="card-head"><span class="eyebrow" id="trainHead">Your train</span><span class="pill you" id="trainTime"></span></div>
     <div class="where" id="trainWhere"></div>
     <div class="stops" id="trainStops"></div>
     <div id="trainCars"></div>
@@ -214,7 +214,7 @@ button{cursor:pointer}
   </section>
 
   <section class="card">
-    <div class="card-head"><span class="eyebrow">Next trains</span><span class="muted small" id="walkNote"></span></div>
+    <div class="card-head"><span class="eyebrow" id="listHead">Next trains</span><span class="muted small" id="walkNote"></span></div>
     <ol class="list" id="list"></ol>
   </section>
 
@@ -554,6 +554,7 @@ button{cursor:pointer}
     $('toName').textContent = toS[2];
     $('walkOut').textContent = state.walk + ' min';
     $('walkNote').textContent = state.walk + ' min walk';
+    $('listHead').textContent = 'Next trains at ' + fromS[2];
     $('walkSrc').textContent = state.walkSource === 'location' ? 'Worked out from where you are' : state.walkSource === 'place' ? 'Worked out from that place' : '';
     renderGetThere();
 
@@ -581,18 +582,19 @@ button{cursor:pointer}
       cls = 'none'; label = 'No trains to catch right now'; big = 'No trains';
       sub = state.error ? 'Can\'t reach the MBTA. Check your signal.' : 'The Orange Line runs about 5 AM to 1 AM.';
     } else {
-      var dest = target.destArr ? ' · gets to ' + toS[2] + ' ' + clock(target.destArr) : '';
+      var trainAt = 'Train at ' + fromS[2] + ': ' + clock(target.arr);
       if (tp.kind === 'leave') {
         cls = tp.slack <= 60000 ? 'soon' : 'calm';
         label = tp.slack <= 60000 ? 'Get ready. Leave in' : 'Leave in';
         big = mmss(tp.slack);
-        sub = 'for the ' + clock(target.arr) + ' at ' + fromS[2] + dest;
+        sub = trainAt;
+        alt = 'Leave by ' + clock(tp.at) + ' and you\'re on the platform a minute early';
       } else if (tp.kind === 'go') {
         cls = 'now'; label = 'Leave now'; big = 'Go';
-        sub = 'You\'ll make the ' + clock(target.arr) + dest;
+        sub = trainAt + ' (' + inMin(target.arr - now) + ')';
       } else {
         cls = 'rush'; label = 'Leave now and walk fast'; big = 'Hustle';
-        sub = 'The ' + clock(target.arr) + ' pulls in ' + inMin(target.arr - now) + dest;
+        sub = trainAt + ' (' + inMin(target.arr - now) + ')';
         var nextOk = null;
         upcoming.forEach(function (u) { if (!nextOk && u.t !== target && u.p.kind === 'leave') nextOk = u; });
         if (nextOk) alt = 'Or relax: the ' + clock(nextOk.t.arr) + ', leave in ' + mmss(nextOk.p.slack);
@@ -615,7 +617,9 @@ button{cursor:pointer}
       var bits = [];
       if (w.sub) bits.push(w.sub);
       bits.push('at ' + fromS[2] + ' ' + inMin(target.arr - now));
+      if (target.destArr) bits.push('you\'re at ' + toS[2] + ' by ' + clock(target.destArr));
       $('trainStops').textContent = bits.join(' · ');
+      $('trainHead').textContent = 'Your train at ' + fromS[2];
       $('trainCars').innerHTML = carsHTML(target.vehicle);
     } else card.hidden = true;
 
