@@ -68,6 +68,12 @@ button{cursor:pointer}
 .route .arrow{flex:none;color:var(--muted)}
 .icon-btn{flex:none;width:44px;height:44px;border-radius:50%;border:0;background:var(--card);display:grid;place-items:center;color:var(--fg)}
 .icon-btn:active{background:var(--card-2)}
+.plan{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;margin:0 -2px;padding:2px}
+.plan::-webkit-scrollbar{display:none}
+.pchip{flex:none;position:relative;display:inline-flex;align-items:center;gap:6px;min-height:38px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--fg);font-size:14px;font-weight:600;white-space:nowrap}
+.pchip.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.pchip.pick input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;-webkit-appearance:none;appearance:none}
+.pchip svg{flex:none}
 .lochelp{border-radius:16px;background:#2A1D10;color:#FFE2BD;padding:12px 14px;font-size:14px;display:flex;flex-direction:column;gap:8px}
 .lochelp-head{display:flex;align-items:center;gap:10px}
 .lochelp-head span{flex:1;min-width:0}
@@ -164,6 +170,8 @@ button{cursor:pointer}
 .legend .l2{background:#B07E26}
 .legend .l3{background:#B8463B}
 .ride-note{font-size:13px;color:var(--muted)}
+.consist-note{font-size:13px;color:var(--muted)}
+.consist-note b{color:var(--fg);font-weight:600}
 
 /* next trains */
 .list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
@@ -219,6 +227,16 @@ button{cursor:pointer}
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4v16"></path><path d="M3 8l4-4 4 4"></path><path d="M17 20V4"></path><path d="M21 16l-4 4-4-4"></path></svg>
       </button>
     </div>
+    <div class="plan" id="planRow" role="group" aria-label="When you're leaving">
+      <button type="button" class="pchip on" data-plan="" aria-label="Leave now">Now</button>
+      <button type="button" class="pchip" data-plan="12:00" aria-label="Leave at 12 PM">12 PM</button>
+      <button type="button" class="pchip" data-plan="17:00" aria-label="Leave at 5 PM">5 PM</button>
+      <label class="pchip pick" id="pickChip">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2"></path><path d="M5 3L2 6"></path><path d="M19 3l3 3"></path></svg>
+        <span id="pickLabel">Pick a time</span>
+        <input type="time" id="planTime" step="60" aria-label="Leave at a time you pick">
+      </label>
+    </div>
     <div class="getthere" id="getThere"></div>
     <div class="lochelp" id="locHelp" hidden>
       <div class="lochelp-head"><span>Location is off for this page, so it can't tell which stop you're at.</span><button type="button" id="locHelpBtn" aria-expanded="false" aria-controls="locSteps">Turn it on</button></div>
@@ -271,7 +289,7 @@ button{cursor:pointer}
 <script>
 (function () {
   'use strict';
-  var VERSION = '2026-11-17-7';
+  var VERSION = '2026-11-17-8';
   var API = 'https://api-v3.mbta.com';
   var POLL_MS = 15000, ALERT_MS = 120000;
   var CUSHION = 45000;   // aim to be on the platform this long before the train pulls in
@@ -347,7 +365,8 @@ button{cursor:pointer}
     from: keyIndex('north'), to: keyIndex('forhl'), walk: 5, sound: false, awake: false,
     trains: [], alerts: [], fetchedAt: 0, error: '', backoffUntil: 0,
     here: null, place: null, fromSource: 'auto', walkSource: 'manual', locMsg: '',
-    startFix: null, placedOnce: false, riding: null, boardCandidate: null, destArr: {}, locDenied: false
+    startFix: null, placedOnce: false, riding: null, boardCandidate: null, destArr: {}, locDenied: false,
+    planAt: null, manualWalk: 6, sched: [], schedKey: '', schedAt: 0
   };
   var chimed = {};
   var $ = function (id) { return document.getElementById(id); };
@@ -362,17 +381,22 @@ button{cursor:pointer}
       if (saved.walk >= 1 && saved.walk <= 30) state.walk = saved.walk;
       state.sound = !!saved.sound; state.awake = !!saved.awake;
       if (saved.walkSource) state.walkSource = saved.walkSource;
+      if (saved.manualWalk >= 1 && saved.manualWalk <= 30) state.manualWalk = saved.manualWalk;
+      if (typeof saved.planAt === 'string' && /^\d\d:\d\d$/.test(saved.planAt)) state.planAt = saved.planAt;
     }
     var h = new URLSearchParams(location.hash.slice(1));
     var f = keyIndex(h.get('from') || ''), t = keyIndex(h.get('to') || ''), w = parseInt(h.get('walk') || '', 10);
     if (f >= 0) state.from = f;
     if (t >= 0) state.to = t;
     if (w >= 1 && w <= 30) state.walk = w;
+    var at = h.get('at');
+    if (at && /^\d{4}$/.test(at)) state.planAt = at.slice(0, 2) + ':' + at.slice(2);
+    else if (at === 'now') state.planAt = null;
     if (state.from === state.to) state.to = state.from === 0 ? 1 : state.from - 1;
   }
   function saveSettings() {
-    try { localStorage.setItem('muse-commute', JSON.stringify({ from: state.from, to: state.to, walk: state.walk, sound: state.sound, awake: state.awake, walkSource: state.walkSource })); } catch (e) {}
-    var q = 'from=' + STATIONS[state.from][0] + '&to=' + STATIONS[state.to][0] + '&walk=' + state.walk;
+    try { localStorage.setItem('muse-commute', JSON.stringify({ from: state.from, to: state.to, walk: state.walk, sound: state.sound, awake: state.awake, walkSource: state.walkSource, manualWalk: state.manualWalk, planAt: state.planAt })); } catch (e) {}
+    var q = 'from=' + STATIONS[state.from][0] + '&to=' + STATIONS[state.to][0] + '&walk=' + state.walk + (state.planAt ? '&at=' + state.planAt.replace(':', '') : '');
     try { history.replaceState(null, '', '#' + q); } catch (e) {}
   }
   function dir() { return state.to > state.from ? 1 : 0; }      // 1 = toward Oak Grove
@@ -389,6 +413,7 @@ button{cursor:pointer}
   function inMin(ms) {
     if (ms < 30000) return 'now';
     var m = Math.round(ms / 60000);
+    if (m >= 60) return 'in ' + Math.floor(m / 60) + ' h ' + (m % 60) + ' m';
     return m < 1 ? 'now' : 'in ' + m + ' min';
   }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
@@ -585,8 +610,85 @@ button{cursor:pointer}
       html += '<span class="car2 l' + c.lv + (c.fromFront === 1 ? ' nose' : '') + (c === best ? ' best' : '') + '"><span class="body"><i style="height:' + FILL[c.lv] + '%"></i></span>' + (c === best ? '<em>Emptiest</em>' : '') + '</span>';
     });
     html += '</div><div class="consist-ends"><span>Back</span><span class="front">Front \u2192</span></div>';
+    html += '<div class="consist-note">The front stops at the <b>' + headsign() + ' end</b> of the platform.</div>';
     html += '<div class="legend"><span><i class="l1"></i>Seats</span><span><i class="l2"></i>A few seats</span><span><i class="l3"></i>Standing</span></div></div>';
     return html;
+  }
+
+  // ---------- leaving later: a time you pick ----------
+  function headsign() { return dir() === 1 ? 'Oak Grove' : 'Forest Hills'; }
+  function planStart() {
+    if (!state.planAt) return null;
+    var parts = state.planAt.split(':'), d = new Date();
+    d.setHours(+parts[0], +parts[1], 0, 0);
+    return d.getTime();
+  }
+  function clockHM(hm) {
+    var parts = hm.split(':'), h = +parts[0], m = parts[1];
+    return ((h + 11) % 12 + 1) + ':' + m + (h < 12 ? ' AM' : ' PM');
+  }
+  function dur(ms) {
+    var m = Math.round(ms / 60000);
+    if (m < 60) return m + ' min';
+    return Math.floor(m / 60) + ' h' + (m % 60 ? ' ' + (m % 60) + ' min' : '');
+  }
+  // The walk for a trip later: from where you are if you're near your start, else your own setting.
+  function planWalkMs() {
+    var h = freshFix();
+    if (h && state.walkSource === 'location' && distTo(state.from, h) < 1500) return walkMs();
+    return state.manualWalk * 60000;
+  }
+  function setPlan(v) {
+    state.planAt = v || null;
+    chimed = {}; state.sched = []; state.schedKey = '';
+    saveSettings(); renderPlanRow(); loadSchedule(); render();
+  }
+  function renderPlanRow() {
+    var chips = document.querySelectorAll('#planRow .pchip[data-plan]'), custom = !!state.planAt;
+    Array.prototype.forEach.call(chips, function (c) {
+      var on = (c.getAttribute('data-plan') || null) === state.planAt;
+      if (on) custom = false;
+      c.classList.toggle('on', on);
+      c.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    $('pickChip').classList.toggle('on', custom);
+    $('pickLabel').textContent = custom ? 'Leave at ' + clockHM(state.planAt) : 'Pick a time';
+    if (state.planAt) $('planTime').value = state.planAt;
+  }
+  // Live predictions only reach an hour or so ahead, so a trip later is planned from the schedule
+  // until the live times arrive.
+  function loadSchedule() {
+    var ps = planStart();
+    if (!ps || ps - Date.now() < 25 * 60000) return;
+    var key = state.from + '-' + state.to + '-' + state.planAt;
+    if (state.schedKey === key && Date.now() - state.schedAt < 300000) return;
+    var from = state.from, to = state.to, d = new Date(ps), e = new Date(ps + 90 * 60000);
+    var pad = function (n) { return String(n).padStart(2, '0'); };
+    var endHour = e.getHours() + (e.getDate() !== d.getDate() ? 24 : 0);
+    api('/schedules', {
+      'filter[stop]': 'place-' + STATIONS[from][0] + ',place-' + STATIONS[to][0],
+      'filter[route]': 'Orange',
+      'filter[direction_id]': String(dir()),
+      'filter[date]': d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()),
+      'filter[min_time]': pad(d.getHours()) + ':' + pad(d.getMinutes()),
+      'filter[max_time]': pad(endHour) + ':' + pad(e.getMinutes())
+    }).then(function (j) {
+      if (from !== state.from || to !== state.to) return;
+      var byTrip = {};
+      (j.data || []).forEach(function (sc) {
+        var a = sc.attributes || {}, r = sc.relationships || {};
+        var trip = r.trip && r.trip.data && r.trip.data.id, stop = r.stop && r.stop.data && r.stop.data.id;
+        if (!trip || !(stop in PLATFORM)) return;
+        var t = byTrip[trip] || (byTrip[trip] = { trip: 'sched-' + trip, scheduled: true, vehicle: null });
+        var arr = a.arrival_time ? Date.parse(a.arrival_time) : null, dep = a.departure_time ? Date.parse(a.departure_time) : null;
+        if (PLATFORM[stop] === from) { t.arr = arr != null ? arr : dep; t.dep = dep != null ? dep : (arr != null ? arr + 40000 : null); }
+        else if (PLATFORM[stop] === to) t.destArr = arr != null ? arr : dep;
+      });
+      state.sched = Object.keys(byTrip).map(function (k) { return byTrip[k]; })
+        .filter(function (t) { return t.arr; }).sort(function (a, b) { return a.arr - b.arr; });
+      state.schedKey = key; state.schedAt = Date.now();
+      render();
+    }).catch(function () {});
   }
 
   // ---------- where you are, live ----------
@@ -633,19 +735,33 @@ button{cursor:pointer}
       return '<div class="alert' + (bad ? ' bad' : '') + '"><span class="chip">' + chip + '</span><span>' + esc(a.short_header || a.header) + '</span></div>';
     }).join('') : (state.fetchedAt ? '<div class="okline"><i></i>No delays reported on your ride</div>' : '');
 
-    // pick the train you can make
+    // pick the train you can make (a plan for later means: not before then)
+    var ps = planStart();
+    if (ps && now > ps + 30 * 60000) { state.planAt = null; saveSettings(); renderPlanRow(); ps = null; }
+    var planned = mode === 'wait' && ps && ps > now - 60000;
+    if (planned) wms = planWalkMs();
     var target = null, tp = null, upcoming = [];
-    var platformAt = now + wms;
-    state.trains.forEach(function (t) {
-      if (t.arr < now - 120000) return;
-      var p;
-      if (mode === 'at') p = { kind: t.dep - 15000 > now ? 'ok' : 'missed' };
-      else if (mode === 'way') p = { kind: platformAt <= t.dep - 10000 ? (platformAt <= t.arr - 20000 ? 'pace' : 'hurry') : 'missed' };
-      else if (mode === 'ride') p = { kind: 'ride' };
-      else p = plan(t, now, wms);
-      upcoming.push({ t: t, p: p });
-      if (!target && mode !== 'ride' && p.kind !== 'missed') { target = t; tp = p; }
-    });
+    var platformAt = now + wms, fromSched = false;
+    var pickFrom = function (list) {
+      list.forEach(function (t) {
+        if (t.arr < now - 120000) return;
+        var p;
+        if (mode === 'at') p = { kind: t.dep - 15000 > now ? 'ok' : 'missed' };
+        else if (mode === 'way') p = { kind: platformAt <= t.dep - 10000 ? (platformAt <= t.arr - 20000 ? 'pace' : 'hurry') : 'missed' };
+        else if (mode === 'ride') p = { kind: 'ride' };
+        else {
+          p = plan(t, now, wms);
+          if (planned && t.arr - CUSHION - wms < ps - 1000) p = { kind: 'early' };   // before you planned to go
+        }
+        upcoming.push({ t: t, p: p });
+        if (!target && mode !== 'ride' && p.kind !== 'missed' && p.kind !== 'early') { target = t; tp = p; }
+      });
+    };
+    pickFrom(state.trains);
+    if (planned && !target && state.sched.length) {
+      upcoming = []; fromSched = true;
+      pickFrom(state.sched.filter(function (t) { return t.arr > ps; }));
+    }
     trackRide(mode, target, now);
 
     // hero
@@ -683,14 +799,19 @@ button{cursor:pointer}
       sub = 'Train at ' + fromS[2] + ': ' + clock(target.arr);
       alt = pace ? 'You\'re on pace: about ' + Math.max(1, Math.round(wms / 60000)) + ' min to the platform' : 'Walk faster to make it';
       if (!pace) maybeChime(target.trip, 'now');
+    } else if (planned && tp.kind === 'leave' && tp.slack > 60 * 60000) {
+      label = 'Planned: leave at';
+      big = clock(tp.at);
+      sub = 'for the ' + clock(target.arr) + ' ' + headsign() + ' train at ' + fromS[2];
+      alt = 'That\'s in ' + dur(tp.slack) + (target.scheduled ? '. It switches to live times about an hour before.' : '.');
     } else {
-      var trainAt = 'Train at ' + fromS[2] + ': ' + clock(target.arr);
+      var trainAt = 'Train at ' + fromS[2] + ': ' + clock(target.arr) + ' · ' + headsign() + ' train';
       if (tp.kind === 'leave') {
         cls = tp.slack <= 60000 ? 'soon' : 'calm';
         label = tp.slack <= 60000 ? 'Get ready. Leave in' : 'Leave in';
         big = mmss(tp.slack);
         sub = trainAt;
-        alt = 'Leave by ' + clock(tp.at) + ' and you\'re on the platform a minute early';
+        alt = planned ? 'You planned to leave after ' + clock(ps) + ': leave at ' + clock(tp.at) + ' and walk right onto it' : 'Leave by ' + clock(tp.at) + ' and you\'re on the platform a minute early';
       } else if (tp.kind === 'go') {
         cls = 'now'; label = 'Leave now'; big = 'Go';
         sub = trainAt + ' (' + inMin(target.arr - now) + ')';
@@ -711,7 +832,7 @@ button{cursor:pointer}
 
     // your train
     var card = $('trainCard');
-    if (target && mode !== 'ride') {
+    if (target && mode !== 'ride' && !target.scheduled) {
       card.hidden = false;
       var tp2 = position(target), away = tp2 ? stopsAway(tp2) : null, big2, sub2;
       if (!tp2) {
@@ -728,7 +849,7 @@ button{cursor:pointer}
       $('awayBig').textContent = big2;
       $('awaySub').textContent = sub2;
       $('trainTime').textContent = clock(target.arr);
-      $('trainHead').textContent = 'Your train at ' + fromS[2];
+      $('trainHead').textContent = 'Your ' + headsign() + ' train · ' + fromS[2];
       renderApproach(target, now);
       $('approach').setAttribute('aria-label', 'Your train, ' + big2 + ', ' + sub2 + ', coming up to ' + fromS[2] + '.');
       $('trainCars').innerHTML = consistHTML(target.vehicle);
@@ -746,6 +867,7 @@ button{cursor:pointer}
         if (t === target) { cls = p.kind === 'pace' ? 'you' : 'you rush'; tag = p.kind === 'pace' ? 'Yours · on pace' : 'Yours · walk fast'; }
         else if (p.kind === 'missed') { cls = 'missed'; tag = 'Too soon'; }
       }
+      else if (p.kind === 'early') { cls = 'missed'; tag = 'Before you leave'; }
       else if (t === target) { cls = p.kind === 'rush' ? 'you rush' : 'you'; tag = p.kind === 'leave' ? 'Yours · leave ' + clock(p.at) : p.kind === 'go' ? 'Yours · leave now' : 'Yours · walk fast'; }
       else if (p.kind === 'missed') { cls = 'missed'; tag = 'Too soon'; }
       else if (p.kind === 'leave') tag = 'Leave ' + clock(p.at);
@@ -753,6 +875,7 @@ button{cursor:pointer}
       return '<li class="' + cls + '"><span class="t">' + clock(t.arr) + '</span><span class="in">' + inMin(t.arr - now) + '</span><span class="tag">' + tag + '</span></li>';
     });
     $('list').innerHTML = rows.length ? rows.join('') : '<li><span class="muted">No predictions yet.</span></li>';
+    if (fromSched) $('listHead').textContent = 'Scheduled at ' + fromS[2];
 
     // status
     var line = $('statusLine'), age = state.fetchedAt ? Math.round((now - state.fetchedAt) / 1000) : null;
@@ -809,6 +932,7 @@ button{cursor:pointer}
   }
   function routeChanged() {
     state.trains = []; state.fetchedAt = 0; state.error = ''; chimed = {}; trackKey = '';
+    state.sched = []; state.schedKey = ''; setTimeout(loadSchedule, 0);
     state.startFix = state.here; state.riding = null; state.boardCandidate = null;
     saveSettings(); render(); loadTrains();
   }
@@ -874,6 +998,10 @@ button{cursor:pointer}
     }, { enableHighAccuracy: true, timeout: 12000, maximumAge: 10000 });
   }
   $('locBtn').addEventListener('click', function () { state.fromSource = 'auto'; startWatching(); useMyLocation(true); });
+  Array.prototype.forEach.call(document.querySelectorAll('#planRow .pchip[data-plan]'), function (c) {
+    c.addEventListener('click', function () { setPlan(c.getAttribute('data-plan')); });
+  });
+  $('planTime').addEventListener('change', function () { if (this.value) setPlan(this.value); });
   $('locHelpBtn').addEventListener('click', function () {
     var steps = $('locSteps'), open = steps.hidden;
     steps.hidden = !open;
@@ -1106,7 +1234,7 @@ button{cursor:pointer}
     closeSearch();
   }, true);
 
-  function setWalk(n) { state.walk = Math.max(1, Math.min(30, n)); state.walkSource = 'manual'; chimed = {}; saveSettings(); render(); }
+  function setWalk(n) { state.walk = Math.max(1, Math.min(30, n)); state.manualWalk = state.walk; state.walkSource = 'manual'; chimed = {}; saveSettings(); render(); }
   $('walkMinus').addEventListener('click', function () { setWalk(state.walk - 1); });
   $('walkPlus').addEventListener('click', function () { setWalk(state.walk + 1); });
   $('soundChk').addEventListener('change', function () {
@@ -1128,6 +1256,8 @@ button{cursor:pointer}
   loadSettings();
   saveSettings();
   initToggles();
+  renderPlanRow();
+  loadSchedule();
   render();
   loadTrains();
   loadAlerts();
@@ -1136,6 +1266,7 @@ button{cursor:pointer}
   checkVersion();
   setInterval(function () { if (document.visibilityState === 'visible') loadTrains(); }, POLL_MS);
   setInterval(function () { if (document.visibilityState === 'visible') loadAlerts(); }, ALERT_MS);
+  setInterval(function () { if (document.visibilityState === 'visible') loadSchedule(); }, 60000);
   setInterval(function () { if (document.visibilityState === 'visible') render(); }, 1000);
 })();
 </script>
