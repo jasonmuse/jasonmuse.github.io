@@ -40,7 +40,7 @@ button{cursor:pointer}
 .top{display:flex;flex-direction:column;gap:10px}
 .searchbox{position:relative}
 .search{display:flex;align-items:center;gap:8px;height:50px;padding:0 6px 0 15px;border-radius:999px;background:var(--card);border:1px solid var(--line);transition:border-color .2s}
-.search:focus-within{border-color:var(--accent)}
+.search:has(input:focus){border-color:var(--accent)}
 .search .mag{flex:none;color:var(--muted)}
 .search input{flex:1;min-width:0;height:100%;border:0;background:transparent;font-size:16px;color:var(--fg);outline:none;-webkit-appearance:none;appearance:none;padding:0}
 .search input::placeholder{color:var(--muted)}
@@ -59,14 +59,21 @@ button{cursor:pointer}
 .sg-main b{font-weight:600;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sg-sub{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sg-note{padding:10px 12px;font-size:13px;color:var(--muted)}
-.route{display:flex;align-items:center;gap:8px}
-.stn{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:8px 12px;min-height:56px;border-radius:16px;border:0;background:var(--card);text-align:left}
+.route{display:flex;align-items:stretch;gap:8px}
+.route .arrow,.route .icon-btn{align-self:center}
+.stn{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:2px;padding:9px 12px;min-height:64px;border-radius:16px;border:0;background:var(--card);text-align:left}
 .stn:active{background:var(--card-2)}
 .stn-lbl{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .stn-name{font-size:15px;font-weight:650;line-height:1.15;max-width:100%;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .route .arrow{flex:none;color:var(--muted)}
 .icon-btn{flex:none;width:44px;height:44px;border-radius:50%;border:0;background:var(--card);display:grid;place-items:center;color:var(--fg)}
 .icon-btn:active{background:var(--card-2)}
+.lochelp{border-radius:16px;background:#2A1D10;color:#FFE2BD;padding:12px 14px;font-size:14px;display:flex;flex-direction:column;gap:8px}
+.lochelp-head{display:flex;align-items:center;gap:10px}
+.lochelp-head span{flex:1;min-width:0}
+.lochelp button{flex:none;border:0;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:14px;padding:8px 12px;min-height:36px}
+.lochelp ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;color:#FFE9CC}
+.lochelp b{color:#FFFFFF}
 .getthere{display:flex;align-items:center;gap:6px 10px;flex-wrap:wrap;font-size:13px;color:var(--muted);padding:0 4px;min-height:18px}
 .getthere a{color:var(--accent);font-weight:600;text-decoration:none}
 .getthere .warn{color:var(--warn)}
@@ -190,6 +197,14 @@ button{cursor:pointer}
       </button>
     </div>
     <div class="getthere" id="getThere"></div>
+    <div class="lochelp" id="locHelp" hidden>
+      <div class="lochelp-head"><span>Location is off for this page, so it can't tell which stop you're at.</span><button type="button" id="locHelpBtn" aria-expanded="false" aria-controls="locSteps">Turn it on</button></div>
+      <ol id="locSteps" hidden>
+        <li>iPhone <b>Settings</b> › <b>Privacy &amp; Security</b> › <b>Location Services</b>: on. Then <b>Safari Websites</b> › <b>While Using the App</b>, with <b>Precise Location</b> on.</li>
+        <li>Back in Safari: tap <b>≡</b> next to the address › <b>Website Settings</b> › <b>Location</b> › <b>Allow</b>.</li>
+        <li>Come back here. It finds your stop by itself.</li>
+      </ol>
+    </div>
   </header>
 
   <div id="alerts"></div>
@@ -237,7 +252,7 @@ button{cursor:pointer}
 <script>
 (function () {
   'use strict';
-  var VERSION = '2026-11-17-5';
+  var VERSION = '2026-11-17-6';
   var API = 'https://api-v3.mbta.com';
   var POLL_MS = 15000, ALERT_MS = 120000;
   var CUSHION = 45000;   // aim to be on the platform this long before the train pulls in
@@ -313,7 +328,7 @@ button{cursor:pointer}
     from: keyIndex('north'), to: keyIndex('forhl'), walk: 5, sound: false, awake: false,
     trains: [], alerts: [], fetchedAt: 0, error: '', backoffUntil: 0,
     here: null, place: null, fromSource: 'auto', walkSource: 'manual', locMsg: '',
-    startFix: null, placedOnce: false, riding: null, boardCandidate: null, destArr: {}
+    startFix: null, placedOnce: false, riding: null, boardCandidate: null, destArr: {}, locDenied: false
   };
   var chimed = {};
   var $ = function (id) { return document.getElementById(id); };
@@ -824,20 +839,48 @@ button{cursor:pointer}
       if (flipped) flash('You\'re nearest ' + name + ', so it flipped the direction.');
     }, function (err) {
       btn.classList.remove('busy'); state.locMsg = '';
-      flash(err && err.code === 1 ? 'Location is off for this page. Allow it in Safari\'s settings, or tap From to pick your stop.' : 'Couldn\'t find you just now. Tap From to pick your stop.');
+      if (err && err.code === 1) { showLocHelp(true); $('locSteps').hidden = false; $('locHelpBtn').setAttribute('aria-expanded', 'true'); $('locHelpBtn').textContent = 'Hide'; }
+      else flash('Couldn\'t find you just now. Tap From to pick your stop.');
     }, { enableHighAccuracy: true, timeout: 12000, maximumAge: 10000 });
   }
   $('locBtn').addEventListener('click', function () { state.fromSource = 'auto'; startWatching(); useMyLocation(true); });
+  $('locHelpBtn').addEventListener('click', function () {
+    var steps = $('locSteps'), open = steps.hidden;
+    steps.hidden = !open;
+    this.setAttribute('aria-expanded', open ? 'true' : 'false');
+    this.textContent = open ? 'Hide' : 'Turn it on';
+  });
 
   // ---------- following you while the page is open ----------
   var watchId = null;
   function startWatching() {
     if (watchId != null || !('geolocation' in navigator)) return;
     watchId = navigator.geolocation.watchPosition(onFix, function (err) {
-      if (err && err.code === 1) { watchId = null; }   // location's off: everything stays as you set it
+      if (err && err.code === 1) {                       // refused: everything stays as you set it
+        if (watchId != null) navigator.geolocation.clearWatch(watchId);
+        watchId = null;
+        showLocHelp(true);
+      }
     }, { enableHighAccuracy: true, maximumAge: 5000, timeout: 30000 });
   }
+  function showLocHelp(on) {
+    state.locDenied = on;
+    $('locHelp').hidden = !on;
+  }
+  // When it's turned on in Settings and you come back, pick it up without a reload.
+  function watchPermission() {
+    if (!navigator.permissions || !navigator.permissions.query) { startWatching(); return; }
+    navigator.permissions.query({ name: 'geolocation' }).then(function (status) {
+      var apply = function () {
+        if (status.state === 'denied') showLocHelp(true);
+        else { showLocHelp(false); startWatching(); }
+      };
+      apply();
+      status.onchange = apply;
+    }).catch(function () { startWatching(); });
+  }
   function onFix(pos) {
+    if (state.locDenied) showLocHelp(false);
     var h = { lat: pos.coords.latitude, lon: pos.coords.longitude, acc: pos.coords.accuracy || 0, at: Date.now() };
     state.here = h;
     if (!state.startFix) state.startFix = h;
@@ -1047,7 +1090,7 @@ button{cursor:pointer}
   // Browsers only allow sound and screen-on after a tap, so any tap re-arms them.
   document.addEventListener('pointerdown', function () { if (state.sound) unlockAudio(); holdScreen(); }, { passive: true });
   document.addEventListener('visibilitychange', function () {
-    if (document.visibilityState === 'visible') { holdScreen(); checkVersion(); startWatching(); loadTrains(); loadAlerts(); render(); }
+    if (document.visibilityState === 'visible') { holdScreen(); checkVersion(); watchPermission(); loadTrains(); loadAlerts(); render(); }
   });
   window.addEventListener('hashchange', function () { state.place = null; loadSettings(); routeChanged(); });
 
@@ -1059,7 +1102,7 @@ button{cursor:pointer}
   loadTrains();
   loadAlerts();
   holdScreen();
-  startWatching();
+  watchPermission();
   checkVersion();
   setInterval(function () { if (document.visibilityState === 'visible') loadTrains(); }, POLL_MS);
   setInterval(function () { if (document.visibilityState === 'visible') loadAlerts(); }, ALERT_MS);
