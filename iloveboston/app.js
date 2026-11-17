@@ -45,6 +45,7 @@
     star: '<path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.3L12 17.1l-5.7 3.1 1.2-6.3-4.7-4.4 6.4-.8z"/>',
     play: '<path d="M7 4.5v15l12.5-7.5z" fill="currentColor" stroke="none"/>',
     nav: '<path d="M3.5 10.6L20 4l-6.6 16.5-2.1-7.2z" fill="currentColor" stroke="none"/>',
+    sliders: '<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>',
     globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/>',
   };
 
@@ -203,6 +204,34 @@
       trains: [['Green', 'B · Boston College', '3 min', '11 min'], ['Green', 'D · Riverside', '6 min', ''], ['Green', 'E · Medford/Tufts', '2 min', '9 min']] },
   ];
 
+  /* ---------- demo: other looks and features on/off ---------- */
+  const LOOKS = [
+    { k: 'h', name: 'H · D, calmer', live: true, desc: "The map with a pull-up list and three tabs. It's the one you're using." },
+    { k: 'a', name: 'A · Classic', desc: "Matches Phil's sign: a clean list with categories, a radius and the 10 languages." },
+    { k: 'b', name: 'B · Map first', desc: 'A big map up top with numbered pins, and the list underneath.' },
+    { k: 'c', name: 'C · Walk lines', desc: 'Places as stops on walk-time lines, like a subway map.' },
+    { k: 'd', name: 'D · The blend', desc: "A's look with a small map, Live now, the walk line and the T, all on one page." },
+    { k: 'e', name: 'E · Calm list', desc: 'A quiet list. A Map button opens a full-screen map.' },
+    { k: 'f', name: 'F · Three tabs', desc: 'Nearby, Map and Live now along the bottom.' },
+    { k: 'g', name: 'G · Map + pull-up list', desc: 'The map fills the top and the list slides up over it.' },
+  ];
+  const FEATURES = [
+    ['events', "What's on", 'The events tab: shows, markets, free stuff'],
+    ['live', 'Live now', 'Pop-up and market vendors selling right now'],
+    ['transit', 'The T', 'Stations on the map and the next trains'],
+    ['spots', 'Spots & badges', 'Tap DTC-001 to collect signs and walk the Freedom Trail'],
+    ['featured', 'Featured businesses', 'Paid spots with photos and a deal, always labeled Sponsored'],
+    ['langs', '10 languages', 'The flag button up top'],
+    ['walkline', 'Walk line', 'Places as stops on a line. Off shows a plain list'],
+  ];
+  const FDEF = { events: true, live: true, transit: true, spots: true, featured: true, langs: true, walkline: true };
+  function loadFlags() {
+    try { return Object.assign({}, FDEF, JSON.parse(localStorage.getItem('ilb-f') || '{}')); } catch (e) { return Object.assign({}, FDEF); }
+  }
+  function saveFlags() {
+    try { localStorage.setItem('ilb-f', JSON.stringify(S.f)); } catch (e) { /* ignore */ }
+  }
+
   /* ---------- state ---------- */
   const S = {
     route: 'h', arg: '',
@@ -210,6 +239,7 @@
     lang: detectLang(), langOpen: false,
     pTab: 'spots', badge: 'downtown', tracking: false,
     slide: 0, liveOpen: -1, liveSlide: 0,
+    f: loadFlags(), demoOpen: false, demoTab: 'looks', view: -1,
   };
   function detectLang() {
     try {
@@ -219,7 +249,8 @@
     const nav = ((navigator.languages && navigator.languages[0]) || navigator.language || 'en').toLowerCase().slice(0, 2);
     return STR[nav] ? nav : 'en';
   }
-  const T = () => STR[S.lang] || STR.en;
+  const T = () => (S.f.langs ? (STR[S.lang] || STR.en) : STR.en);
+  const tabsOn = () => [['near', true], ['events', S.f.events], ['live', S.f.live]].filter((x) => x[1]).map((x) => x[0]);
 
   /* ---------- toast ---------- */
   let toastTimer = 0;
@@ -238,6 +269,7 @@
     const parts = h.split('/');
     S.route = parts[0] || 'h';
     S.arg = parts[1] || '';
+    if (S.route === 'looks') { S.route = 'h'; S.demoOpen = true; S.demoTab = 'looks'; }
     if (S.route === 'live' && S.arg) {
       const ix = VENDORS.findIndex((v) => v.id === S.arg);
       if (ix >= 0) { S.liveOpen = ix; S.liveSlide = 0; }
@@ -307,6 +339,7 @@
         </div>
         <div class="topbar">
           <div class="pillw logo">I ${I.heart(18, 17, '#B8232F')} BOSTON</div>
+          <button type="button" class="pillw demobtn" data-act="demo-open" aria-label="Demo: other looks, and features on or off">${I.s(P.sliders, 18)}<span>Demo</span></button>
           <button type="button" class="pillw langbtn" data-act="lang" aria-label="Language"><span class="flag" id="langFlag"></span><span id="langShort"></span></button>
         </div>
         <button type="button" class="recenter" id="recenter" data-act="recenter" aria-label="Back to this sign" hidden>${I.s(P.nav, 20)}</button>
@@ -315,7 +348,7 @@
             <div class="sh-head" id="shHead">
               <span class="handle" aria-hidden="true"></span>
               <button type="button" class="sh-title" id="shToggle" data-act="toggle"><span class="cap" id="tHere"></span><span class="ttl">Downtown Crossing</span></button>
-              <a class="dtc" href="#/spots" aria-label="Sign DTC-001: see every spot, your badges and the Freedom Trail"><span>DTC-001</span>${I.s(P.right, 14, 2.4)}</a>
+              <span class="dtc-slot" id="dtcSlot"></span>
             </div>
             <div class="tabs" id="tabs" role="tablist" aria-label="What to show"></div>
             <div class="sh-body" id="shBody"></div>
@@ -324,11 +357,11 @@
         </section>
         <button type="button" class="mapbtn" id="mapBtn" data-act="half" hidden>${I.s(P.map)}<span>Map</span></button>
         <div class="lang-wrap" id="langWrap" hidden></div>
+        <div class="lang-wrap" id="demoWrap" hidden></div>
+        <div class="viewer-wrap" id="viewerWrap" hidden></div>
       </div>`;
     hMounted = true;
-    sig = { pins: '', body: '', prev: '' };
-    $('#stationsL').innerHTML = STATIONS.map((st) => `<span class="chip-st" style="left:${st.x}px;top:${st.y - 10}px">${st.lines.map((l) => `<span class="dot8" style="background:${LINE[l].c}"></span>`).join('')}<span>${esc(st.short)}</span></span>`).join('');
-    $('#spotsL').innerHTML = SPOTS.map((p) => `<a class="spot" href="#/spots" style="left:${p.x}px;top:${p.y}px" aria-label="Sign ${p.code}, ${esc(p.area)}${p.got ? ', collected' : ''}. See every spot">${I.heart(12, 11, p.got ? '#B8232F' : 'none', '#B8232F', 2.5)}<span>${p.code}</span></a>`).join('');
+    sig = { pins: '', body: '', prev: '', layers: '', demo: '', view: '' };
     bindH();
     // First paint without animation, then turn transitions on.
     app.classList.add('instant');
@@ -356,8 +389,18 @@
     const tr = curTrans(top);
     cur = { tx: tr.tx, ty: tr.ty };
     $('#world').style.transform = `translate(${tr.tx}px,${tr.ty}px)`;
+    // map layers that features turn on and off
+    const fs = JSON.stringify(S.f);
+    if (sig.layers !== fs) {
+      $('#stationsL').innerHTML = S.f.transit ? STATIONS.map((st) => `<span class="chip-st" style="left:${st.x}px;top:${st.y - 10}px">${st.lines.map((l) => `<span class="dot8" style="background:${LINE[l].c}"></span>`).join('')}<span>${esc(st.short)}</span></span>`).join('') : '';
+      $('#spotsL').innerHTML = S.f.spots ? SPOTS.map((p) => `<a class="spot" href="#/spots" style="left:${p.x}px;top:${p.y}px" aria-label="Sign ${p.code}, ${esc(p.area)}${p.got ? ', collected' : ''}. See every spot">${I.heart(12, 11, p.got ? '#B8232F' : 'none', '#B8232F', 2.5)}<span>${p.code}</span></a>`).join('') : '';
+      $('#dtcSlot').innerHTML = S.f.spots
+        ? `<a class="dtc" href="#/spots" aria-label="Sign DTC-001: see every spot, your badges and the Freedom Trail"><span>DTC-001</span>${I.s(P.right, 14, 2.4)}</a>`
+        : '<span class="dtc static">DTC-001</span>';
+      sig.layers = fs;
+    }
     // pins
-    const pinSig = [S.tab, S.cat, S.day, S.sel, S.lang].join('|');
+    const pinSig = [S.tab, S.cat, S.day, S.sel, S.lang, fs].join('|');
     if (sig.pins !== pinSig) { $('#pinsL').innerHTML = pinsHTML(); sig.pins = pinSig; }
     // header + tabs + body
     $('#tHere').textContent = t.here;
@@ -365,9 +408,14 @@
     const tog = $('#shToggle');
     tog.setAttribute('aria-label', labels[S.sheet]);
     tog.setAttribute('aria-expanded', S.sheet === 'full' ? 'true' : 'false');
-    $('#tabs').innerHTML = [['near', t.tabNear], ['events', t.tabEvents], ['live', t.tabLive]].map(([id, label]) =>
-      `<button type="button" class="tab" role="tab" aria-selected="${S.tab === id}" data-act="tab" data-v="${id}">${id === 'live' ? '<span class="ldot pdot"></span>' : ''}<span>${esc(label)}</span></button>`).join('');
-    const bodySig = [S.tab, S.cat, S.day, S.tOpen, S.lang].join('|');
+    const on = tabsOn();
+    const tabLabel = { near: t.tabNear, events: t.tabEvents, live: t.tabLive };
+    const tabsEl = $('#tabs');
+    tabsEl.hidden = on.length < 2;
+    tabsEl.style.gridTemplateColumns = `repeat(${on.length},minmax(0,1fr))`;
+    tabsEl.innerHTML = on.map((id) =>
+      `<button type="button" class="tab" role="tab" aria-selected="${S.tab === id}" data-act="tab" data-v="${id}">${id === 'live' ? '<span class="ldot pdot"></span>' : ''}<span>${esc(tabLabel[id])}</span></button>`).join('');
+    const bodySig = [S.tab, S.cat, S.day, S.tOpen, S.lang, fs].join('|');
     if (sig.body !== bodySig) {
       const body = $('#shBody');
       const keep = sig.body.split('|')[0] === S.tab ? body.scrollTop : 0;
@@ -381,12 +429,63 @@
     rc.hidden = !(panned && (S.sel || S.sheet !== 'full') && dragTop == null);
     rc.style.top = (top - 58) + 'px';
     $('#mapBtn').hidden = !(S.sheet === 'full' && !S.sel && dragTop == null);
-    $('#langShort').textContent = (LANGS.find((l) => l.code === S.lang) || LANGS[0]).short;
-    $('#langFlag').innerHTML = FLAG[S.lang] || FLAG.en;
-    document.documentElement.lang = S.lang;
+    const langCode = S.f.langs ? S.lang : 'en';
+    $('.langbtn').hidden = !S.f.langs;
+    $('#langShort').textContent = (LANGS.find((l) => l.code === langCode) || LANGS[0]).short;
+    $('#langFlag').innerHTML = FLAG[langCode] || FLAG.en;
+    document.documentElement.lang = langCode;
     // language sheet
     const lw = $('#langWrap');
     if (S.langOpen) { lw.innerHTML = langHTML(); lw.hidden = false; } else { lw.hidden = true; lw.innerHTML = ''; }
+    // demo panel and the looks viewer
+    const dw = $('#demoWrap');
+    const ds = [S.demoOpen, S.demoTab, fs].join('|');
+    if (S.demoOpen) {
+      if (sig.demo !== ds) {
+        const keep = dw.querySelector('.demo-sheet');
+        const st = keep ? keep.scrollTop : 0;
+        dw.innerHTML = demoHTML();
+        const ns = dw.querySelector('.demo-sheet');
+        if (ns && keep && sig.demo.split('|')[1] === S.demoTab) ns.scrollTop = st;
+        sig.demo = ds;
+      }
+      dw.hidden = false;
+    } else { dw.hidden = true; dw.innerHTML = ''; sig.demo = ''; }
+    const vw = $('#viewerWrap');
+    if (S.view >= 0) {
+      if (sig.view !== String(S.view)) { vw.innerHTML = viewerHTML(); sig.view = String(S.view); }
+      vw.hidden = false;
+    } else { vw.hidden = true; vw.innerHTML = ''; sig.view = ''; }
+  }
+
+  function demoHTML() {
+    const looks = LOOKS.map((l, i) => `<button type="button" class="lcard" data-act="look" data-v="${i}" aria-label="${esc(l.name)}${l.live ? ", the one you're using" : ''}">
+        <span class="limg"><img src="looks/${l.k}-thumb.webp" alt="" loading="lazy" width="390" height="844">${l.live ? '<span class="lbadge">You\'re using it</span>' : ''}</span>
+        <span class="lname">${esc(l.name)}</span><span class="ldesc">${esc(l.desc)}</span></button>`).join('');
+    const feats = FEATURES.map(([k, label, desc]) => `<button type="button" class="frow" role="switch" aria-checked="${!!S.f[k]}" data-act="flag" data-v="${k}">
+        <span class="ftxt"><b>${esc(label)}</b><span>${esc(desc)}</span></span><span class="sw${S.f[k] ? ' on' : ''}" aria-hidden="true"><span></span></span></button>`).join('');
+    const allOn = FEATURES.every(([k]) => S.f[k]);
+    return `<div class="lang-dim" data-act="demo-close"></div>
+      <div class="lang-sheet demo-sheet" role="dialog" aria-label="Demo">
+        <div class="lang-head"><h2>${I.s(P.sliders, 20)} Demo</h2><button type="button" class="pv-x" data-act="demo-close" aria-label="Close">${I.s(P.x, 20)}</button></div>
+        <p class="small muted demo-intro">Flip through the other looks, or turn features on and off to see the page with and without them.</p>
+        <div class="tabs dtabs" role="tablist" aria-label="Demo"><button type="button" class="tab" role="tab" aria-selected="${S.demoTab === 'looks'}" data-act="demo-tab" data-v="looks">Other looks</button><button type="button" class="tab" role="tab" aria-selected="${S.demoTab === 'features'}" data-act="demo-tab" data-v="features">Features on/off</button></div>
+        ${S.demoTab === 'looks'
+          ? `<div class="lgrid">${looks}</div><p class="small muted demo-intro">Tap a look to see it big; swipe or use the arrows to flip through.</p>`
+          : `<div class="flist">${feats}</div>${allOn ? '' : '<button type="button" class="btn wide" data-act="flags-reset">Turn everything back on</button>'}<p class="small muted demo-intro">Your phone remembers these until you change them.</p>`}
+      </div>`;
+  }
+  function viewerHTML() {
+    const l = LOOKS[S.view];
+    return `<div class="viewer" role="dialog" aria-label="${esc(l.name)}">
+      <div class="v-top"><span class="v-count">${S.view + 1} of ${LOOKS.length}</span><button type="button" class="pv-x dark" data-act="view-close" aria-label="Back to the looks">${I.s(P.x, 20)}</button></div>
+      <div class="v-stage"><img class="viewer-img" src="looks/${l.k}.webp" alt="Mockup ${esc(l.name)}" draggable="false"></div>
+      <div class="v-bottom">
+        <button type="button" class="v-nav" data-act="view-prev" aria-label="Previous look">${I.s(P.left, 22, 2.4)}</button>
+        <div class="v-cap"><b>${esc(l.name)}</b><span>${esc(l.desc)}</span>${l.live ? '<button type="button" class="btn primary v-try" data-act="view-try">Use this one</button>' : ''}</div>
+        <button type="button" class="v-nav" data-act="view-next" aria-label="Next look">${I.s(P.right, 22, 2.4)}</button>
+      </div>
+    </div>`;
   }
 
   /* ----- pins on the map ----- */
@@ -433,10 +532,14 @@
         if (i > 0) out += `<div class="mark" style="--ml:84px"><span>${esc(t.walk5)}</span></div>`;
         crossed = true;
       }
+      const spon = S.f.featured && p.sponsored ? `<span class="sp">${esc(t.sponsored)}</span>` : '';
+      if (!S.f.walkline) {
+        return `<button type="button" class="prow" data-act="sel" data-k="place:${p.id}"><span class="pnum">${i + 1}</span><span class="txt"><span class="nm"><b>${esc(p.name)}</b>${spon}</span><span class="sub">${esc(t[p.kind])}</span></span><span class="pmin">${esc(t.mins(m))}</span></button>`;
+      }
       out += `<button type="button" class="row" data-act="sel" data-k="place:${p.id}">
         <span class="tcol">${esc(t.mins(m))}</span>
         <span class="lcol"><span class="stop">${i + 1}</span></span>
-        <span class="txt"><span class="nm"><b>${esc(p.name)}</b>${p.sponsored ? `<span class="sp">${esc(t.sponsored)}</span>` : ''}</span><span class="sub">${esc(t[p.kind])}</span></span>
+        <span class="txt"><span class="nm"><b>${esc(p.name)}</b>${spon}</span><span class="sub">${esc(t[p.kind])}</span></span>
       </button>`;
       return out;
     }).join('');
@@ -454,13 +557,13 @@
     }).join('');
     return `
       <div class="chips">${chips}</div>
-      <div class="line"><div class="rail" style="left:62.5px"></div>${rows}</div>
+      ${S.f.walkline ? `<div class="line"><div class="rail" style="left:62.5px"></div>${rows}</div>` : `<div class="plist">${rows}</div>`}
       <p class="note">${esc(t.allWithin)}</p>
-      <section class="tsec">
+      ${S.f.transit ? `<section class="tsec">
         <div class="tsec-h">${I.s(P.train, 20)}<h3>${esc(t.tHead)}</h3></div>
         <div class="tlist">${tRows}</div>
         <p class="small muted">Sample times. On the real site they come live from the MBTA.</p>
-      </section>
+      </section>` : ''}
       <a class="cta-row" href="#/business"><span>${esc(t.biz)}</span>${I.s(P.right)}</a>
       <p class="note small pb">${esc(t.sample)}. Tap one to see it on the map.</p>`;
   }
@@ -479,7 +582,7 @@
       return `<button type="button" class="row ev" data-act="sel" data-k="event:${e.id}">
         <span class="tcol">${e.wd ? `<span class="wd">${e.wd}</span>` : ''}<span class="tm"${e.now ? ' style="color:#C41E35"' : ''}>${esc(e.now ? t.now : e.time + ' ' + e.ap)}</span>${e.now ? `<span class="tilll">${esc(t.till(e.until))}</span>` : ''}</span>
         <span class="lcol"><span class="estop${e.now ? ' now pdot' : ''}"></span></span>
-        <span class="txt"><span class="nm"><b>${esc(e.name)}</b>${e.sponsored ? `<span class="sp">${esc(t.sponsored)}</span>` : ''}</span><span class="sub">${esc(e.where)} · ${esc(t.mins(mins(e.dist)))} · <span class="evprice${free ? ' free' : ''}">${esc(e.price)}</span></span></span>
+        <span class="txt"><span class="nm"><b>${esc(e.name)}</b>${S.f.featured && e.sponsored ? `<span class="sp">${esc(t.sponsored)}</span>` : ''}</span><span class="sub">${esc(e.where)} · ${esc(t.mins(mins(e.dist)))} · <span class="evprice${free ? ' free' : ''}">${esc(e.price)}</span></span></span>
       </button>`;
     };
     let rows = now.map(row).join('');
@@ -517,19 +620,19 @@
     if (type === 'place') {
       const p = PLACES.find((x) => x.id === id);
       title = p.name;
-      chip = p.sponsored ? `<span class="sp">${esc(t.sponsored)}</span>` : '';
+      chip = S.f.featured && p.sponsored ? `<span class="sp">${esc(t.sponsored)}</span>` : '';
       line1 = t[p.kind] + ' · ' + t.walk(mins(p.dist));
-      thumb = p.photo ? `<span class="thumb" style="background:${p.tint};color:${p.ink}">${I.s(P.photo, 30, 1.6)}</span>` : '';
+      thumb = S.f.featured && p.photo ? `<span class="thumb" style="background:${p.tint};color:${p.ink}">${I.s(P.photo, 30, 1.6)}</span>` : '';
       primary = `<a class="btn primary" href="${maps(p.q)}" target="_blank" rel="noopener">${I.s(P.pin)}<span>${esc(t.directions)}</span></a>`;
       secondary = `<a class="btn" href="#/${p.page}">${esc(t.seePage)}</a>`;
     } else if (type === 'event') {
       const e = EVENTS.find((x) => x.id === id);
       const dayWord = e.wd ? WEEKDAY[e.wd] : (e.day === 'tomorrow' ? t.tomorrow : t.today);
       title = e.name;
-      chip = e.sponsored ? `<span class="sp">${esc(t.sponsored)}</span>` : '';
+      chip = S.f.featured && e.sponsored ? `<span class="sp">${esc(t.sponsored)}</span>` : '';
       line1 = (e.now ? t.now + ', ' + t.till(e.until) : dayWord + ' · ' + e.time + ' ' + e.ap) + ' · ' + e.price;
       line2 = e.where + ' · ' + t.walk(mins(e.dist));
-      thumb = e.photo ? `<span class="thumb" style="background:${e.tint};color:${e.ink}">${I.s(P.photo, 30, 1.6)}</span>` : '';
+      thumb = e.photo && (S.f.featured || !e.sponsored) ? `<span class="thumb" style="background:${e.tint};color:${e.ink}">${I.s(P.photo, 30, 1.6)}</span>` : '';
       primary = `<button type="button" class="btn primary" data-act="demo" data-v="Added to your calendar (demo)">${I.s(P.cal)}<span>${esc(t.addCal)}</span></button>`;
       secondary = e.q ? `<a class="btn" href="${maps(e.q)}" target="_blank" rel="noopener">${esc(t.directions)}</a>` : `<button type="button" class="btn" data-act="demo">${esc(t.directions)}</button>`;
     } else {
@@ -673,7 +776,7 @@
       tiles: [['Photo', '#E6EDFA'], ['Video', '#E3F1E9'], ['Photo', '#F3E7D6'], ['Photo', '#EFE8F7'], ['Photo', '#FCEBDD'], ['Photo', '#E6EDFA']] },
   };
   function placeScreen() {
-    const f = FEATURED[S.arg];
+    const f = S.f.featured ? FEATURED[S.arg] : null;
     if (f) return featuredHTML(f);
     const p = PLACES.find((x) => x.id === S.arg) || PLACES[1];
     return listingHTML(p);
@@ -904,6 +1007,27 @@
         try { localStorage.setItem('ilb-lang', v); } catch (err) { /* ignore */ }
         updH(); break;
       case 'demo': toast(v || 'This part is a demo'); break;
+      case 'demo-open': S.demoOpen = true; S.langOpen = false; updH(); break;
+      case 'demo-close': S.demoOpen = false; updH(); break;
+      case 'demo-tab': S.demoTab = v; updH(); break;
+      case 'flag': {
+        S.f[v] = !S.f[v];
+        saveFlags();
+        if (!tabsOn().includes(S.tab)) S.tab = 'near';
+        if (S.sel && ((S.sel.startsWith('live:') && !S.f.live) || (S.sel.startsWith('event:') && !S.f.events))) S.sel = null;
+        updH();
+        break;
+      }
+      case 'flags-reset': S.f = Object.assign({}, FDEF); saveFlags(); updH(); break;
+      case 'look': {
+        const i = +v;
+        S.view = i; updH();
+        break;
+      }
+      case 'view-close': S.view = -1; updH(); break;
+      case 'view-prev': S.view = (S.view + LOOKS.length - 1) % LOOKS.length; updH(); break;
+      case 'view-next': S.view = (S.view + 1) % LOOKS.length; updH(); break;
+      case 'view-try': S.view = -1; S.demoOpen = false; updH(); break;
       case 'back':
         if (S.cameFromApp && history.length > 1) history.back();
         else location.hash = '#/';
@@ -921,11 +1045,24 @@
     }
   });
   document.addEventListener('keydown', (e) => {
+    if (S.view >= 0 && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) {
+      S.view = (S.view + (e.key === 'ArrowRight' ? 1 : LOOKS.length - 1)) % LOOKS.length; updH(); return;
+    }
     if (e.key === 'Escape') {
-      if (S.langOpen) { S.langOpen = false; updH(); }
+      if (S.view >= 0) { S.view = -1; updH(); }
+      else if (S.demoOpen) { S.demoOpen = false; updH(); }
+      else if (S.langOpen) { S.langOpen = false; updH(); }
       else if (S.sel) { S.sel = null; updH(); }
       else if (S.route === 'live' && S.liveOpen >= 0) { S.liveOpen = -1; rerenderScreen(); }
     }
+  });
+
+  let vx = null;
+  app.addEventListener('pointerdown', (e) => { if (e.target.closest('.v-stage')) vx = e.clientX; });
+  app.addEventListener('pointerup', (e) => {
+    if (vx == null) return;
+    const dx = e.clientX - vx; vx = null;
+    if (S.view >= 0 && Math.abs(dx) > 50) { S.view = (S.view + (dx < 0 ? 1 : LOOKS.length - 1)) % LOOKS.length; updH(); }
   });
 
   window.addEventListener('hashchange', () => {
