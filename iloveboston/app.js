@@ -458,7 +458,7 @@
   /* ---------- demo: other looks and features on/off ---------- */
   const LOOKS = [
     { k: 'h', name: 'H · D, calmer', live: true, desc: "The map with a pull-up list and three tabs. It's the one you're using." },
-    { k: 'a', name: 'A · Classic', desc: "Matches Phil's sign: a clean list with categories, a radius and the 10 languages." },
+    { k: 'a', name: 'A · Classic', desc: "Matches Dr Phil's sign: a clean list with categories, a radius and the 10 languages." },
     { k: 'b', name: 'B · Map first', desc: 'A big map up top with numbered pins, and the list underneath.' },
     { k: 'c', name: 'C · Walk lines', desc: 'Places as stops on walk-time lines, like a subway map.' },
     { k: 'd', name: 'D · The blend', desc: "A's look with a small map, Live now, the walk line and the T, all on one page." },
