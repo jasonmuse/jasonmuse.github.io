@@ -59,44 +59,58 @@ button{cursor:pointer}
 .sg-main b{font-weight:600;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sg-sub{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sg-note{padding:10px 12px;font-size:13px;color:var(--muted)}
-.route{display:flex;align-items:stretch;gap:8px}
-.route .arrow,.route .icon-btn{align-self:center}
-.stn{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:2px;padding:9px 12px;min-height:64px;border-radius:16px;border:0;background:var(--card);text-align:left;transition:background .2s,box-shadow .2s}
-.stn:active{background:var(--card-2)}
-.stn.editing{background:var(--card-2);box-shadow:inset 0 0 0 1.5px var(--accent)}
-.stn-lbl{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);transition:color .2s}
-.stn.editing .stn-lbl{color:var(--accent)}
-.stn-name{font-size:15px;font-weight:650;line-height:1.15;max-width:100%;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.route .arrow{flex:none;color:var(--muted)}
-.icon-btn{flex:none;width:44px;height:44px;border-radius:50%;border:0;background:var(--card);display:grid;place-items:center;color:var(--fg)}
-.icon-btn:active{background:var(--card-2)}
+/* the trip: one card, your start on top and where you're going below, joined like a route map */
+.route{display:flex;align-items:center;gap:4px;padding:4px 6px 4px 4px;border-radius:18px;background:var(--card)}
+.route-stops{position:relative;flex:1;min-width:0;display:flex;flex-direction:column}
+.route-stops::before{content:"";position:absolute;left:19px;top:28px;bottom:28px;border-left:2px dotted #4A5366;pointer-events:none}
+.stn{display:flex;align-items:center;gap:12px;width:100%;min-height:44px;padding:0 10px 0 14px;border:0;border-radius:14px;background:none;color:var(--fg);text-align:left;cursor:pointer;transition:background .2s}
+.stn:active,.stn.editing{background:var(--card-2)}
+.stn-dot{position:relative;z-index:1;flex:none;width:12px;height:12px;border-radius:50%;box-sizing:border-box}
+.stn-dot.from{border:2.5px solid var(--muted);background:var(--card)}
+.stn-dot.to{background:var(--accent);box-shadow:0 0 0 3px rgba(237,139,0,.22)}
+.stn-name{flex:1;min-width:0;font-size:16px;font-weight:650;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stn.editing .stn-name{color:var(--accent)}
+.icon-btn{flex:none;width:40px;height:40px;border-radius:50%;border:0;background:var(--card-2);display:grid;place-items:center;color:var(--fg);cursor:pointer}
+.icon-btn:active{background:var(--line)}
 #swapIcon{transition:transform .55s cubic-bezier(.3,1.35,.5,1);view-transition-name:swap-icon}
-.plan{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;margin:0 -2px;padding:2px}
-.plan::-webkit-scrollbar{display:none}
-.pchip{flex:none;position:relative;display:inline-flex;align-items:center;gap:6px;min-height:38px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--fg);font-size:14px;font-weight:600;white-space:nowrap;transition:background .25s,border-color .25s,color .25s}
-.pchip.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
-.pchip.pick input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;-webkit-appearance:none;appearance:none}
-.pchip svg{flex:none}
-.lochelp{border-radius:16px;background:#2A1D10;color:#FFE2BD;padding:12px 14px;font-size:14px;display:flex;flex-direction:column;gap:8px}
-.lochelp-head{display:flex;align-items:center;gap:10px}
-.lochelp-head span{flex:1;min-width:0}
-.lochelp button{flex:none;border:0;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:14px;padding:8px 12px;min-height:36px}
-.lochelp ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;color:#FFE9CC}
-.lochelp b{color:#FFFFFF}
-.lochelp.quiet{display:none}
-.lochelp button.lochelp-x{background:none;color:#FFE2BD;font-size:22px;line-height:1;font-weight:400;padding:2px 4px;min-height:0}
-.getthere{display:flex;align-items:center;gap:6px 10px;flex-wrap:wrap;font-size:13px;color:var(--muted);padding:0 4px;min-height:18px}
+/* one quiet line under it: delays, your walk, and when you're leaving */
+.meta{display:flex;align-items:center;gap:10px;padding:0 4px 0 8px;min-height:30px}
+.getthere{flex:1;min-width:0;display:flex;align-items:center;gap:2px 7px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
 .getthere a{color:var(--accent);font-weight:600;text-decoration:none}
 .getthere .warn{color:var(--warn)}
 .getthere button.lnk{font-size:13px}
+.getthere .ok{display:inline-flex;align-items:center;gap:6px}
+.getthere .ok i{width:7px;height:7px;border-radius:50%;background:var(--good)}
+.getthere .dot{opacity:.45}
+.when{position:relative;flex:none}
+.when-btn{display:inline-flex;align-items:center;gap:3px;height:30px;padding:0 9px 0 12px;border-radius:999px;border:0;background:var(--card);color:var(--fg);font-size:13px;font-weight:650;white-space:nowrap;cursor:pointer;transition:background .25s,color .25s}
+.when-btn svg{opacity:.7;transition:transform .25s}
+.when-btn svg.clk{opacity:.85;margin-right:2px}
+.when-btn[aria-expanded="true"] svg:not(.clk){transform:rotate(180deg)}
+.when-menu .wm-h{padding:6px 12px 4px;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.when-btn.on{background:var(--accent);color:var(--accent-ink)}
+.when-menu{position:absolute;right:0;top:36px;z-index:25;min-width:184px;padding:6px;border-radius:16px;background:var(--card);border:1px solid var(--line);box-shadow:0 16px 40px rgba(0,0,0,.55);transform-origin:top right}
+.when-menu .wm{position:relative;display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:42px;padding:0 12px;border:0;border-radius:10px;background:none;color:var(--fg);font-size:15px;font-weight:600;text-align:left;cursor:pointer}
+.when-menu .wm:hover,.when-menu .wm:focus-visible{background:var(--card-2)}
+.when-menu .wm.on::after{content:"";flex:none;width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.when-menu .wm input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;-webkit-appearance:none;appearance:none}
+/* location trouble: one slim line, with the steps a tap away */
+.lochelp{border-radius:14px;background:#24190E;color:#F5D6AE;padding:7px 8px 7px 14px;font-size:13px;display:flex;flex-direction:column;gap:8px}
+.lochelp-head{display:flex;align-items:center;gap:8px}
+.lochelp-head span{flex:1;min-width:0}
+.lochelp button{flex:none;border:0;border-radius:999px;background:rgba(237,139,0,.18);color:#FFC679;font-weight:700;font-size:13px;padding:6px 11px;min-height:30px;cursor:pointer}
+.lochelp ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;color:#FFE9CC}
+.lochelp b{color:#FFFFFF}
+.lochelp.quiet{display:none}
+.lochelp button.lochelp-x{background:none;color:#F5D6AE;font-size:20px;line-height:1;font-weight:400;padding:2px 6px;min-height:0}
 
 /* alerts */
 .alert{display:flex;gap:10px;align-items:flex-start;padding:11px 13px;border-radius:14px;background:#2A1D10;color:#FFE2BD;font-size:14px}
 .alert.bad{background:#2E1715;color:#FFD3CC}
 .alert .chip{flex:none;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 7px;border-radius:999px;background:rgba(255,181,71,.18);color:var(--warn);margin-top:1px}
 .alert.bad .chip{background:rgba(255,138,122,.18);color:var(--bad)}
-.okline{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);padding:0 2px}
-.okline i{width:8px;height:8px;border-radius:50%;background:var(--good);display:inline-block}
+#alerts{display:flex;flex-direction:column;gap:8px}
+#alerts:empty{display:none}
 
 /* hero: the Live Activity, on the web. Big: your train coming in (Train, the default) or when to
    leave (Leave). The other one sits in the pill under it; tap the pill or the switch to swap them. */
@@ -324,26 +338,29 @@ button.lnk{border:0;background:none;padding:0;margin:0;color:var(--accent);font:
       <div class="sugg" id="sugg" role="listbox" aria-label="Stations" hidden></div>
     </div>
     <div class="route">
-      <button class="stn" id="fromBtn" type="button" aria-label="Change where you start"><span class="stn-lbl">From</span><span class="stn-name" id="fromName">…</span></button>
-      <svg class="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg>
-      <button class="stn" id="toBtn" type="button" aria-label="Change where you're going"><span class="stn-lbl">To</span><span class="stn-name" id="toName">…</span></button>
+      <div class="route-stops">
+        <button class="stn" id="fromBtn" type="button" aria-label="From. Change where you start"><i class="stn-dot from" aria-hidden="true"></i><span class="stn-name" id="fromName">…</span></button>
+        <button class="stn" id="toBtn" type="button" aria-label="To. Change where you're going"><i class="stn-dot to" aria-hidden="true"></i><span class="stn-name" id="toName">…</span></button>
+      </div>
       <button class="icon-btn" id="swapBtn" type="button" aria-label="Swap direction">
         <svg id="swapIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4v16"></path><path d="M3 8l4-4 4 4"></path><path d="M17 20V4"></path><path d="M21 16l-4 4-4-4"></path></svg>
       </button>
     </div>
-    <div class="plan" id="planRow" role="group" aria-label="When you're leaving">
-      <button type="button" class="pchip on" data-plan="" aria-label="Leave now">Now</button>
-      <button type="button" class="pchip" data-plan="12:00" aria-label="Leave at 12 PM">12 PM</button>
-      <button type="button" class="pchip" data-plan="17:00" aria-label="Leave at 5 PM">5 PM</button>
-      <label class="pchip pick" id="pickChip">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2"></path><path d="M5 3L2 6"></path><path d="M19 3l3 3"></path></svg>
-        <span id="pickLabel">Pick a time</span>
-        <input type="time" id="planTime" step="60" aria-label="Leave at a time you pick">
-      </label>
+    <div class="meta">
+      <div class="getthere" id="getThere"></div>
+      <div class="when" id="when">
+        <button type="button" class="when-btn" id="whenBtn" aria-haspopup="true" aria-expanded="false" aria-controls="whenMenu" aria-label="When you're leaving: now"><svg class="clk" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg><span id="whenLabel">Now</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg></button>
+        <div class="when-menu" id="whenMenu" role="group" aria-label="When you're leaving" hidden>
+          <div class="wm-h">When you're leaving</div>
+          <button type="button" class="wm" data-plan="">Now</button>
+          <button type="button" class="wm" data-plan="12:00">12 PM</button>
+          <button type="button" class="wm" data-plan="17:00">5 PM</button>
+          <label class="wm" id="pickChip"><span id="pickLabel">Pick a time…</span><input type="time" id="planTime" step="60" aria-label="Leave at a time you pick"></label>
+        </div>
+      </div>
     </div>
-    <div class="getthere" id="getThere"></div>
     <div class="lochelp" id="locHelp" hidden>
-      <div class="lochelp-head"><span id="locHelpText">Location is off for this page, so it can't tell which stop you're at.</span><button type="button" id="locHelpBtn" aria-expanded="false" aria-controls="locSteps">Turn it on</button><button type="button" class="lochelp-x" id="locHelpX" aria-label="Hide this">×</button></div>
+      <div class="lochelp-head"><span id="locHelpText">Location is off for this page. At the station? Tap I'm here.</span><button type="button" id="locHelpBtn" aria-expanded="false" aria-controls="locSteps">Turn it on</button><button type="button" class="lochelp-x" id="locHelpX" aria-label="Hide this">×</button></div>
       <ol id="locSteps" hidden></ol>
     </div>
   </header>
@@ -393,7 +410,7 @@ button.lnk{border:0;background:none;padding:0;margin:0;color:var(--accent);font:
     </div>
     <div class="row"><label for="soundChk">Chime when it's time to go</label><input type="checkbox" class="switch" id="soundChk"></div>
     <div class="row"><label for="awakeChk">Keep screen on</label><input type="checkbox" class="switch" id="awakeChk"></div>
-    <p class="hint">The big number is your train. Tap Leave (or the line under it) to make it when to leave instead. Tap From or To at the top to change a stop, or search where you're going and it starts you at the stop nearest you. Your location stays on your phone. Your stations and walk time are saved in this page's link: tap Share, then Add to Home Screen, and it opens like an app.</p>
+    <p class="hint">Tap any train to see its timer. Your stops and walk are saved in this page's link, so Share › Add to Home Screen opens it like an app. Your location stays on your phone.</p>
   </section>
 
   <footer class="foot"><span id="statusLine">Connecting to the MBTA…</span><span>Live data: <a href="https://www.mbta.com/developers" target="_blank" rel="noopener">MBTA</a></span></footer>
@@ -402,7 +419,7 @@ button.lnk{border:0;background:none;padding:0;margin:0;color:var(--accent);font:
 <script>
 (function () {
   'use strict';
-  var VERSION = '2026-11-17-10';
+  var VERSION = '2026-11-17-11';
   var API = 'https://api-v3.mbta.com';
   var POLL_MS = 15000, ALERT_MS = 120000;
   var CUSHION = 45000;   // aim to be on the platform this long before the train pulls in
@@ -479,7 +496,7 @@ button.lnk{border:0;background:none;padding:0;margin:0;color:var(--accent);font:
     trains: [], alerts: [], fetchedAt: 0, error: '', backoffUntil: 0,
     here: null, place: null, fromSource: 'auto', walkSource: 'manual', locMsg: '',
     startFix: null, placedOnce: false, riding: null, boardCandidate: null, destArr: {}, locDenied: false,
-    planAt: null, manualWalk: 6, sched: [], schedKey: '', schedAt: 0,
+    planAt: null, planDay: null, manualWalk: 6, sched: [], schedKey: '', schedAt: 0,
     bigShows: 'train',  // the big number: 'train' (when your train comes in) or 'leave' (when to leave)
     pick: null,         // a train you picked to look at (its trip), instead of the one it picked for you
     manualAt: null      // "I'm here": { i: station, at: time } when this device can't tell you're at the station
@@ -534,6 +551,7 @@ button.lnk{border:0;background:none;padding:0;margin:0;color:var(--accent);font:
       if (saved.walkSource) state.walkSource = saved.walkSource;
       if (saved.manualWalk >= 1 && saved.manualWalk <= 30) state.manualWalk = saved.manualWalk;
       if (typeof saved.planAt === 'string' && /^\d\d:\d\d$/.test(saved.planAt)) state.planAt = saved.planAt;
+      if (typeof saved.planDay === 'string' && /^\d{4}-\d\d-\d\d$/.test(saved.planDay)) state.planDay = saved.planDay;
       if (saved.bigShows === 'train' || saved.bigShows === 'leave') state.bigShows = saved.bigShows;
     }
     var h = new URLSearchParams(location.hash.slice(1));
@@ -542,12 +560,12 @@ button.lnk{border:0;background:none;padding:0;margin:0;color:var(--accent);font:
     if (t >= 0) state.to = t;
     if (w >= 1 && w <= 30) state.walk = w;
     var at = h.get('at');
-    if (at && /^\d{4}$/.test(at)) state.planAt = at.slice(0, 2) + ':' + at.slice(2);
-    else if (at === 'now') state.planAt = null;
+    if (at && /^\d{4}$/.test(at)) { state.planAt = at.slice(0, 2) + ':' + at.slice(2); state.planDay = planDayFor(state.planAt); }
+    else if (at === 'now') { state.planAt = null; state.planDay = null; }
     if (state.from === state.to) state.to = state.from === 0 ? 1 : state.from - 1;
   }
   function saveSettings() {
-    try { localStorage.setItem('muse-commute', JSON.stringify({ from: state.from, to: state.to, walk: state.walk, sound: state.sound, awake: state.awake, walkSource: state.walkSource, manualWalk: state.manualWalk, planAt: state.planAt, bigShows: state.bigShows })); } catch (e) {}
+    try { localStorage.setItem('muse-commute', JSON.stringify({ from: state.from, to: state.to, walk: state.walk, sound: state.sound, awake: state.awake, walkSource: state.walkSource, manualWalk: state.manualWalk, planAt: state.planAt, planDay: state.planDay, bigShows: state.bigShows })); } catch (e) {}
     var q = 'from=' + STATIONS[state.from][0] + '&to=' + STATIONS[state.to][0] + '&walk=' + state.walk + (state.planAt ? '&at=' + state.planAt.replace(':', '') : '');
     try { history.replaceState(null, '', '#' + q); } catch (e) {}
   }
@@ -800,9 +818,19 @@ button.lnk{border:0;background:none;padding:0;margin:0;color:var(--accent);font:
   function planStart() {
     if (!state.planAt) return null;
     var parts = state.planAt.split(':'), d = new Date();
+    if (state.planDay) { var ymd = state.planDay.split('-'); d = new Date(+ymd[0], +ymd[1] - 1, +ymd[2]); }
     d.setHours(+parts[0], +parts[1], 0, 0);
     return d.getTime();
   }
+  function dayKey(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+  // A time that's already gone today (say 5 PM, picked at 11 PM) means tomorrow
+  function planDayFor(hm) {
+    var parts = hm.split(':'), d = new Date();
+    d.setHours(+parts[0], +parts[1], 0, 0);
+    if (d.getTime() < Date.now() - 30 * 60000) d.setDate(d.getDate() + 1);
+    return dayKey(d);
+  }
+  function planTomorrow() { return !!(state.planAt && state.planDay && state.planDay !== dayKey(new Date())); }
   function clockHM(hm) {
     var parts = hm.split(':'), h = +parts[0], m = parts[1];
     return ((h + 11) % 12 + 1) + ':' + m + (h < 12 ? ' AM' : ' PM');
@@ -820,21 +848,28 @@ button.lnk{border:0;background:none;padding:0;margin:0;color:var(--accent);font:
   }
   function setPlan(v) {
     state.planAt = v || null;
+    state.planDay = v ? planDayFor(v) : null;
     chimed = {}; state.sched = []; state.schedKey = '';
     saveSettings(); loadSchedule(); smooth();
   }
+  // When you're leaving: one small button ("Leaving now" / "Leaving 5 PM") with a menu
   function renderPlanRow() {
     if (vtPending) return;
-    var chips = document.querySelectorAll('#planRow .pchip[data-plan]'), custom = !!state.planAt;
-    Array.prototype.forEach.call(chips, function (c) {
+    var items = document.querySelectorAll('#whenMenu [data-plan]'), custom = !!state.planAt;
+    Array.prototype.forEach.call(items, function (c) {
       var on = (c.getAttribute('data-plan') || null) === state.planAt;
       if (on) custom = false;
       c.classList.toggle('on', on);
       c.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
     $('pickChip').classList.toggle('on', custom);
-    $('pickLabel').textContent = custom ? 'Leave at ' + clockHM(state.planAt) : 'Pick a time';
+    var tmrw = planTomorrow();
+    $('pickLabel').textContent = custom ? 'Leave at ' + clockHM(state.planAt) + (tmrw ? ' tomorrow' : '') : 'Pick a time…';
     if (state.planAt) $('planTime').value = state.planAt;
+    var at = state.planAt ? clockHM(state.planAt).replace(':00 ', ' ') : '';
+    $('whenLabel').textContent = state.planAt ? (tmrw ? 'Tomorrow ' : '') + at : 'Now';
+    $('whenBtn').setAttribute('aria-label', 'When you\'re leaving: ' + (state.planAt ? (tmrw ? 'tomorrow ' : '') + at : 'now'));
+    $('whenBtn').classList.toggle('on', !!state.planAt);
   }
   // Live predictions only reach an hour or so ahead, so a trip later is planned from the schedule
   // until the live times arrive.
@@ -984,9 +1019,10 @@ button.lnk{border:0;background:none;padding:0;margin:0;color:var(--accent);font:
     }
     var lead = state.bigShows;
     if (planned && tp.kind === 'leave' && tp.slack > 60 * 60000) {   // a while off: clock times read better
-      var trainAt = { label: (picked ? 'Planned: this train at ' : 'Planned: your train at ') + fromS[2], big: clock(t.arr), unit: ampm(t.arr), sub: train + ' · in ' + dur(t.arr - now),
+      var pfx = planTomorrow() ? 'Tomorrow: ' : 'Planned: ';
+      var trainAt = { label: pfx + (picked ? 'this train at ' : 'your train at ') + fromS[2], big: clock(t.arr), unit: ampm(t.arr), sub: train + ' · in ' + dur(t.arr - now),
         pill: { icon: 'train', html: 'Train at <span class="n">' + clock(t.arr) + '</span> <span class="m">· in ' + dur(t.arr - now) + '</span>' } };
-      var leaveAt = { label: 'Planned: leave at', big: clock(tp.at), unit: ampm(tp.at), sub: 'for the ' + clock(t.arr) + ' ' + train + ' at ' + fromS[2],
+      var leaveAt = { label: pfx + 'leave at', big: clock(tp.at), unit: ampm(tp.at), sub: 'for the ' + clock(t.arr) + ' ' + train + ' at ' + fromS[2],
         pill: { icon: 'walk', html: 'Leave at <span class="n">' + clock(tp.at) + '</span> <span class="m">· ' + walkMin + ' min walk</span>' } };
       var front = lead === 'leave' ? leaveAt : trainAt, back = lead === 'leave' ? trainAt : leaveAt;
       m.label = front.label; m.big = front.big; m.unit = front.unit; m.sub = front.sub; m.second = back.pill;
@@ -1142,6 +1178,10 @@ button.lnk{border:0;background:none;padding:0;margin:0;color:var(--accent);font:
     var fromS = STATIONS[state.from], toS = STATIONS[state.to];
     $('fromName').textContent = fromS[2];
     $('toName').textContent = toS[2];
+    $('fromBtn').setAttribute('aria-label', 'From ' + fromS[1] + '. Change it');
+    $('toBtn').setAttribute('aria-label', 'To ' + toS[1] + '. Change it');
+    var when = $('when');
+    if (when.hidden !== (mode !== 'wait')) { when.hidden = mode !== 'wait'; if (when.hidden) whenMenu(false); }
     // each station name carries its own name for smooth changes, so on a swap it glides to the other box
     $('fromName').style.viewTransitionName = 'st-' + fromS[0];
     $('toName').style.viewTransitionName = 'st-' + toS[0];
@@ -1160,11 +1200,11 @@ button.lnk{border:0;background:none;padding:0;margin:0;color:var(--accent);font:
       var a = x.attributes, bad = (a.severity || 0) >= 7 || a.effect === 'SUSPENSION' || a.effect === 'SHUTTLE';
       var chip = a.effect === 'DELAY' ? 'Delays' : a.effect === 'SHUTTLE' ? 'Shuttle' : a.effect === 'SUSPENSION' ? 'No trains' : 'Heads up';
       return '<div class="alert' + (bad ? ' bad' : '') + '"><span class="chip">' + chip + '</span><span>' + esc(a.short_header || a.header) + '</span></div>';
-    }).join('') : (state.fetchedAt ? '<div class="okline"><i></i>No delays reported on your ride</div>' : '');
+    }).join('') : '';
 
     // pick the train you can make (a plan for later means: not before then)
     var ps = planStart();
-    if (ps && now > ps + 30 * 60000) { state.planAt = null; saveSettings(); renderPlanRow(); ps = null; }
+    if (ps && now > ps + 30 * 60000) { state.planAt = null; state.planDay = null; saveSettings(); renderPlanRow(); ps = null; }
     var planned = mode === 'wait' && ps && ps > now - 60000;
     if (planned) wms = planWalkMs();
     var target = null, tp = null, upcoming = [];
@@ -1358,22 +1398,23 @@ button.lnk{border:0;background:none;padding:0;margin:0;color:var(--accent);font:
   function renderGetThere(mode, wms) {
     if (vtPending) return;
     if (mode == null) { mode = locMode(); wms = walkMs(); }
-    var f = state.from, t = state.to, html;
+    var f = state.from, t = state.to, bits = [], stops = Math.abs(t - f);
+    var dirLink = '<a href="' + mapsLink(null, null, stLat(f), stLon(f)) + '" target="_blank" rel="noopener">Directions</a>';
     var hereBtn = '<button type="button" class="lnk" data-act="here">I\'m here</button>';
-    if (state.locMsg) html = '<span class="warn">' + esc(state.locMsg) + '</span>' + (mode === 'wait' || mode === 'way' ? hereBtn : '');
-    else if (mode === 'ride') html = '<span>On your way to ' + esc(STATIONS[t][2]) + '</span>';
-    else if (mode === 'at') html = '<span>You\'re at ' + esc(STATIONS[f][2]) + ' · ' + Math.abs(t - f) + (Math.abs(t - f) === 1 ? ' stop' : ' stops') + ' to ' + esc(STATIONS[t][2]) + '</span>'
-        + (manualHere() && !realAt() ? '<button type="button" class="lnk" data-act="nothere">Not here</button>' : '');
-    else if (mode === 'way') html = '<span>About ' + Math.max(1, Math.round(wms / 60000)) + ' min to ' + esc(STATIONS[f][2]) + '</span>'
-        + '<a href="' + mapsLink(null, null, stLat(f), stLon(f)) + '" target="_blank" rel="noopener">Directions</a>' + hereBtn;
-    else {
-      html = '<span>' + (state.walkSource === 'location' ? 'Walk about ' + state.walk + ' min to ' : state.walk + ' min walk to ') + esc(STATIONS[f][2]) + '</span>'
-        + '<a href="' + mapsLink(null, null, stLat(f), stLon(f)) + '" target="_blank" rel="noopener">Directions</a>' + hereBtn;
-      if (state.place) {
-        html += '<span>Then ' + streetMin(state.place.m) + ' min from ' + esc(STATIONS[t][2]) + ' to ' + esc(state.place.name) + '</span>'
-          + '<a href="' + mapsLink(stLat(t), stLon(t), state.place.lat, state.place.lon) + '" target="_blank" rel="noopener">Map</a>';
-      }
+    if (state.fetchedAt && !relevantAlerts().length) bits.push('<span class="ok"><i></i>No delays</span>');
+    if (state.locMsg) bits.push('<span class="warn">' + esc(state.locMsg) + '</span>', hereBtn);
+    else if (mode === 'ride') bits.push('<span>On your way to ' + esc(STATIONS[t][2]) + '</span>');
+    else if (mode === 'at') {
+      bits.push('<span>You\'re here</span>', '<span>' + stops + (stops === 1 ? ' stop' : ' stops') + ' to ' + esc(STATIONS[t][2]) + '</span>');
+      if (manualHere() && !realAt()) bits.push('<button type="button" class="lnk" data-act="nothere">Not here</button>');
     }
+    else if (mode === 'way') bits.push('<span>' + Math.max(1, Math.round(wms / 60000)) + ' min to go</span>', dirLink);
+    else {
+      bits.push('<span>' + state.walk + ' min walk</span>', freshFix() ? dirLink : hereBtn);
+      if (state.place) bits.push('<span>then ' + streetMin(state.place.m) + ' min to ' + esc(state.place.name) + '</span>',
+        '<a href="' + mapsLink(stLat(t), stLon(t), state.place.lat, state.place.lon) + '" target="_blank" rel="noopener">Map</a>');
+    }
+    var html = bits.join('<span class="dot" aria-hidden="true">·</span>');
     if (html !== getThereHtml) { $('getThere').innerHTML = html; getThereHtml = html; }   // only when it changes, so taps land
   }
   var flashTimer = 0;
@@ -1413,10 +1454,23 @@ button.lnk{border:0;background:none;padding:0;margin:0;color:var(--accent);font:
     }, { enableHighAccuracy: true, timeout: 12000, maximumAge: 10000 });
   }
   $('locBtn').addEventListener('click', function () { state.fromSource = 'auto'; startWatching(); useMyLocation(true); });
-  Array.prototype.forEach.call(document.querySelectorAll('#planRow .pchip[data-plan]'), function (c) {
-    c.addEventListener('click', function () { setPlan(c.getAttribute('data-plan')); });
+  function whenMenu(open) {
+    var menu = $('whenMenu');
+    if (open === !menu.hidden) return;
+    $('whenBtn').setAttribute('aria-expanded', open ? 'true' : 'false');
+    menu.hidden = !open;
+    if (open) anim(menu, [{ opacity: 0, transform: 'translateY(-6px) scale(.96)' }, { opacity: 1, transform: 'none' }], { duration: 180, easing: EASE });
+  }
+  $('whenBtn').addEventListener('click', function () { whenMenu($('whenMenu').hidden); });
+  Array.prototype.forEach.call(document.querySelectorAll('#whenMenu [data-plan]'), function (c) {
+    c.addEventListener('click', function () { whenMenu(false); setPlan(c.getAttribute('data-plan')); });
   });
-  $('planTime').addEventListener('change', function () { if (this.value) setPlan(this.value); });
+  $('pickChip').addEventListener('click', function () { try { $('planTime').showPicker(); } catch (e) {} });
+  $('planTime').addEventListener('change', function () { if (this.value) { whenMenu(false); setPlan(this.value); } });
+  document.addEventListener('pointerdown', function (e) {
+    if (!$('whenMenu').hidden && !$('when').contains(e.target)) whenMenu(false);
+  }, true);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') whenMenu(false); });
   $('segTrain').addEventListener('click', function () { setBig('train'); });
   $('segLeave').addEventListener('click', function () { setBig('leave'); });
   $('heroSecond').addEventListener('click', function () {
@@ -1520,8 +1574,7 @@ button.lnk{border:0;background:none;padding:0;margin:0;color:var(--accent);font:
     var dismissed = false;
     try { dismissed = sessionStorage.getItem('mc-lochelp') === 'hide'; } catch (e) {}
     if (kind) {
-      $('locHelpText').textContent = (kind === 'unavailable' ? 'This device can\'t find where it is' : 'Location is off for this page')
-        + ', so it can\'t tell when you\'re at the station. Tap I\'m here when you are, or turn it on.';
+      $('locHelpText').textContent = (kind === 'unavailable' ? 'This device can\'t find where it is.' : 'Location is off for this page.') + ' At the station? Tap I\'m here.';
       $('locSteps').innerHTML = locStepsHTML();
     }
     showEl($('locHelp'), !!kind && !dismissed);
