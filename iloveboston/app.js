@@ -232,20 +232,42 @@
     { id: 'chinatown', name: 'Chinatown Gate', cat: 'see', kind: 'landmark', dist: 0.4, page: 'place/chinatown', q: 'Chinatown Gate Boston', x: 300, y: 372 },
   ];
   const PICON = { florabella: 'flower', brattle: 'book', opera: 'ticket', drphil: 'wrench', paku: 'food', common: 'tree', oldstate: 'columns', genki: 'fish', faneuil: 'bag', chinatown: 'gate' };
-  // Sample recommendations and visitor photos. On the real site they come from people who checked in.
-  const TINTS = { rose: ['#F6E1E4', '#B8232F'], sand: ['#F3E7D6', '#8A5A1E'], mint: ['#E3F1E9', '#1E6A45'], lilac: ['#EFE8F7', '#5B3A8A'], peach: ['#FCEBDD', '#A2461A'], sky: ['#E6EDFA', '#2A4E9B'] };
-  const SOCIAL = {
-    common: { rec: 55, today: 12, photos: [['Frog Pond at sunset', 52, 'sky', 'tree', 'Maya'], ['Fall leaves on the Common', 33, 'peach', 'tree', 'Lucas']] },
-    faneuil: { rec: 47, today: 7, photos: [['Lunch at the food hall', 37, 'sand', 'food', 'Priya'], ['A street performer', 22, 'lilac', 'star', 'Tom']] },
-    paku: { rec: 42, today: 8, photos: [['Katsu plate', 34, 'peach', 'food', 'Kenji'], ['The lunch set', 21, 'sand', 'food', 'Ana'], ['Gyoza to share', 12, 'rose', 'food', 'Sam']] },
-    brattle: { rec: 38, today: 4, photos: [['The outdoor book carts', 25, 'sky', 'book', 'Leo'], ['A first-edition find', 18, 'sand', 'book', 'Sofia']] },
-    florabella: { rec: 31, today: 6, photos: [['Sunflower bouquet', 41, 'sand', 'flower', 'Mei'], ['Mini roses', 19, 'rose', 'flower', 'Arjun'], ['The yellow umbrella', 12, 'peach', 'flower', 'Ji-woo']] },
-    genki: { rec: 27, today: 3, photos: [['Sushi plate', 28, 'rose', 'fish', 'Lucas'], ['Rolls to share', 17, 'mint', 'fish', 'Maya']] },
-    drphil: { rec: 24, today: 2, photos: [['My phone, good as new', 9, 'sky', 'wrench', 'Tom']] },
-    opera: { rec: 22, today: 2, photos: [['The lobby before the show', 30, 'lilac', 'ticket', 'Sofia'], ['Curtain call', 14, 'rose', 'ticket', 'Priya']] },
-    oldstate: { rec: 19, today: 1, photos: [['The balcony', 16, 'sand', 'columns', 'Leo']] },
-    chinatown: { rec: 16, today: 2, photos: [['The gate at night', 20, 'rose', 'gate', 'Mei'], ['Lanterns', 12, 'peach', 'gate', 'Ji-woo']] },
-  };
+  // Sample recommendations. On the real site they come from people who checked in.
+  const SOCIAL = { common: { rec: 55, today: 12 }, faneuil: { rec: 47, today: 7 }, paku: { rec: 42, today: 8 }, brattle: { rec: 38, today: 4 }, florabella: { rec: 31, today: 6 },
+    genki: { rec: 27, today: 3 }, drphil: { rec: 24, today: 2 }, opera: { rec: 22, today: 2 }, oldstate: { rec: 19, today: 1 }, chinatown: { rec: 16, today: 2 } };
+  // Sample visitor photos: real photos from Wikimedia Commons under free licenses (credits at #/credits).
+  // Most aren't from these exact places. [place, caption, likes, who took it, average color, author, license, Commons file]
+  const PHOTOS = [
+    ['common', 'Frog Pond and the skyline', 52, 'Maya', '#466174', 'AlexiusHoratius', 'CC BY-SA 3.0', 'Frog_Pond_Boston_5.JPG'],
+    ['common', 'Fall on the Common', 33, 'Lucas', '#787d66', 'Robert Linsdell', 'CC BY 2.0', 'View_from_Boston_Common_Frog_Pond,_Massachusetts_(493523)_(11061275685).jpg'],
+    ['common', 'Skating on Frog Pond', 21, 'Ana', '#8b919b', 'Daderot', 'CC0', 'Boston_Common_Frog_Pond_-_IMG_8279.JPG'],
+    ['faneuil', 'Faneuil Hall on a blue-sky day', 40, 'Priya', '#7f756b', 'Robert Linsdell', 'CC BY 2.0', 'Faneuil_Hall_Square,_Boston_(493562)_(11061833634).jpg'],
+    ['faneuil', 'Lunch at Quincy Market', 37, 'Tom', '#677793', 'Brian-R-Phillips', 'CC BY-SA 4.0', 'Quincy_Market,_with_Custom_House_Tower,_Boston.jpg'],
+    ['paku', 'Katsu plate', 34, 'Kenji', '#85724e', 'Fred Cherrygarden', 'CC BY-SA 4.0', 'Tonkatsu_at_Miyoshiya.jpg'],
+    ['paku', 'Katsu curry', 21, 'Ana', '#79685b', 'Hykw-a4', 'CC BY-SA 3.0', 'Katsukare-.jpg'],
+    ['paku', 'Gyoza to share', 12, 'Sam', '#946b3b', 'Enming Yan', 'CC BY-SA 4.0', 'Gyoza_no_Antei_-_3.jpg'],
+    ['brattle', 'The outdoor book carts', 25, 'Leo', '#74635f', 'Rob Faulkner', 'CC BY 2.0', 'Alleyway_Bookstore_(13190847904)_(2).jpg'],
+    ['brattle', 'The yellow front on West St', 18, 'Sofia', '#645c57', 'Sharon Mollerus', 'CC BY 2.0', 'Brattle_Book_Shop.jpg'],
+    ['florabella', 'Sunflower bouquet', 41, 'Mei', '#3d4026', '4028mdk09', 'CC BY-SA 3.0', 'Altarschmuck_Sonnenblumen_und_Dahlien.JPG'],
+    ['florabella', 'Pink roses', 19, 'Arjun', '#645458', 'Caroline Attwood', 'CC0', 'Pink_rose_bouquet_(Unsplash).jpg'],
+    ['florabella', 'Fresh at the stand', 12, 'Ji-woo', '#7f5f5d', 'PattayaPatrol', 'CC BY-SA 4.0', 'DFC_4186_Bright_purple_orchids_and_fresh_white_blossoms_arranged_at_a_bustling_market_stall_ready_for_sale.jpg'],
+    ['genki', 'Sushi rolls', 28, 'Lucas', '#8c7a45', 'Loozrboy', 'CC BY-SA 2.0', 'Golden_Maki_Rainbow_Roll_sushi.jpg'],
+    ['genki', 'Torched nigiri', 17, 'Maya', '#8b6c50', 'ウィ貴公子', 'CC BY-SA 4.0', '202407171813_IMG_7121.jpg'],
+    ['drphil', 'The repair bench', 9, 'Tom', '#605a53', 'Tech. Sgt. Christina Styer, US Air Force', 'Public domain', 'Volunteering_to_fix_what_we_break_130131-F-ME639-082.jpg'],
+    ['drphil', 'Before the fix', 7, 'Sam', '#3c3d3f', 'Ashwin Kumar', 'CC BY-SA 2.0', 'Samsung_Galaxy_S2_shattered_screen.jpg'],
+    ['opera', 'Inside before the show', 30, 'Sofia', '#4d3833', 'Sdkb', 'CC BY-SA 4.0', 'B.F._Keith_Memorial_Theater,_Boston_Opera_House_panorama_(front).jpg'],
+    ['opera', 'The lobby ceiling', 14, 'Priya', '#755c44', 'Phoebe', 'CC BY-SA 4.0', 'Boston_Opera_House_interior_1_2024_02.jpg'],
+    ['oldstate', 'The Old State House at sunset', 26, 'Leo', '#65503b', 'Rizka', 'CC BY-SA 3.0', 'Old_State_House,_Boston,_Massachusetts.JPG'],
+    ['oldstate', 'The golden lion', 11, 'Kenji', '#927e6d', 'Farragutful', 'CC BY-SA 4.0', '2024_Old_State_House_Lion_-_Boston.jpg'],
+    ['chinatown', 'The gate on Beach St', 20, 'Mei', '#616f77', '4300streetcar', 'CC BY 4.0', 'Chinatown_Gate_Boston_July_2025.jpg'],
+    ['chinatown', 'The gate at night', 16, 'Ji-woo', '#584e45', 'FASTILY', 'CC BY-SA 4.0', 'Chinatown_gate,_Boston_1_2019-12-18.jpg'],
+  ];
+  const PH = {};
+  PHOTOS.forEach(([place, cap, likes, by, color, artist, lic, file]) => {
+    const list = PH[place] || (PH[place] = []);
+    const key = place + '-' + list.length;
+    list.push({ pid: key, place, cap, base: likes, by, color, src: 'p/' + key + '.webp', thumb: 'p/' + key + '-t.webp', artist, lic, file });
+  });
   const CATS = ['eat', 'shop', 'see', 'services'];
   const EVENTS = [
     { id: 'market', day: 'today', now: true, until: '7 pm', name: 'Holiday market stalls', where: 'Summer St plaza', dist: 0.1, price: 'Free', q: 'Downtown Crossing Boston', x: 266, y: 314 },
@@ -266,6 +288,13 @@
     { id: 'candles', name: 'Handmade candles', short: 'Candles', what: 'Holiday market stall', till: '7 pm', dist: 0.2, tint: '#EFE8F7', ink: '#5B3A8A', icon: 'candle', x: 150, y: 214, slides: ['Photo', 'Video', 'Photo'] },
     { id: 'vintage', name: 'Vintage rack', short: 'Vintage clothes', what: 'Secondhand clothes', till: '5 pm', dist: 0.2, tint: '#E6EDFA', ink: '#2A4E9B', icon: 'vintage', x: 282, y: 306, slides: ['Photo', 'Photo', 'Video'] },
   ];
+  // Photos for the Live now stands (Wikimedia Commons, credited at #/credits; Florabella reuses its sunflowers)
+  const VPHOTOS = {
+    dumpling: ['Dumpling cart', '#897d26', 'PattayaPatrol', 'CC BY-SA 4.0', 'DFC_6168_Steaming_skewers_of_golden_pork_shumai_ready_to_bite_into_at_a_street_food_stall_in_Klet_Kaeo_Sattahip.jpg'],
+    candles: ['Handmade candles', '#605c58', 'Mx. Granger', 'CC0', 'Candles_on_display_at_Diptyque.jpg'],
+    vintage: ['Vintage rack', '#463e36', 'PattayaPatrol', 'CC BY-SA 4.0', 'DZ3_0654_A_bustling_night_market_stall_in_Sattahip_Thailand_where_shoppers_browse_racks_of_clothes_under_warm_lamps.jpg'],
+  };
+  const vPhoto = (v) => (VPHOTOS[v.id] ? { src: 'p/v-' + v.id + '.webp', thumb: 'p/v-' + v.id + '-t.webp', color: VPHOTOS[v.id][1] } : PH[v.id][0]);
   const LATER = [
     { name: 'Taco truck', what: 'Street food · Summer St', opens: '5 pm' },
     { name: 'Night market jewelry', what: 'Handmade jewelry · Winter St', opens: '6 pm' },
@@ -323,9 +352,9 @@
   }
   // Four ways to show the Nearby list. Picked in Demo; the phone remembers it.
   const STYLES = [
-    { k: 'picks', name: 'Top picks', icon: 'thumb', desc: 'Ranked by recommendations, with “40+ recommend” and “5+ today” badges' },
-    { k: 'photos', name: 'Photos', icon: 'photo', desc: 'A grid of the most-liked photos people took of what they got' },
-    { k: 'best', name: 'Best of', icon: 'medal', desc: 'The top 3 in each category, with gold, silver and bronze' },
+    { k: 'picks', name: 'Top picks', icon: 'thumb', desc: 'Big photo cards, ranked by how many people recommend each place' },
+    { k: 'photos', name: 'Photos', icon: 'photo', desc: 'Every photo people took of what they got, most-liked first' },
+    { k: 'best', name: 'Best of', icon: 'medal', desc: 'A row of photos per category, with gold, silver and bronze' },
     { k: 'walk', name: 'Walk line', icon: 'steps', desc: 'The old one: places in order of how close they are' },
   ];
   function loadStyle() {
@@ -353,7 +382,7 @@
     lang: detectLang(), langOpen: false,
     pTab: 'spots', badge: 'downtown', tracking: false,
     slide: 0, liveOpen: -1, liveSlide: 0,
-    f: loadFlags(), demoOpen: false, demoTab: 'looks', view: -1, theme: loadTheme(), style: loadStyle(),
+    f: loadFlags(), demoOpen: false, demoTab: 'looks', view: -1, theme: loadTheme(), style: loadStyle(), z: 1,
     // points and the visitor's own check-ins, recommendations, likes and photos (this visit only)
     points: 135, checked: {}, recd: {}, liked: {}, mine: {}, sv: 0, howOpen: false, firstCheck: false, likedOnce: false,
   };
@@ -387,15 +416,13 @@
   const hotLabel = (n) => (n >= 10 ? '10+' : n >= 5 ? '5+' : '');
   const placeById = (id) => PLACES.find((x) => x.id === id);
   function photosOf(id) {
-    const list = SOCIAL[id].photos.map(([cap, likes, tint, icon, by], i) => {
-      const pid = id + '-' + i;
-      return { pid, place: id, cap, likes: likes + (S.liked[pid] ? 1 : 0), tint: TINTS[tint][0], ink: TINTS[tint][1], icon, by };
-    });
-    if (S.mine[id]) list.push({ pid: id + '-me', place: id, cap: 'Your photo', likes: 0, tint: TINTS.sky[0], ink: TINTS.sky[1], icon: 'camera', by: 'you', mine: true, url: S.mine[id] });
+    const list = PH[id].map((ph) => Object.assign({}, ph, { likes: ph.base + (S.liked[ph.pid] ? 1 : 0) }));
+    if (S.mine[id]) list.push({ pid: id + '-me', place: id, cap: 'Your photo', likes: 0, by: 'you', color: '#6B7A90', mine: true, url: S.mine[id] });
     return list.sort((a, b) => b.likes - a.likes);
   }
   const topPhoto = (id) => photosOf(id)[0];
-  const phMedia = (ph, size, sw) => (ph.url ? `<img src="${ph.url}" alt="">` : I.s(P[ph.icon], size, sw || 1.4));
+  // the photo itself; small = the 180px version for pins and thumbnails. Lazy unless it's near the top.
+  const phImg = (ph, small, lazy) => `<img src="${ph.url || (small ? ph.thumb : ph.src)}" alt=""${lazy === false ? '' : ' loading="lazy"'} decoding="async" draggable="false">`;
   function socHTML(id, exact) {
     const t = T();
     const r = recOf(id), d = todayOf(id);
@@ -497,7 +524,7 @@
      ================================================================= */
   let hMounted = false;
   let G = null;                 // geometry
-  let cur = { tx: 0, ty: 0 };   // live translate while dragging
+  let cur = { tx: 0, ty: 0, k: 1 };   // live translate and zoom while dragging or pinching
   let md = null, sd = null, moved = false, dragTop = null, justDragged = false;
   let sig = { pins: '', body: '', prev: '' };
   const prevSig = () => [S.sel, S.lang, S.sv, JSON.stringify(S.f)].join('|');
@@ -522,11 +549,56 @@
     if (dragTop != null) return dragTop;
     return topFor(S.sheet);
   }
-  function bounds(top) {
-    return { txMin: G.W - WORLD.x1, txMax: -WORLD.x0, tyMin: Math.min(0, top - WORLD.y1), tyMax: -WORLD.y0 };
+  // How far the map can move: its edges never come inside the screen. k is the zoom.
+  function bounds(top, k) {
+    const z = k || S.z;
+    const b = { txMin: G.W - WORLD.x1 * z, txMax: -WORLD.x0 * z, tyMin: Math.min(0, top - WORLD.y1 * z), tyMax: -WORLD.y0 * z };
+    if (b.txMin > b.txMax) b.txMin = b.txMax = (b.txMin + b.txMax) / 2;
+    if (b.tyMin > b.tyMax) b.tyMin = b.tyMax;
+    return b;
+  }
+  const ZMAX = 3;
+  const zMin = () => Math.max(0.75, (G.H + 10) / (WORLD.y1 - WORLD.y0));
+  function fit(tx, ty, k) {
+    const b = bounds(sheetTop(), k);
+    return { tx: clamp(tx, b.txMin, b.txMax), ty: clamp(ty, b.tyMin, b.tyMax), k };
+  }
+  // Markers keep their size while the map zooms (they scale by 1/k inside the zoomed world).
+  function setWorld(c) {
+    const w = $('#world');
+    w.style.transform = `translate(${c.tx}px,${c.ty}px) scale(${c.k})`;
+    w.style.setProperty('--ik', (1 / c.k).toFixed(4));
+  }
+  function commitView() {
+    S.tx = cur.tx; S.ty = cur.ty; S.z = cur.k;
+    $('#map').classList.remove('grabbing');
+    $('#world').classList.remove('nodrag');
+    updH();
+  }
+  // Glide to a view. With a focus point, the spot under it stays put while zooming.
+  let anim = 0;
+  function animateTo(t1, focus, done) {
+    cancelAnimationFrame(anim);
+    const t0 = Object.assign({}, cur), start = performance.now(), ms = 320;
+    const fw = focus ? { x: (focus.x - t0.tx) / t0.k, y: (focus.y - t0.ty) / t0.k } : null;
+    $('#world').classList.add('nodrag');
+    const step = (now) => {
+      const p = Math.min(1, (now - start) / ms), e = 1 - Math.pow(1 - p, 3);
+      const k = Math.exp(Math.log(t0.k) + (Math.log(t1.k) - Math.log(t0.k)) * e);
+      cur = fw ? fit(focus.x - fw.x * k, focus.y - fw.y * k, k) : { tx: t0.tx + (t1.tx - t0.tx) * e, ty: t0.ty + (t1.ty - t0.ty) * e, k };
+      setWorld(cur);
+      if (p < 1) anim = requestAnimationFrame(step);
+      else if (done) done(); else commitView();
+    };
+    anim = requestAnimationFrame(step);
+  }
+  // double tap: zoom in where you tapped (at the closest zoom, back out)
+  function zoomBy(x, y) {
+    const k = cur.k >= ZMAX - 0.05 ? 1 : Math.min(ZMAX, cur.k * 2);
+    animateTo({ k }, { x, y });
   }
   function curTrans(top) {
-    const b = bounds(top);
+    const b = bounds(top, S.z);
     const tx = S.tx == null ? G.baseX : S.tx;
     const ty = S.ty == null ? G.baseY : S.ty;
     return { tx: clamp(tx, b.txMin, b.txMax), ty: clamp(ty, b.tyMin, b.tyMax) };
@@ -537,7 +609,7 @@
     app.innerHTML = `
       <div class="scr h">
         <div class="map" id="map">
-          <div class="world" id="world">${$('#world-svg').innerHTML}<div id="spotsL"></div><div id="stationsL"></div><div id="pinsL"></div></div>
+          <div class="world" id="world">${$('#world-svg').innerHTML}<span class="me" style="left:216px;top:256px" aria-hidden="true"></span><div id="spotsL"></div><div id="stationsL"></div><div id="pinsL"></div></div>
         </div>
         <div class="topbar">
           <div class="pillw logo">I ${I.heart(18, 17, '#B8232F')} BOSTON</div>
@@ -589,8 +661,8 @@
     sheet.style.top = top + 'px';
     // map
     const tr = curTrans(top);
-    cur = { tx: tr.tx, ty: tr.ty };
-    $('#world').style.transform = `translate(${tr.tx}px,${tr.ty}px)`;
+    cur = { tx: tr.tx, ty: tr.ty, k: S.z };
+    setWorld(cur);
     // map layers that features turn on and off
     const fs = JSON.stringify(S.f);
     if (sig.layers !== fs) {
@@ -636,7 +708,7 @@
     }
     // chrome
     const rc = $('#recenter');
-    const panned = (S.tx != null && S.tx !== G.baseX) || (S.ty != null && S.ty !== G.baseY);
+    const panned = (S.tx != null && S.tx !== G.baseX) || (S.ty != null && S.ty !== G.baseY) || S.z !== 1;
     rc.hidden = !(panned && (S.sel || S.sheet !== 'full') && dragTop == null);
     rc.style.top = (top - 58) + 'px';
     $('#mapBtn').hidden = !(S.sheet === 'full' && !S.sel && dragTop == null);
@@ -710,8 +782,8 @@
       let items = [];
       if (m.st === 'walk') items = m.list.map((p, i) => ({ p, k: 'num', n: i + 1 }));
       else if (m.st === 'picks') { items = m.list.map((p, i) => ({ p, k: 'num', n: i + 1 })); if (m.spot) items.unshift({ p: m.spot, k: 'spot' }); }
-      else if (m.st === 'best') m.groups.forEach((g) => g.shown.forEach((p, i) => items.push({ p, k: 'medal', n: i + 1 })));
-      else items = m.cards.map((c) => ({ p: c.p, k: 'photo', ph: c.ph }));
+      else if (m.st === 'best') m.groups.forEach((g) => g.all.forEach((p, i) => items.push({ p, k: 'medal', n: i + 1 })));
+      else items = m.pins.map((c) => ({ p: c.p, k: 'photo', ph: c.ph }));
       items.forEach((it) => { it.on = S.sel === 'place:' + it.p.id; });
       items.sort((a, b) => (a.on ? 1 : 0) - (b.on ? 1 : 0));
       return items.map(placePin).join('');
@@ -748,42 +820,65 @@
     }
     if (st === 'best') {
       const cats = S.cat === 'all' ? CATS : [S.cat];
-      return { st, groups: cats.map((c) => { const all = ranked.filter((p) => p.cat === c); return { c, all, shown: S.cat === 'all' ? all.slice(0, 3) : all }; }).filter((g) => g.all.length) };
+      return { st, groups: cats.map((c) => ({ c, all: ranked.filter((p) => p.cat === c) })).filter((g) => g.all.length) };
     }
-    return { st, cards: ranked.map((p) => ({ p, ph: topPhoto(p.id) })).sort((a, b) => b.ph.likes - a.ph.likes) };
+    // Photos: every visitor photo, most-liked first; the map gets one photo pin per place
+    const photos = [];
+    ranked.forEach((p) => photosOf(p.id).forEach((ph) => { if (!ph.mine) photos.push({ p, ph }); }));
+    photos.sort((a, b) => b.ph.likes - a.ph.likes);
+    return { st, photos, pins: ranked.map((p) => ({ p, ph: topPhoto(p.id) })) };
   }
+  const MEDAL = ['Gold', 'Silver', 'Bronze'];
   function placePin(it) {
     const p = it.p, on = it.on;
     const key = `data-act="pin" data-k="place:${p.id}"`;
     if (it.k === 'photo') {
-      const s = on ? 46 : 36;
-      return `<button type="button" class="phpin tinted${on ? ' on' : ''}" ${key} aria-label="${esc(it.ph.cap)}, ${esc(p.name)}" style="left:${p.x - s / 2}px;top:${p.y - s / 2}px;width:${s}px;height:${s}px;--tint:${it.ph.tint};--tink:${it.ph.ink}">${phMedia(it.ph, on ? 22 : 18, 1.8)}</button>`;
+      const s = on ? 46 : 38;
+      return `<button type="button" class="phpin${on ? ' on' : ''}" ${key} aria-label="${esc(p.name)}" style="left:${p.x - s / 2}px;top:${p.y - s / 2}px;width:${s}px;height:${s}px;background:${it.ph.color}">${phImg(it.ph, true)}</button>`;
     }
     const size = on ? 36 : 30;
     const pos = `left:${p.x - size / 2}px;top:${p.y - size / 2}px;width:${size}px;height:${size}px`;
     if (it.k === 'spot') return `<button type="button" class="pin spin${on ? ' on' : ''}" ${key} aria-label="Sponsored: ${esc(p.name)}" style="${pos}">${I.s(P[PICON[p.id]], on ? 18 : 15, 2.2)}</button>`;
-    if (it.k === 'medal') return `<button type="button" class="pin mpin m${Math.min(it.n, 4)}${on ? ' on' : ''}" ${key} aria-label="${['Gold', 'Silver', 'Bronze'][it.n - 1] || 'No. ' + it.n}: ${esc(p.name)}" style="${pos}">${it.n}</button>`;
+    if (it.k === 'medal') return `<button type="button" class="pin mpin m${Math.min(it.n, 4)}${on ? ' on' : ''}" ${key} aria-label="${MEDAL[it.n - 1] || 'No. ' + it.n}: ${esc(p.name)}" style="${pos}">${it.n}</button>`;
     const col = S.f.colors ? `;background:${CAT_COLOR[p.cat]}` : '';
     return `<button type="button" class="pin${S.f.colors ? ' cpin' : ''}${on ? ' on' : ''}" ${key} aria-label="${it.n}. ${esc(p.name)}" style="${pos}${col}">${it.n}</button>`;
   }
   const sponTag = (p) => (S.f.featured && p.sponsored ? `<span class="sp">${esc(T().sponsored)}</span>` : '');
-  // a ranked row: the place's most-liked photo with its rank, the name, and the badges
-  function rkInner(p, n) {
+  const metaLine = (p) => esc(T()[p.kind]) + ' · ' + esc(T().mins(mins(p.dist)));
+  // Top picks: a big card per place, its most-liked photo with the rank, name and badges on top
+  function pkCard(p, n) {
     const t = T();
     const ph = topPhoto(p.id);
+    const hot = hotLabel(todayOf(p.id));
     const col = S.f.colors ? ` style="background:${CAT_COLOR[p.cat]}"` : '';
-    return `<span class="rk-ph tinted" style="--tint:${ph.tint};--tink:${ph.ink}">${phMedia(ph, 28, 1.5)}${n ? `<span class="rk-n"${col}>${n}</span>` : ''}</span>
-      <span class="rk-txt"><span class="nm"><b>${esc(p.name)}</b>${sponTag(p)}</span><span class="sub">${esc(t[p.kind])} · ${esc(t.mins(mins(p.dist)))}</span>${socHTML(p.id)}</span>`;
+    return `<button type="button" class="pk" data-act="sel" data-k="place:${p.id}">
+        <span class="pk-img" style="background:${ph.color}">${phImg(ph, false, n > 2)}</span><span class="pk-shade"></span>
+        <span class="pk-top"><span class="pk-n"${col}>${n}</span>${S.f.featured && p.sponsored ? `<span class="sp onimg">${esc(t.sponsored)}</span>` : ''}${hot ? `<span class="pk-hot">${I.s(P.flame, 13, 2.4)}${esc(t.todayN(hot))}</span>` : ''}</span>
+        <span class="pk-bot"><span class="pk-txt"><b>${esc(p.name)}</b><span>${metaLine(p)}</span></span><span class="pk-rec" aria-label="${esc(t.rec(bucket(recOf(p.id))))}">${I.s(P.thumb, 14, 2.4)}${esc(bucket(recOf(p.id)))}</span></span>
+      </button>`;
   }
-  function boRow(p, n) {
-    const t = T();
-    return `<button type="button" class="bo-row" data-act="sel" data-k="place:${p.id}"><span class="medal-s m${Math.min(n, 4)}" aria-label="${['Gold', 'Silver', 'Bronze'][n - 1] || 'No. ' + n}">${n}</span>
-      <span class="rk-txt"><span class="nm"><b>${esc(p.name)}</b>${sponTag(p)}</span><span class="sub">${esc(t[p.kind])} · ${esc(t.mins(mins(p.dist)))}</span>${socHTML(p.id)}</span></button>`;
+  // the paid Spotlight: smaller, so the first real pick still shows at half height
+  function spotCard(p) {
+    const t = T(), ph = topPhoto(p.id);
+    const hot = hotLabel(todayOf(p.id));
+    return `<button type="button" class="spc" data-act="sel" data-k="place:${p.id}">
+        <span class="spc-img" style="background:${ph.color}">${phImg(ph, false, false)}</span>
+        <span class="spc-txt"><span class="sp">${esc(t.sponsored)}</span><b>${esc(p.name)}</b><span class="sub">${metaLine(p)}</span>
+          <span class="soc"><span class="rec">${I.s(P.thumb, 14, 2.2)}${esc(bucket(recOf(p.id)))}</span>${hot ? `<span class="hot">${I.s(P.flame, 12, 2.4)}${esc(t.todayN(hot))}</span>` : ''}</span></span>
+      </button>`;
+  }
+  function boCard(p, n) {
+    const t = T(), ph = topPhoto(p.id);
+    return `<button type="button" class="boc" data-act="sel" data-k="place:${p.id}">
+        <span class="boc-img" style="background:${ph.color}">${phImg(ph)}<span class="medal-s m${Math.min(n, 4)}" aria-label="${MEDAL[n - 1] || 'No. ' + n}">${n}</span></span>
+        <span class="boc-name">${esc(p.name)}</span>${sponTag(p)}<span class="sub">${metaLine(p)}</span>
+        <span class="rec">${I.s(P.thumb, 13, 2.2)}${esc(t.rec(bucket(recOf(p.id))))}</span>
+      </button>`;
   }
   function phCard(c, top) {
     const t = T(), p = c.p, ph = c.ph;
     return `<div class="phcard"><button type="button" class="ph-open" data-act="sel" data-k="place:${p.id}" aria-label="${esc(ph.cap)}, at ${esc(p.name)}">
-        <span class="ph-img tinted" style="--tint:${ph.tint};--tink:${ph.ink}">${phMedia(ph, 46, 1.3)}${top ? `<span class="ph-top">${esc(t.mostLiked)}</span>` : ''}</span>
+        <span class="ph-img" style="background:${ph.color}">${phImg(ph, false, !top)}${top ? `<span class="ph-top">${esc(t.mostLiked)}</span>` : ''}</span>
         <span class="ph-cap">${esc(ph.cap)}</span><span class="ph-sub"><span>${esc(p.name)} · ${esc(t.mins(mins(p.dist)))}</span>${sponTag(p)}</span></button>
       ${likeBtn(ph)}</div>`;
   }
@@ -839,14 +934,14 @@
     if (m.st === 'walk') {
       body = walkHTML(m.list); note = t.allWithin;
     } else if (m.st === 'picks') {
-      body = (m.spot ? `<button type="button" class="spc" data-act="sel" data-k="place:${m.spot.id}">${rkInner(m.spot, 0)}</button>` : '')
-        + (m.list.length ? `<div class="sec-h"><h3>${esc(t.topPicks)}</h3></div><div class="rklist">${m.list.map((p, i) => `<button type="button" class="rk" data-act="sel" data-k="place:${p.id}">${rkInner(p, i + 1)}</button>`).join('')}</div>` : '');
+      body = (m.spot ? spotCard(m.spot) : '')
+        + (m.list.length ? `<div class="sec-h"><h3>${esc(t.topPicks)}</h3></div><div class="pklist">${m.list.map((p, i) => pkCard(p, i + 1)).join('')}</div>` : '');
     } else if (m.st === 'best') {
+      const one = m.groups.length === 1;
       body = m.groups.map((g) => `<section class="bo"><div class="bo-h">${S.f.colors ? `<i class="cdot" style="background:${CAT_COLOR[g.c]}"></i>` : ''}<h3>${esc(t['best' + g.c[0].toUpperCase() + g.c.slice(1)])}</h3></div>
-          ${g.shown.map((p, i) => boRow(p, i + 1)).join('')}
-          ${g.shown.length < g.all.length ? `<button type="button" class="bo-more" data-act="cat" data-v="${g.c}">${esc(t.seeAll(g.all.length))}${I.s(P.right, 15, 2.4)}</button>` : ''}</section>`).join('');
+          <div class="${one ? 'bo-grid' : 'bo-scroll'}">${g.all.map((p, i) => boCard(p, i + 1)).join('')}</div></section>`).join('');
     } else {
-      body = `<div class="sec-h"><h3>${esc(t.photosHead)}</h3></div><div class="phgrid">${m.cards.map((c, i) => phCard(c, i === 0)).join('')}</div>`;
+      body = `<div class="sec-h"><h3>${esc(t.photosHead)}</h3></div><div class="phgrid">${m.photos.map((c, i) => phCard(c, i === 0)).join('')}</div>`;
       note = t.photosNote;
     }
     return `
@@ -855,7 +950,7 @@
       <p class="note">${esc(note)}</p>
       ${tSecHTML()}
       <a class="cta-row" href="#/business"><span>${esc(t.biz)}</span>${I.s(P.right)}</a>
-      <p class="note small pb">${esc(t.sample)}. Tap one to see it on the map.</p>`;
+      <p class="note small pb">${esc(t.sample)}. Tap one to see it on the map. <a href="#/credits">Photo credits</a></p>`;
   }
 
   /* ----- What's on: the time line ----- */
@@ -889,7 +984,7 @@
     const t = T();
     const vendors = VENDORS.slice().sort((a, b) => a.dist - b.dist);
     const tiles = vendors.map((v) => `<button type="button" class="tile" data-act="sel" data-k="live:${v.id}" aria-label="${esc(v.name)}">
-        <span class="tile-media tinted" style="--tint:${v.tint};--tink:${v.ink}">${I.s(P[v.icon], 48, 1.4)}<span class="livebadge">LIVE · ${esc(t.till(v.till))}</span>${v.video ? `<span class="playmini">${I.s(P.play, 12)}</span>` : ''}</span>
+        <span class="tile-media" style="background:${vPhoto(v).color}">${phImg(vPhoto(v))}<span class="livebadge">LIVE · ${esc(t.till(v.till))}</span>${v.video ? `<span class="playmini">${I.s(P.play, 12)}</span>` : ''}</span>
         <span class="tile-name">${esc(v.name)}</span><span class="tile-sub">${esc(v.short)} · ${esc(t.mins(mins(v.dist)))}</span>
       </button>`).join('');
     const later = LATER.map((l, i) => `<div class="later"${i ? '' : ' style="border-top:0"'}>${I.s(P.clock)}<span class="lt"><b>${esc(l.name)}</b><span>${esc(l.what)}</span></span><span class="lo">${esc(t.opens(l.opens))}</span></div>`).join('');
@@ -915,7 +1010,7 @@
       line1 = t[p.kind] + ' · ' + t.walk(mins(p.dist));
       dot = S.f.colors ? `<i class="cdot" style="background:${CAT_COLOR[p.cat]}"></i>` : '';
       soc = socHTML(p.id, true);
-      thumb = `<span class="thumb tinted" style="--tint:${ph.tint};--tink:${ph.ink}">${phMedia(ph, 32, 1.5)}</span>`;
+      thumb = `<span class="thumb" style="background:${ph.color}">${phImg(ph, true, false)}</span>`;
       primary = `<a class="btn primary" href="${maps(p.q)}" target="_blank" rel="noopener">${I.s(P.pin)}<span>${esc(t.directions)}</span></a>`;
       secondary = `<a class="btn" href="#/${p.page}">${esc(t.seePage)}</a>`;
       earnRow = earnHTML(p.id);
@@ -934,7 +1029,7 @@
       title = v.name;
       chip = `<span class="livebadge inline">LIVE · ${esc(t.till(v.till))}</span>`;
       line1 = v.what + ' · ' + t.walk(mins(v.dist));
-      thumb = `<span class="thumb tinted" style="--tint:${v.tint};--tink:${v.ink}">${I.s(P[v.icon], 34, 1.5)}</span>`;
+      thumb = `<span class="thumb" style="background:${vPhoto(v).color}">${phImg(vPhoto(v), true, false)}</span>`;
       primary = `<a class="btn primary" href="${maps('Downtown Crossing Boston')}" target="_blank" rel="noopener">${I.s(P.pin)}<span>${esc(t.directions)}</span></a>`;
       secondary = `<a class="btn" href="#/live/${v.id}">${esc(t.photos)}</a>`;
     }
@@ -961,12 +1056,42 @@
   let raf = 0;
   function bindH() {
     const map = $('#map'), world = $('#world'), head = $('#shHead'), sheet = $('#sheet');
+    const ptrs = new Map();
+    let pinch = null, lastTap = null, lastType = 'mouse', wheelT = 0;
+    const local = (x, y) => { const r = map.getBoundingClientRect(); return { x: x - r.left, y: y - r.top }; };
+    const applyCur = () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; setWorld(cur); }); };
+    const startPinch = () => {
+      const [a, b] = [...ptrs.values()];
+      const m = local((a.x + b.x) / 2, (a.y + b.y) / 2);
+      pinch = { d0: Math.max(12, Math.hypot(a.x - b.x, a.y - b.y)), k0: cur.k, wx: (m.x - cur.tx) / cur.k, wy: (m.y - cur.ty) / cur.k };
+      md = null; moved = true;
+      map.classList.add('grabbing'); world.classList.add('nodrag');
+    };
     map.addEventListener('pointerdown', (e) => {
       if (e.pointerType === 'mouse' && e.button !== 0) return;
+      cancelAnimationFrame(anim);
+      lastType = e.pointerType;
+      ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (ptrs.size >= 2) {
+        ptrs.forEach((v, id) => { try { map.setPointerCapture(id); } catch (err) { /* ignore */ } });
+        startPinch();
+        return;
+      }
       moved = false;
       md = { x: e.clientX, y: e.clientY, tx: cur.tx, ty: cur.ty, id: e.pointerId, on: false };
     });
     map.addEventListener('pointermove', (e) => {
+      if (!ptrs.has(e.pointerId)) return;
+      ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (pinch) {
+        if (ptrs.size < 2) return;
+        const [a, b] = [...ptrs.values()];
+        const m = local((a.x + b.x) / 2, (a.y + b.y) / 2);
+        const k = clamp(pinch.k0 * Math.hypot(a.x - b.x, a.y - b.y) / pinch.d0, zMin(), ZMAX);
+        cur = fit(m.x - pinch.wx * k, m.y - pinch.wy * k, k);
+        applyCur();
+        return;
+      }
       if (!md || e.pointerId !== md.id) return;
       const dx = e.clientX - md.x, dy = e.clientY - md.y;
       if (!md.on) {
@@ -976,24 +1101,59 @@
         map.classList.add('grabbing');
         world.classList.add('nodrag');
       }
-      const b = bounds(sheetTop());
-      cur.tx = clamp(md.tx + dx, b.txMin, b.txMax);
-      cur.ty = clamp(md.ty + dy, b.tyMin, b.tyMax);
-      if (!raf) raf = requestAnimationFrame(() => { raf = 0; world.style.transform = `translate(${cur.tx}px,${cur.ty}px)`; });
+      cur = fit(md.tx + dx, md.ty + dy, cur.k);
+      applyCur();
     });
-    const endPan = (e) => {
-      if (!md || (e && e.pointerId !== md.id)) return;
+    const endPtr = (e) => {
+      if (!ptrs.has(e.pointerId)) return;
+      ptrs.delete(e.pointerId);
+      if (pinch) {
+        if (ptrs.size >= 2) { startPinch(); return; }
+        pinch = null;
+        if (ptrs.size === 1) {
+          // keep panning with the finger that's still down
+          const [id, p] = [...ptrs.entries()][0];
+          md = { x: p.x, y: p.y, tx: cur.tx, ty: cur.ty, id, on: true };
+          return;
+        }
+        commitView();
+        return;
+      }
+      if (!md || e.pointerId !== md.id) return;
       const was = md.on;
       md = null;
+      if (was) { commitView(); return; }
       map.classList.remove('grabbing');
-      if (was) {
-        world.classList.remove('nodrag');
-        S.tx = cur.tx; S.ty = cur.ty;
-        updH();
+      if (lastType !== 'mouse' && e.type === 'pointerup' && !e.target.closest('button,a')) {
+        const now = Date.now();
+        if (lastTap && now - lastTap.t < 320 && Math.hypot(e.clientX - lastTap.x, e.clientY - lastTap.y) < 30) {
+          lastTap = null;
+          const p = local(e.clientX, e.clientY);
+          zoomBy(p.x, p.y);
+        } else lastTap = { t: now, x: e.clientX, y: e.clientY };
       }
     };
-    map.addEventListener('pointerup', endPan);
-    map.addEventListener('pointercancel', endPan);
+    map.addEventListener('pointerup', endPtr);
+    map.addEventListener('pointercancel', endPtr);
+    map.addEventListener('dblclick', (e) => {
+      if (lastType !== 'mouse' || e.target.closest('button,a')) return;
+      const p = local(e.clientX, e.clientY);
+      zoomBy(p.x, p.y);
+    });
+    map.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      cancelAnimationFrame(anim);
+      const p = local(e.clientX, e.clientY);
+      const k = clamp(cur.k * Math.exp(-e.deltaY * (e.ctrlKey ? 0.012 : 0.0025)), zMin(), ZMAX);
+      const wx = (p.x - cur.tx) / cur.k, wy = (p.y - cur.ty) / cur.k;
+      world.classList.add('nodrag');
+      cur = fit(p.x - wx * k, p.y - wy * k, k);
+      applyCur();
+      clearTimeout(wheelT);
+      wheelT = setTimeout(commitView, 180);
+    }, { passive: false });
+    // Safari's own pinch would zoom the whole page
+    map.addEventListener('gesturestart', (e) => e.preventDefault());
 
     head.addEventListener('pointerdown', (e) => {
       if (e.pointerType === 'mouse' && e.button !== 0) return;
@@ -1044,11 +1204,11 @@
     $('#sheetPrev').hidden = false; $('#sheetList').hidden = true;
     const top = prevTop();
     const tr = curTrans(top);
-    const sx = item.x + tr.tx, sy = item.y + tr.ty;
+    const sx = item.x * S.z + tr.tx, sy = item.y * S.z + tr.ty;
     if (sx < 30 || sx > G.W - 30 || sy < G.st + 80 || sy > top - 30) {
       const b = bounds(top);
-      S.tx = clamp(Math.round(G.W / 2 - item.x), b.txMin, b.txMax);
-      S.ty = clamp(Math.round(top * 0.55 - item.y), b.tyMin, b.tyMax);
+      S.tx = clamp(Math.round(G.W / 2 - item.x * S.z), b.txMin, b.txMax);
+      S.ty = clamp(Math.round(top * 0.55 - item.y * S.z), b.tyMin, b.tyMax);
     }
     updH();
   }
@@ -1079,7 +1239,7 @@
     const photos = photosOf(id);
     const d = todayOf(id);
     const tiles = photos.map((ph, i) => `<div class="phcard">
-        <span class="ph-img tinted" style="--tint:${ph.tint};--tink:${ph.ink}">${phMedia(ph, 40, 1.3)}${i === 0 && !ph.mine ? `<span class="ph-top">${esc(t.mostLiked)}</span>` : ''}</span>
+        <span class="ph-img" style="background:${ph.color}">${phImg(ph, false, i > 1)}${i === 0 && !ph.mine ? `<span class="ph-top">${esc(t.mostLiked)}</span>` : ''}</span>
         ${likeBtn(ph)}
         <span class="ph-cap">${esc(ph.cap)}</span><span class="ph-sub">${ph.mine ? 'by you, just now' : 'by ' + esc(ph.by)}</span></div>`).join('');
     return `<section class="vis"><div class="rev-h"><h2>From visitors</h2><span class="small muted">People who checked in here</span></div>
@@ -1098,10 +1258,12 @@
   function featuredHTML(f) {
     const t = T();
     const i = Math.min(S.slide, f.slides.length - 1);
-    const [kind, tint] = f.slides[i];
+    const kind = f.slides[i][0];
+    const phs = PH[S.arg] || [];
+    const sp = phs[i % phs.length];
     return `<div class="scr page"><div class="scroll">
-      <div class="hero tinted" style="--tint:${tint};--tink:${f.ink}" data-act="slide-next" aria-label="Next photo">
-        ${kind === 'Video' ? `<span class="playbig">${I.s(P.play, 26)}</span>` : I.s(P[f.icon], 92, 1.2)}
+      <div class="hero photo" style="background:${sp.color}" data-act="slide-next" aria-label="Next photo">
+        <img class="hero-img" src="${sp.src}" alt="${esc(sp.cap)}">${kind === 'Video' ? `<span class="playbig">${I.s(P.play, 26)}</span>` : ''}
         <div class="hero-bar">${back()}<button type="button" class="round" data-act="demo" data-v="Share (demo)" aria-label="Share">${I.s(P.share, 19)}</button></div>
         <span class="hero-label">${kind} · ${i + 1} of ${f.slides.length}</span>
         <div class="hero-dots">${f.slides.map((s, j) => `<button type="button" data-act="slide" data-v="${j}" aria-label="Show ${s[0].toLowerCase()} ${j + 1}" aria-pressed="${j === i}"><span class="hd${j === i ? ' on' : ''}" style="width:${j === i ? 20 : 7}px"></span></button>`).join('')}</div>
@@ -1119,7 +1281,7 @@
         <div class="deal"><span class="deal-ic">${I.s(P.gift, 20)}</span><span><span class="eyebrow light">Deal of the month</span><b>${esc(f.deal)}</b></span></div>
         <section><h2>About</h2><p>${esc(f.about)}</p></section>
         <section><h2>Hours</h2><p>${esc(f.hours)}</p></section>
-        <section><h2>Photos and videos</h2><div class="grid3">${f.tiles.map(([k, c]) => `<span class="gt tinted" style="--tint:${c};--tink:${f.ink}">${k === 'Video' ? `<span class="playmini">${I.s(P.play, 14)}</span>` : I.s(P.photo, 30, 1.5)}</span>`).join('')}</div></section>
+        <section><h2>Photos and videos</h2><div class="grid3">${f.tiles.map(([k], j) => { const ph = phs[(j + 1) % phs.length]; return `<span class="gt" style="background:${ph.color}">${phImg(ph)}${k === 'Video' ? `<span class="playmini">${I.s(P.play, 14)}</span>` : ''}</span>`; }).join('')}</div></section>
         ${visitorsHTML(S.arg, true)}
         <section><h2>What people say</h2>
           <article class="rev"><span class="rec">${I.s(P.thumb, 14, 2.2)}Recommends it</span><span class="small muted">Sample</span><p>[A note from someone who recommends it shows here, in your language]</p></article>
@@ -1132,7 +1294,7 @@
     const t = T();
     const ph = topPhoto(p.id);
     return `<div class="scr page"><div class="scroll">
-      <div class="hero small tinted" style="--tint:${ph.tint};--tink:${ph.ink}">${ph.url ? `<img class="hero-img" src="${ph.url}" alt="">` : I.s(P[ph.icon], 64, 1.3)}
+      <div class="hero small photo" style="background:${ph.color}"><img class="hero-img" src="${ph.url || ph.src}" alt="${esc(ph.cap)}">
         <div class="hero-bar">${back()}</div><span class="hero-label">Most-liked visitor photo · ♥ ${ph.likes} · by ${esc(ph.by)}</span></div>
       <div class="pad">
         <span class="freechip">Free listing</span>
@@ -1154,7 +1316,7 @@
   function liveScreen() {
     const t = T();
     const cards = VENDORS.map((v, i) => `<button type="button" class="vcard" data-act="vopen" data-v="${i}" aria-label="${esc(v.name)}">
-        <span class="vmedia tinted" style="--tint:${v.tint};--tink:${v.ink}">${I.s(P[v.icon], 64, 1.4)}<span class="livebadge">LIVE · ${esc(t.till(v.till))}</span><span class="vlabel">${v.slides[0] === 'Video' ? 'Video preview' : 'Photo'}</span>${v.slides[0] === 'Video' ? `<span class="playmini big">${I.s(P.play, 14)}</span>` : ''}</span>
+        <span class="vmedia" style="background:${vPhoto(v).color}">${phImg(vPhoto(v), false, i > 1)}<span class="livebadge">LIVE · ${esc(t.till(v.till))}</span><span class="vlabel">${v.slides[0] === 'Video' ? 'Video preview' : 'Photo'}</span>${v.slides[0] === 'Video' ? `<span class="playmini big">${I.s(P.play, 14)}</span>` : ''}</span>
         <span class="tile-name">${esc(v.name)}</span><span class="tile-sub">${esc(v.what)} · ${esc(t.mins(mins(v.dist)))}</span>
       </button>`).join('');
     let sheet = '';
@@ -1162,7 +1324,7 @@
       const v = VENDORS[S.liveOpen];
       const k = v.slides[S.liveSlide] || 'Photo';
       sheet = `<div class="vsheet-dim" data-act="vclose"></div><div class="vsheet" role="dialog" aria-label="${esc(v.name)}">
-        <div class="vbig tinted" style="--tint:${v.tint};--tink:${v.ink}">${I.s(P[v.icon], 96, 1.2)}
+        <div class="vbig" style="background:${vPhoto(v).color}"><img class="hero-img" src="${vPhoto(v).src}" alt="">
           <span class="livebadge big">LIVE · here ${esc(t.till(v.till))}</span>
           <button type="button" class="round pos-tr" data-act="vclose" aria-label="Close">${I.s(P.x, 20)}</button>
           <span class="vlabel big">${k} · ${S.liveSlide + 1} of ${v.slides.length}</span>
@@ -1309,7 +1471,23 @@
     </div></div>`;
   }
 
-  const SCREENS = { spots: passportScreen, place: placeScreen, live: liveScreen, business: businessScreen };
+  // --- Photo credits (the sample photos are from Wikimedia Commons)
+  function creditsScreen() {
+    const rows = PHOTOS.map(([place, cap, , , color, artist, lic, file], j) => {
+      const ph = PH[place].find((x) => x.file === file);
+      return `<a class="cr" href="https://commons.wikimedia.org/wiki/File:${encodeURIComponent(file)}" target="_blank" rel="noopener"><span class="cr-img" style="background:${color}">${phImg(ph, true, j > 8)}</span>
+        <span class="cr-txt"><b>${esc(cap)}</b><span>${esc(artist)} · ${esc(lic)}</span><span>${esc(placeById(place).name)}</span></span>${I.s(P.right, 16, 2.2)}</a>`;
+    }).join('');
+    return `<div class="scr page white"><div class="scroll">
+      <header class="bar">${back()}<div class="logo-s">I ${I.heart(16, 15, '#B8232F')} BOSTON</div><span style="width:44px"></span></header>
+      <div class="pad tight"><h1 class="h1">Photo credits</h1><p class="muted">The sample photos come from Wikimedia Commons, used under their free licenses (CC0, public domain, CC BY and CC BY-SA). Most aren't from these exact places. On the real site, businesses and visitors add their own.</p></div>
+      <div class="credits">${rows}${Object.keys(VPHOTOS).map((id) => { const [cap, color, artist, lic, file] = VPHOTOS[id]; return `<a class="cr" href="https://commons.wikimedia.org/wiki/File:${encodeURIComponent(file)}" target="_blank" rel="noopener"><span class="cr-img" style="background:${color}"><img src="p/v-${id}-t.webp" alt="" loading="lazy"></span>
+        <span class="cr-txt"><b>${esc(cap)}</b><span>${esc(artist)} · ${esc(lic)}</span><span>Live now</span></span>${I.s(P.right, 16, 2.2)}</a>`; }).join('')}</div>
+      <p class="small muted pad pb">Tap a photo to see it, its author and its license on Wikimedia Commons. The photos here are resized and cropped.</p>
+    </div></div>`;
+  }
+
+  const SCREENS = { spots: passportScreen, place: placeScreen, live: liveScreen, business: businessScreen, credits: creditsScreen };
 
   /* =================================================================
      One click handler for everything
@@ -1326,7 +1504,7 @@
     const act = el.dataset.act, v = el.dataset.v;
     switch (act) {
       case 'tab': S.tab = v; S.sel = null; updH(); break;
-      case 'cat': S.cat = v; updH(); if (el.classList.contains('bo-more')) $('#shBody').scrollTop = 0; break;
+      case 'cat': S.cat = v; updH(); break;
       case 'day': S.day = v; S.sel = null; updH(); break;
       case 'station': S.tOpen = S.tOpen === v ? '' : v; updH(); break;
       case 'tshow': S.tShow = !S.tShow; updH(); break;
@@ -1347,7 +1525,7 @@
       case 'clear': S.sel = null; updH(); break;
       case 'toggle': S.sheet = S.sheet === 'half' ? 'full' : 'half'; updH(); break;
       case 'half': S.sheet = 'half'; updH(); break;
-      case 'recenter': S.tx = null; S.ty = null; updH(); break;
+      case 'recenter': animateTo({ tx: G.baseX, ty: G.baseY, k: 1 }, null, () => { S.tx = null; S.ty = null; S.z = 1; $('#world').classList.remove('nodrag'); updH(); }); break;
       case 'lang': S.langOpen = true; updH(); break;
       case 'langclose': S.langOpen = false; updH(); break;
       case 'setlang':
