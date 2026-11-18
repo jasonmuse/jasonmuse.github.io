@@ -385,7 +385,7 @@ h1,h2,h3,p{margin:0}
 .sw.on span{transform:translateX(20px)}
 .plist{margin:4px 20px 0}
 .prow{display:flex;align-items:center;gap:12px;width:100%;min-height:64px;padding:0;border:0;border-bottom:1px solid #EEF0F3;background:transparent;text-align:left;cursor:pointer}
-.prow .txt{padding:8px 0}
+.prow .txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;padding:8px 0}
 .pnum{flex:none;width:26px;height:26px;border-radius:13px;background:var(--navy);color:#fff;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center}
 .pmin{flex:none;font-size:13px;font-weight:600;color:var(--muted)}
 .viewer-wrap{position:absolute;inset:0;z-index:40}
@@ -401,6 +401,10 @@ h1,h2,h3,p{margin:0}
 .v-cap b{font-family:var(--head);font-weight:800;font-size:17px}
 .v-cap span{font-size:13px;line-height:1.35;color:#C9D2E3}
 .v-try{margin-top:8px;height:42px;border-color:#fff;background:#fff;color:var(--navy)}
+
+/* ---- category colors ---- */
+.cdot{display:inline-block;flex:none;width:8px;height:8px;margin-right:6px;border-radius:4px;vertical-align:1px}
+.pin.cpin.on{box-shadow:0 0 0 3px #fff,0 0 0 7px rgba(19,37,74,.28),0 4px 10px rgba(19,37,74,.35)}
 </style>
 </head>
 <body>
@@ -480,6 +484,6 @@ h1,h2,h3,p{margin:0}
         <circle cx="216" cy="256" r="7.5" fill="#1F5BD8" stroke="#FFFFFF" stroke-width="3"></circle>
       </svg></template>
 <noscript><p style="padding:20px;font-family:sans-serif">This demo needs JavaScript.</p></noscript>
-<script src="app.js?v=2"></script>
+<script src="app.js?v=3"></script>
 </body>
 </html>

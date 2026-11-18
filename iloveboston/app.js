@@ -11,6 +11,8 @@
   const maps = (q) => 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q);
 
   const NAVY = '#13254A', PICK = '#1F5BD8', LIVE = '#D7263D';
+  // One color per category, used on the map pin, the stop in the list and the filter chip.
+  const CAT_COLOR = { eat: '#C2410C', shop: '#1D4ED8', see: '#15803D', services: '#7E22CE' };
   const WORLD = { x0: -260, y0: -300, x1: 650, y1: 900 };
 
   /* ---------- icons ---------- */
@@ -223,8 +225,9 @@
     ['featured', 'Featured businesses', 'Paid spots with photos and a deal, always labeled Sponsored'],
     ['langs', '10 languages', 'The flag button up top'],
     ['walkline', 'Walk line', 'Places as stops on a line. Off shows a plain list'],
+    ['colors', 'Category colors', 'Eat, Shop, See and Services each get a color on the map and the list'],
   ];
-  const FDEF = { events: true, live: true, transit: true, spots: true, featured: true, langs: true, walkline: true };
+  const FDEF = { events: true, live: true, transit: true, spots: true, featured: true, langs: true, walkline: true, colors: true };
   function loadFlags() {
     try { return Object.assign({}, FDEF, JSON.parse(localStorage.getItem('ilb-f') || '{}')); } catch (e) { return Object.assign({}, FDEF); }
   }
@@ -496,7 +499,8 @@
       items.sort((a, b) => (a.on ? 1 : 0) - (b.on ? 1 : 0));
       return items.map(({ p, i, on }) => {
         const size = on ? 36 : 30;
-        return `<button type="button" class="pin${on ? ' on' : ''}" data-act="pin" data-k="place:${p.id}" aria-label="${i + 1}. ${esc(p.name)}" style="left:${p.x - size / 2}px;top:${p.y - size / 2}px;width:${size}px;height:${size}px">${i + 1}</button>`;
+        const col = S.f.colors ? `;background:${CAT_COLOR[p.cat]}` : '';
+        return `<button type="button" class="pin${S.f.colors ? ' cpin' : ''}${on ? ' on' : ''}" data-act="pin" data-k="place:${p.id}" aria-label="${i + 1}. ${esc(p.name)}" style="left:${p.x - size / 2}px;top:${p.y - size / 2}px;width:${size}px;height:${size}px${col}">${i + 1}</button>`;
       }).join('');
     }
     if (S.tab === 'events') {
@@ -523,7 +527,12 @@
   }
   function nearHTML() {
     const t = T();
-    const chips = ['all', 'eat', 'shop', 'see', 'services'].map((c) => `<button type="button" class="chip" aria-pressed="${S.cat === c}" data-act="cat" data-v="${c}"><span>${esc(t[c])}</span></button>`).join('');
+    const chips = ['all', 'eat', 'shop', 'see', 'services'].map((c) => {
+      const col = S.f.colors && c !== 'all' ? CAT_COLOR[c] : null;
+      const on = S.cat === c;
+      const st = col && on ? ` style="background:${col};border-color:${col};color:#fff"` : '';
+      return `<button type="button" class="chip" aria-pressed="${on}" data-act="cat" data-v="${c}"><span${st}>${col ? `<i class="cdot" style="background:${on ? '#fff' : col}"></i>` : ''}${esc(t[c])}</span></button>`;
+    }).join('');
     let crossed = false;
     const rows = placesShown().map((p, i) => {
       const m = mins(p.dist);
@@ -534,11 +543,11 @@
       }
       const spon = S.f.featured && p.sponsored ? `<span class="sp">${esc(t.sponsored)}</span>` : '';
       if (!S.f.walkline) {
-        return `<button type="button" class="prow" data-act="sel" data-k="place:${p.id}"><span class="pnum">${i + 1}</span><span class="txt"><span class="nm"><b>${esc(p.name)}</b>${spon}</span><span class="sub">${esc(t[p.kind])}</span></span><span class="pmin">${esc(t.mins(m))}</span></button>`;
+        return `<button type="button" class="prow" data-act="sel" data-k="place:${p.id}"><span class="pnum"${S.f.colors ? ` style="background:${CAT_COLOR[p.cat]}"` : ''}>${i + 1}</span><span class="txt"><span class="nm"><b>${esc(p.name)}</b>${spon}</span><span class="sub">${esc(t[p.kind])}</span></span><span class="pmin">${esc(t.mins(m))}</span></button>`;
       }
       out += `<button type="button" class="row" data-act="sel" data-k="place:${p.id}">
         <span class="tcol">${esc(t.mins(m))}</span>
-        <span class="lcol"><span class="stop">${i + 1}</span></span>
+        <span class="lcol"><span class="stop"${S.f.colors ? ` style="background:${CAT_COLOR[p.cat]};border-color:${CAT_COLOR[p.cat]};color:#fff"` : ''}>${i + 1}</span></span>
         <span class="txt"><span class="nm"><b>${esc(p.name)}</b>${spon}</span><span class="sub">${esc(t[p.kind])}</span></span>
       </button>`;
       return out;
@@ -616,12 +625,13 @@
   function previewHTML() {
     const t = T();
     const [type, id] = S.sel.split(':');
-    let title = '', chip = '', line1 = '', line2 = '', thumb = '', primary = '', secondary = '';
+    let title = '', chip = '', line1 = '', line2 = '', thumb = '', primary = '', secondary = '', dot = '';
     if (type === 'place') {
       const p = PLACES.find((x) => x.id === id);
       title = p.name;
       chip = S.f.featured && p.sponsored ? `<span class="sp">${esc(t.sponsored)}</span>` : '';
       line1 = t[p.kind] + ' · ' + t.walk(mins(p.dist));
+      dot = S.f.colors ? `<i class="cdot" style="background:${CAT_COLOR[p.cat]}"></i>` : '';
       thumb = S.f.featured && p.photo ? `<span class="thumb" style="background:${p.tint};color:${p.ink}">${I.s(P.photo, 30, 1.6)}</span>` : '';
       primary = `<a class="btn primary" href="${maps(p.q)}" target="_blank" rel="noopener">${I.s(P.pin)}<span>${esc(t.directions)}</span></a>`;
       secondary = `<a class="btn" href="#/${p.page}">${esc(t.seePage)}</a>`;
@@ -646,7 +656,7 @@
     }
     return `<div class="pv">
       <span class="pv-handle"></span>
-      <div class="pv-top">${thumb}<div class="pv-txt"><span class="pv-title">${esc(title)}</span>${chip}<span class="pv-l1">${esc(line1)}</span>${line2 ? `<span class="pv-l2">${esc(line2)}</span>` : ''}</div>
+      <div class="pv-top">${thumb}<div class="pv-txt"><span class="pv-title">${esc(title)}</span>${chip}<span class="pv-l1">${dot}${esc(line1)}</span>${line2 ? `<span class="pv-l2">${esc(line2)}</span>` : ''}</div>
         <button type="button" class="pv-x" data-act="clear" aria-label="Back to the list">${I.s(P.x, 20)}</button></div>
       <div class="pv-btns">${primary}${secondary}</div>
     </div>`;
