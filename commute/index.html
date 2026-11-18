@@ -206,7 +206,7 @@ button.lnk{border:0;background:none;padding:0;margin:0;color:var(--accent);font:
 .away-sub{font-size:15px;color:var(--muted)}
 .approach{position:relative;height:76px;margin:2px 16px 0 48px}
 .ap-rail{position:absolute;left:-48px;right:0;top:30px;height:4px;border-radius:2px;background:var(--line)}
-.ap-flow{position:absolute;right:0;top:30px;height:4px;border-radius:2px;background:repeating-linear-gradient(90deg,var(--accent) 0 9px,rgba(237,139,0,.22) 9px 16px);transition:left 1.4s cubic-bezier(.2,.8,.2,1)}
+.ap-flow{position:absolute;right:0;top:30px;height:4px;border-radius:2px;background:repeating-linear-gradient(90deg,var(--accent) 0 9px,rgba(237,139,0,.22) 9px 16px);transition:left 1s linear}
 .ap-dot{position:absolute;top:26px;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:var(--card);border:3px solid #4A5366;box-sizing:border-box}
 .ap-dot.you{top:21px;width:22px;height:22px;margin-left:-11px;background:var(--accent);border:3px solid #FFFFFF;box-shadow:0 0 0 6px rgba(237,139,0,.16)}
 .ap-tag{position:absolute;top:-2px;transform:translateX(-50%);font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:999px;background:var(--accent);color:var(--accent-ink);white-space:nowrap}
@@ -214,17 +214,20 @@ button.lnk{border:0;background:none;padding:0;margin:0;color:var(--accent);font:
 .ap-name.first{left:-6px}
 .ap-name.last{right:-16px;color:var(--fg);font-weight:650}
 /* each train is a button (a bigger tap area around it): tap one and the big timer shows that train */
-.ap-hit{position:absolute;top:10px;width:60px;height:44px;margin-left:-55px;padding:0;border:0;border-radius:10px;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent;z-index:1;transition:left 1.4s cubic-bezier(.2,.8,.2,1),opacity .4s}
+.ap-hit{position:absolute;top:10px;width:60px;height:44px;margin-left:-55px;padding:0;border:0;border-radius:10px;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent;z-index:1;transition:left 1s linear,opacity .4s}
 .ap-hit.you{z-index:2}
 .ap-hit.far{opacity:.5}
 .ap-hit:focus-visible{outline:2px solid var(--accent);outline-offset:0}
-.ap-train{position:absolute;right:5px;top:12px;width:46px;height:20px;box-sizing:border-box;border-radius:5px 12px 12px 5px;background:#7C8597;display:flex;align-items:center;justify-content:flex-end;padding-right:5px;pointer-events:none;transition:background .3s,box-shadow .3s,width .3s,height .3s,top .3s,opacity .3s}
+.ap-train{position:absolute;right:5px;top:12px;width:46px;height:20px;box-sizing:border-box;border-radius:5px 12px 12px 5px;background:linear-gradient(180deg,#A3ABBC,#6F788A);display:flex;align-items:center;justify-content:flex-end;padding-right:5px;pointer-events:none;transition:background .3s,box-shadow .3s,width .3s,height .3s,top .3s,opacity .3s}
 .ap-train::before{content:"";position:absolute;left:5px;right:13px;top:5px;height:5px;border-radius:2px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.6) 0 5px,transparent 5px 8px)}
 .ap-train::after{content:"";width:4px;height:4px;border-radius:50%;background:#FFF4D6}
 .ap-hit.other .ap-train{top:15px;width:34px;height:14px;opacity:.75}
 .ap-hit.other .ap-train::before{top:4px;height:3px;right:10px}
 .ap-hit.other:hover .ap-train{opacity:1}
-.ap-hit.you .ap-train{background:var(--accent);box-shadow:0 0 16px rgba(237,139,0,.5)}
+.ap-hit.you .ap-train{background:linear-gradient(180deg,#FFB547 0%,#ED8B00 62%,#CF7300 100%);box-shadow:0 0 18px rgba(237,139,0,.55)}
+.ap-hit.you .ap-train::after{box-shadow:0 0 7px 2px rgba(255,236,190,.9)}
+/* a light trail behind your train while it's moving */
+.ap-hit.you.moving::before{content:"";position:absolute;right:51px;top:20px;width:46px;height:4px;border-radius:2px;background:linear-gradient(90deg,transparent,rgba(237,139,0,.6));pointer-events:none}
 @media (prefers-reduced-motion:no-preference){
   .ap-flow{animation:flow .8s linear infinite}
   @keyframes flow{to{background-position:16px 0}}
@@ -419,7 +422,7 @@ button.lnk{border:0;background:none;padding:0;margin:0;color:var(--accent);font:
 <script>
 (function () {
   'use strict';
-  var VERSION = '2026-11-17-11';
+  var VERSION = '2026-11-17-12';
   var API = 'https://api-v3.mbta.com';
   var POLL_MS = 15000, ALERT_MS = 120000;
   var CUSHION = 45000;   // aim to be on the platform this long before the train pulls in
@@ -721,6 +724,14 @@ button.lnk{border:0;background:none;padding:0;margin:0;color:var(--accent);font:
   // show (orange, its front to the right) and the ones around it (grey), gliding as they move. Each
   // train is a button: tap one to show it.
   var trackKey = '';
+  // Between the T's updates (every 15 seconds), a train keeps moving toward you at the pace that gets
+  // it to your stop when predicted, but never past the next station before the T says it got there
+  // (and a train standing at a station stays put).
+  function glide(e0, t, now) {
+    if (e0 <= 0 || !state.fetchedAt) return Math.max(0, e0);
+    var e = e0 - e0 * Math.max(0, now - state.fetchedAt) / Math.max(30000, t.arr - state.fetchedAt);
+    return Math.max(Math.floor(e0 + 1e-9), e, 0);
+  }
   function renderApproach(target, now) {
     var el = $('approach'), s = sgn(), from = state.from;
     var start = Math.max(0, Math.min(19, from - 4 * s));
@@ -741,15 +752,17 @@ button.lnk{border:0;background:none;padding:0;margin:0;color:var(--accent);font:
     var list = state.trains.filter(function (t) { return t.dep > now - 15000; }).slice(0, 4);
     if (target && list.indexOf(target) < 0) list.push(target);
     var items = list.map(function (t) {
-      var p = position(t), x = 0, far = false, here = false;
+      var p = position(t), x = 0, far = false, here = false, moving = false;
       if (!p) far = true;
       else {
-        x = n === 1 ? 100 : (p.pos - start) * s / (n - 1) * 100;
+        var e0 = (from - p.pos) * s, e = glide(e0, t, now);   // stops away: at the last update, and now
+        moving = e < e0 - 0.005 && e > 0;
+        x = n === 1 ? 100 : (n - 1 - e) / (n - 1) * 100;
         if (x < 0) { x = 0; far = true; }
         if (x > 100) x = 100;
         here = p.idx === from && p.status === 'STOPPED_AT';
       }
-      return { t: t, x: x, far: far, here: here, yours: !!target && t.trip === target.trip };
+      return { t: t, x: x, far: far, here: here, moving: moving && !far, yours: !!target && t.trip === target.trip };
     });
     // Trains farther out than the track all wait at its left end: draw just one there (the one on
     // show, or else the nearest), not a pile you can't tap. The strip and the list have the rest.
@@ -762,7 +775,7 @@ button.lnk{border:0;background:none;padding:0;margin:0;color:var(--accent);font:
     });
     var seen = {}, flowAt = null, fresh = [];
     items.forEach(function (it) {
-      var t = it.t, yours = it.yours, x = it.x, far = it.far, here = it.here;
+      var t = it.t, yours = it.yours, x = it.x, far = it.far, here = it.here, moving = it.moving;
       var id = 'ap-' + t.trip.replace(/[^\w-]/g, '_');
       seen[id] = 1;
       var m = document.getElementById(id);
@@ -771,7 +784,7 @@ button.lnk{border:0;background:none;padding:0;margin:0;color:var(--accent);font:
         m.innerHTML = '<span class="ap-train"></span>';
         m.style.left = x + '%'; m.style.opacity = '0'; el.appendChild(m); fresh.push(m);
       }
-      m.className = 'ap-hit ' + (yours ? 'you' : 'other') + (far ? ' far' : '') + (here ? ' here' : '');
+      m.className = 'ap-hit ' + (yours ? 'you' : 'other') + (far ? ' far' : '') + (here ? ' here' : '') + (moving ? ' moving' : '');
       m.setAttribute('aria-pressed', yours ? 'true' : 'false');
       m.setAttribute('aria-label', 'The ' + clock(t.arr) + ' train' + (here ? ', at ' + STATIONS[from][2] + ' now' : '') + (yours ? ', on show' : '. Show it'));
       m.style.left = x + '%';
