@@ -83,9 +83,12 @@ button{cursor:pointer}
 .lochelp button{flex:none;border:0;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:14px;padding:8px 12px;min-height:36px}
 .lochelp ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;color:#FFE9CC}
 .lochelp b{color:#FFFFFF}
+.lochelp.quiet{display:none}
+.lochelp button.lochelp-x{background:none;color:#FFE2BD;font-size:22px;line-height:1;font-weight:400;padding:2px 4px;min-height:0}
 .getthere{display:flex;align-items:center;gap:6px 10px;flex-wrap:wrap;font-size:13px;color:var(--muted);padding:0 4px;min-height:18px}
 .getthere a{color:var(--accent);font-weight:600;text-decoration:none}
 .getthere .warn{color:var(--warn)}
+.getthere button.lnk{font-size:13px}
 
 /* alerts */
 .alert{display:flex;gap:10px;align-items:flex-start;padding:11px 13px;border-radius:14px;background:#2A1D10;color:#FFE2BD;font-size:14px}
@@ -97,7 +100,7 @@ button{cursor:pointer}
 
 /* hero: the Live Activity, on the web. Big: your train coming in (Train, the default) or when to
    leave (Leave). The other one sits in the pill under it; tap the pill or the switch to swap them. */
-.hero{position:relative;border-radius:26px;background:var(--card);padding:14px 16px 18px 20px;display:flex;flex-direction:column;gap:4px;transition:background .45s ease,box-shadow .45s ease}
+.hero{position:relative;border-radius:26px;background:var(--card);padding:14px 16px 18px 20px;display:flex;flex-direction:column;gap:4px;touch-action:pan-y pinch-zoom;transition:background .45s ease,box-shadow .45s ease}
 .hero-top{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:36px}
 .hero-label{flex:1;min-width:0;font-size:14px;font-weight:600;color:var(--muted);transition:color .3s}
 .hero-big{font-family:var(--num);font-size:76px;line-height:1;min-height:76px;font-weight:700;letter-spacing:-1px;font-variant-numeric:tabular-nums;color:var(--fg);transform-origin:0 100%;transition:color .3s}
@@ -129,6 +132,31 @@ button{cursor:pointer}
 .hero.rush .hero-second svg,.hero.rush .hero-second .m{color:#FFE2D1}
 .hero.none .hero-big{font-size:34px;min-height:0;letter-spacing:0}
 .hero.alarm{box-shadow:0 0 0 2px rgba(237,139,0,.85)}
+.hero-second.muted{color:var(--muted);font-weight:500}
+.hero-second.muted svg{color:var(--muted)}
+button.lnk{border:0;background:none;padding:0;margin:0;color:var(--accent);font:inherit;font-weight:650;cursor:pointer}
+.hero.now button.lnk{color:var(--accent-ink);text-decoration:underline}
+/* the trains to flip through: tap one, use the arrows, swipe the card, or the arrow keys */
+.tstrip{display:flex;align-items:center;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.07)}
+.tnav{flex:none;width:34px;height:34px;border-radius:50%;border:0;padding:0;background:var(--card-2);color:var(--fg);display:grid;place-items:center;cursor:pointer;transition:opacity .2s,background .2s}
+.tnav:disabled{opacity:.28;cursor:default}
+.tnav:not(:disabled):active{background:var(--line)}
+.tchips{position:relative;flex:1;min-width:0;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;padding:2px}
+.tchips::-webkit-scrollbar{display:none}
+.tchip{flex:none;display:flex;flex-direction:column;align-items:center;gap:1px;min-width:60px;padding:6px 9px 5px;border-radius:12px;border:0;background:var(--card-2);color:var(--fg);font-family:var(--num);font-size:15px;font-weight:700;font-variant-numeric:tabular-nums;cursor:pointer;scroll-snap-align:center;transition:background .25s,color .25s,box-shadow .25s}
+.tchip small{font-family:var(--font);font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.tchip.yours{box-shadow:inset 0 0 0 1.5px var(--accent)}
+.tchip.yours small{color:var(--accent)}
+.tchip.here small{color:var(--good)}
+.tchip.soon{color:var(--muted)}
+.tchip.sel{background:var(--fg);color:var(--bg)}
+.tchip.sel small{color:#4A5366}
+.tchip.sel.yours small{color:#A35A00}
+.tchip.sel.here small{color:#1F7A47}
+.hero.now .tstrip,.hero.rush .tstrip{border-top-color:rgba(0,0,0,.14)}
+.hero.now .tnav,.hero.now .tchip,.hero.rush .tnav,.hero.rush .tchip{background:rgba(0,0,0,.16);color:inherit}
+.hero.now .tchip small,.hero.rush .tchip small{color:inherit;opacity:.75}
+.hero.now .tchip.sel,.hero.rush .tchip.sel{background:rgba(255,255,255,.9);color:var(--accent-ink)}
 /* the switch: which number is big */
 .seg{position:relative;flex:none;display:grid;grid-template-columns:1fr 1fr;padding:3px;border-radius:999px;background:var(--card-2);transition:background .35s}
 .seg::before{content:"";position:absolute;top:3px;bottom:3px;left:3px;width:calc(50% - 3px);border-radius:999px;background:#384152;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .4s cubic-bezier(.3,1.3,.5,1),background .35s}
@@ -171,20 +199,25 @@ button{cursor:pointer}
 .ap-name{position:absolute;top:52px;font-size:12px;color:var(--muted);white-space:nowrap}
 .ap-name.first{left:-6px}
 .ap-name.last{right:-16px;color:var(--fg);font-weight:650}
-.ap-train{position:absolute;top:22px;width:46px;height:20px;margin-left:-46px;box-sizing:border-box;border-radius:5px 12px 12px 5px;background:#7C8597;display:flex;align-items:center;justify-content:flex-end;padding-right:5px;transition:left 1.4s cubic-bezier(.2,.8,.2,1),opacity .4s}
+/* each train is a button (a bigger tap area around it): tap one and the big timer shows that train */
+.ap-hit{position:absolute;top:10px;width:60px;height:44px;margin-left:-55px;padding:0;border:0;border-radius:10px;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent;z-index:1;transition:left 1.4s cubic-bezier(.2,.8,.2,1),opacity .4s}
+.ap-hit.you{z-index:2}
+.ap-hit.far{opacity:.5}
+.ap-hit:focus-visible{outline:2px solid var(--accent);outline-offset:0}
+.ap-train{position:absolute;right:5px;top:12px;width:46px;height:20px;box-sizing:border-box;border-radius:5px 12px 12px 5px;background:#7C8597;display:flex;align-items:center;justify-content:flex-end;padding-right:5px;pointer-events:none;transition:background .3s,box-shadow .3s,width .3s,height .3s,top .3s,opacity .3s}
 .ap-train::before{content:"";position:absolute;left:5px;right:13px;top:5px;height:5px;border-radius:2px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.6) 0 5px,transparent 5px 8px)}
 .ap-train::after{content:"";width:4px;height:4px;border-radius:50%;background:#FFF4D6}
-.ap-train.other{top:25px;width:34px;height:14px;margin-left:-34px;opacity:.75}
-.ap-train.other::before{top:4px;height:3px;right:10px}
-.ap-train.you{background:var(--accent);box-shadow:0 0 16px rgba(237,139,0,.5);z-index:2}
-.ap-train.far{opacity:.5}
+.ap-hit.other .ap-train{top:15px;width:34px;height:14px;opacity:.75}
+.ap-hit.other .ap-train::before{top:4px;height:3px;right:10px}
+.ap-hit.other:hover .ap-train{opacity:1}
+.ap-hit.you .ap-train{background:var(--accent);box-shadow:0 0 16px rgba(237,139,0,.5)}
 @media (prefers-reduced-motion:no-preference){
   .ap-flow{animation:flow .8s linear infinite}
   @keyframes flow{to{background-position:16px 0}}
-  .ap-train.here{animation:here 1.2s ease-in-out infinite}
+  .ap-hit.you.here .ap-train{animation:here 1.2s ease-in-out infinite}
   @keyframes here{50%{box-shadow:0 0 0 8px rgba(237,139,0,.25)}}
 }
-@media (prefers-reduced-motion:reduce){.ap-train,.ap-flow{transition:none}}
+@media (prefers-reduced-motion:reduce){.ap-hit,.ap-train,.ap-flow{transition:none}}
 
 /* the cars: back on the left, front on the right (the end that pulls in first) */
 .consist{display:flex;flex-direction:column;gap:7px;margin-top:2px}
@@ -214,8 +247,13 @@ button{cursor:pointer}
 
 /* next trains */
 .list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
-.list li{display:grid;grid-template-columns:64px 74px 1fr;align-items:center;gap:8px;padding:10px 0;border-top:1px solid var(--line);font-size:15px}
+.list li{border-top:1px solid var(--line)}
 .list li:first-child{border-top:0}
+.list li > .muted{display:block;padding:10px 0}
+/* each row is a button: tap it and the big timer shows that train */
+.list .row{display:grid;grid-template-columns:64px 74px 1fr;align-items:center;gap:8px;width:calc(100% + 16px);margin:0 -8px;padding:10px 8px;border:0;border-radius:12px;background:none;color:inherit;font:inherit;font-size:15px;text-align:left;cursor:pointer;transition:background .2s}
+.list .row:hover{background:rgba(255,255,255,.03)}
+.list .row:active,.list li.sel .row{background:var(--card-2)}
 .list .t{font-family:var(--num);font-weight:700;font-variant-numeric:tabular-nums}
 .list .in{color:var(--muted);font-variant-numeric:tabular-nums}
 .list .tag{justify-self:end;text-align:right;font-size:13px;color:var(--muted)}
@@ -305,12 +343,8 @@ button{cursor:pointer}
     </div>
     <div class="getthere" id="getThere"></div>
     <div class="lochelp" id="locHelp" hidden>
-      <div class="lochelp-head"><span>Location is off for this page, so it can't tell which stop you're at.</span><button type="button" id="locHelpBtn" aria-expanded="false" aria-controls="locSteps">Turn it on</button></div>
-      <ol id="locSteps" hidden>
-        <li>iPhone <b>Settings</b> › <b>Privacy &amp; Security</b> › <b>Location Services</b>: on. Then <b>Safari Websites</b> › <b>While Using the App</b>, with <b>Precise Location</b> on.</li>
-        <li>Back in Safari: tap <b>≡</b> next to the address › <b>Website Settings</b> › <b>Location</b> › <b>Allow</b>.</li>
-        <li>Come back here. It finds your stop by itself.</li>
-      </ol>
+      <div class="lochelp-head"><span id="locHelpText">Location is off for this page, so it can't tell which stop you're at.</span><button type="button" id="locHelpBtn" aria-expanded="false" aria-controls="locSteps">Turn it on</button><button type="button" class="lochelp-x" id="locHelpX" aria-label="Hide this">×</button></div>
+      <ol id="locSteps" hidden></ol>
     </div>
   </header>
 
@@ -328,13 +362,18 @@ button{cursor:pointer}
     <div class="hero-sub" id="heroSub"><span class="sk line"></span></div>
     <div class="hero-second" id="heroSecond" hidden></div>
     <div class="hero-alt" id="heroAlt"></div>
+    <div class="tstrip" id="tstrip" hidden>
+      <button type="button" class="tnav" data-step="-1" aria-label="Earlier train"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></button>
+      <div class="tchips" id="tchips" role="group" aria-label="Trains at your stop"></div>
+      <button type="button" class="tnav" data-step="1" aria-label="Later train"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></button>
+    </div>
     <p class="sr" id="heroSr" aria-live="polite"></p>
   </section>
 
   <section class="card" id="trainCard" hidden>
     <div class="card-head"><span class="eyebrow" id="trainHead">Your train</span><span class="pill you" id="trainTime"></span></div>
     <div class="away"><span class="away-big" id="awayBig"></span><span class="away-sub" id="awaySub"></span></div>
-    <div class="approach" id="approach" role="img"></div>
+    <div class="approach" id="approach" role="group"></div>
     <div id="trainCars"></div>
     <div class="ride-note" id="rideNote"></div>
   </section>
@@ -363,7 +402,7 @@ button{cursor:pointer}
 <script>
 (function () {
   'use strict';
-  var VERSION = '2026-11-17-9';
+  var VERSION = '2026-11-17-10';
   var API = 'https://api-v3.mbta.com';
   var POLL_MS = 15000, ALERT_MS = 120000;
   var CUSHION = 45000;   // aim to be on the platform this long before the train pulls in
@@ -441,7 +480,9 @@ button{cursor:pointer}
     here: null, place: null, fromSource: 'auto', walkSource: 'manual', locMsg: '',
     startFix: null, placedOnce: false, riding: null, boardCandidate: null, destArr: {}, locDenied: false,
     planAt: null, manualWalk: 6, sched: [], schedKey: '', schedAt: 0,
-    bigShows: 'train'   // the big number: 'train' (when your train comes in) or 'leave' (when to leave)
+    bigShows: 'train',  // the big number: 'train' (when your train comes in) or 'leave' (when to leave)
+    pick: null,         // a train you picked to look at (its trip), instead of the one it picked for you
+    manualAt: null      // "I'm here": { i: station, at: time } when this device can't tell you're at the station
   };
   var chimed = {};
   var $ = function (id) { return document.getElementById(id); };
@@ -658,8 +699,9 @@ button{cursor:pointer}
   }
 
   // ---------- render ----------
-  // Your train coming up the line: the last few stops before yours, left to right, with your train
-  // (orange, its front to the right) and the ones around it (grey), gliding as they move.
+  // Your train coming up the line: the last few stops before yours, left to right, with the train on
+  // show (orange, its front to the right) and the ones around it (grey), gliding as they move. Each
+  // train is a button: tap one to show it.
   var trackKey = '';
   function renderApproach(target, now) {
     var el = $('approach'), s = sgn(), from = state.from;
@@ -678,11 +720,10 @@ button{cursor:pointer}
       html += '<span class="ap-name last">' + esc(STATIONS[from][2]) + '</span>';
       el.innerHTML = html;
     }
-    var shown = state.trains.filter(function (t) { return t.dep > now - 15000; }).slice(0, 3);
-    if (target && shown.indexOf(target) < 0) shown.push(target);
-    var seen = {}, flowAt = null, fresh = [];
-    shown.forEach(function (t) {
-      var p = position(t), yours = !!target && t.trip === target.trip, x = 0, far = false, here = false;
+    var list = state.trains.filter(function (t) { return t.dep > now - 15000; }).slice(0, 4);
+    if (target && list.indexOf(target) < 0) list.push(target);
+    var items = list.map(function (t) {
+      var p = position(t), x = 0, far = false, here = false;
       if (!p) far = true;
       else {
         x = n === 1 ? 100 : (p.pos - start) * s / (n - 1) * 100;
@@ -690,15 +731,35 @@ button{cursor:pointer}
         if (x > 100) x = 100;
         here = p.idx === from && p.status === 'STOPPED_AT';
       }
+      return { t: t, x: x, far: far, here: here, yours: !!target && t.trip === target.trip };
+    });
+    // Trains farther out than the track all wait at its left end: draw just one there (the one on
+    // show, or else the nearest), not a pile you can't tap. The strip and the list have the rest.
+    var edgeTaken = items.some(function (it) { return it.far && it.yours; });
+    items = items.filter(function (it) {
+      if (!it.far || it.yours) return true;
+      if (edgeTaken) return false;
+      edgeTaken = true;
+      return true;
+    });
+    var seen = {}, flowAt = null, fresh = [];
+    items.forEach(function (it) {
+      var t = it.t, yours = it.yours, x = it.x, far = it.far, here = it.here;
       var id = 'ap-' + t.trip.replace(/[^\w-]/g, '_');
       seen[id] = 1;
       var m = document.getElementById(id);
-      if (!m) { m = document.createElement('span'); m.id = id; m.style.left = x + '%'; m.style.opacity = '0'; el.appendChild(m); fresh.push(m); }
-      m.className = 'ap-train ' + (yours ? 'you' : 'other') + (far ? ' far' : '') + (yours && here ? ' here' : '');
+      if (!m) {
+        m = document.createElement('button'); m.type = 'button'; m.id = id; m.setAttribute('data-trip', t.trip);
+        m.innerHTML = '<span class="ap-train"></span>';
+        m.style.left = x + '%'; m.style.opacity = '0'; el.appendChild(m); fresh.push(m);
+      }
+      m.className = 'ap-hit ' + (yours ? 'you' : 'other') + (far ? ' far' : '') + (here ? ' here' : '');
+      m.setAttribute('aria-pressed', yours ? 'true' : 'false');
+      m.setAttribute('aria-label', 'The ' + clock(t.arr) + ' train' + (here ? ', at ' + STATIONS[from][2] + ' now' : '') + (yours ? ', on show' : '. Show it'));
       m.style.left = x + '%';
       if (yours) flowAt = x;
     });
-    Array.prototype.slice.call(el.querySelectorAll('.ap-train')).forEach(function (m) { if (!seen[m.id]) m.remove(); });
+    Array.prototype.slice.call(el.querySelectorAll('.ap-hit')).forEach(function (m) { if (!seen[m.id]) m.remove(); });
     // trains that just showed up fade in
     if (fresh.length) requestAnimationFrame(function () { requestAnimationFrame(function () { fresh.forEach(function (f) { f.style.opacity = ''; }); }); });
     var flow = $('apFlow');
@@ -814,8 +875,16 @@ button{cursor:pointer}
   // ---------- where you are, live ----------
   function freshFix() { return state.here && Date.now() - state.here.at < 120000 ? state.here : null; }
   function distTo(i, h) { return meters(h.lat, h.lon, stLat(i), stLon(i)); }
+  // "I'm here": you're at the station, but this device can't tell (a laptop, or location off). It lasts
+  // 30 minutes, or until you pick another start.
+  function manualHere() { var a = state.manualAt; return !!(a && a.i === state.from && Date.now() - a.at < 30 * 60000); }
+  // At the station by location (only this can tell that you got on a train)
+  function realAt() { var h = freshFix(); return !!(h && h.acc <= 250 && distTo(state.from, h) <= 150); }
+  // A train standing at your platform right now
+  function atPlatform(t) { var p = t && position(t); return !!(p && p.idx === state.from && p.status === 'STOPPED_AT'); }
   // Your walk to the platform: from where you are when we know it, else your setting.
   function walkMs() {
+    if (manualHere()) return 45000;
     var h = freshFix();
     if (h && state.walkSource === 'location') {
       var m = distTo(state.from, h);
@@ -826,6 +895,7 @@ button{cursor:pointer}
   // wait: not left yet · way: walking to the station · at: at the station · ride: on the train
   function locMode() {
     if (state.riding) return 'ride';
+    if (manualHere()) return 'at';
     var h = freshFix();
     if (!h || h.acc > 250) return 'wait';
     var m = distTo(state.from, h);
@@ -843,8 +913,9 @@ button{cursor:pointer}
     train: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="14" rx="3.5"></rect><path d="M5 10h14"></path><path d="M8.5 21l2-4"></path><path d="M15.5 21l-2-4"></path></svg>'
   };
   function ampm(ms) { return clockFmt.format(ms).slice(-2); }
-  function heroModel(now, mode, t, tp, upcoming, planned, ps, wms, fromS, toS) {
-    var m = { cls: 'calm', label: '', big: '', unit: '', sub: '', second: null, alt: '', toggle: mode === 'wait', alarm: false, chime: '', bigKey: '', secondKey: '' };
+  // picked: you chose this train (tapped it, or stepped to it) instead of the one it picked for you
+  function heroModel(now, mode, t, tp, upcoming, planned, ps, wms, fromS, toS, picked) {
+    var m = { cls: 'calm', label: '', big: '', unit: '', sub: '', second: null, alt: '', altHtml: '', toggle: mode === 'wait', alarm: false, chime: '', bigKey: '', secondKey: '' };
     if (mode === 'ride') {
       var arrive = state.destArr[state.riding.trip] || state.riding.destArr;
       m.label = 'Arriving at ' + toS[2] + ' in';
@@ -863,40 +934,64 @@ button{cursor:pointer}
     var train = headsign() + ' train', walkMin = Math.max(1, Math.round(wms / 60000));
     var trainIn = t.arr > now ? mmss(t.arr - now) : 'Now';
     var pullsIn = train + ' · pulls into ' + fromS[2] + ' at ' + clock(t.arr);
+    var whose = picked ? 'This train' : 'Your train', tag = picked ? 'pick|' : '';
+    var here = atPlatform(t), leavesIn = t.dep > now ? mmss(t.dep - now) : 'Now';
+    var tooSoon = { icon: 'walk', html: 'Too soon to make it from here', cls: 'muted' };
+    var hereHint = realAt() ? '' : 'Already at ' + esc(fromS[2]) + '? <button type="button" class="lnk" data-act="here">I\'m here</button>';
     if (mode === 'at') {
-      var p = position(t), next = null;
+      var next = null;
       upcoming.forEach(function (u) { if (!next && u.t.arr > t.arr && u.p.kind !== 'missed') next = u.t; });
-      if (p && p.idx === state.from && p.status === 'STOPPED_AT') {
-        m.cls = 'now'; m.label = 'Your train is here'; m.big = 'Board'; m.sub = train + ' · doors open'; m.chime = 'now';
+      if (here && tp.kind === 'ok') {
+        m.cls = 'now'; m.label = whose + ' is here'; m.big = 'Board'; m.sub = train + ' · doors open, leaves in ' + leavesIn; m.chime = 'now';
+      } else if (here) {
+        m.cls = 'soon'; m.label = 'Leaving ' + fromS[2] + ' now'; m.big = leavesIn; m.sub = train + ' · doors closing';
       } else {
         m.cls = t.arr - now <= 60000 ? 'soon' : 'calm';
-        m.label = 'You\'re at ' + fromS[2] + '. Next train in'; m.big = trainIn; m.sub = pullsIn;
+        m.label = picked ? 'This train in' : 'You\'re at ' + fromS[2] + '. Next train in'; m.big = trainIn; m.sub = pullsIn;
         m.chime = t.arr - now <= 60000 ? 'soon' : '';
       }
       if (next) m.second = { icon: 'train', html: 'Then the <span class="n">' + clock(next.arr) + '</span> <span class="m">· ' + inMin(next.arr - now) + '</span>' };
-      m.bigKey = 'at|' + t.trip + '|' + m.cls; m.secondKey = next ? 'then|' + next.trip : '';
+      m.bigKey = tag + 'at|' + t.trip + '|' + m.cls; m.secondKey = next ? 'then|' + next.trip : '';
+      return m;
+    }
+    if (here) {
+      // At your platform right now, and you're not there: when it leaves, and whether you'd make it
+      m.toggle = false; m.label = 'At ' + fromS[2] + ' now · leaves in'; m.big = leavesIn; m.sub = train + ' · doors open';
+      if (tp.kind === 'missed' || tp.kind === 'early') { m.second = tooSoon; m.altHtml = hereHint; }
+      else { m.second = { icon: 'walk', html: 'Run to make it', cls: 'rush' }; m.alarm = true; m.chime = 'now'; }
+      m.bigKey = tag + 'here|' + t.trip; m.secondKey = 'here|' + t.trip + '|' + tp.kind;
       return m;
     }
     if (mode === 'way') {
-      var pace = tp.kind === 'pace';
-      m.label = 'Your train in'; m.big = trainIn; m.sub = pullsIn;
-      m.second = pace ? { icon: 'walk', html: 'On pace <span class="m">· ' + walkMin + ' min to the platform</span>' }
-                      : { icon: 'walk', html: 'Walk faster to make it', cls: 'rush' };
-      m.alarm = !pace; m.chime = pace ? '' : 'now';
-      m.bigKey = 'train|' + t.trip; m.secondKey = 'pace|' + pace;
+      m.label = whose + ' in'; m.big = trainIn; m.sub = pullsIn;
+      if (tp.kind === 'missed') m.second = tooSoon;
+      else {
+        var pace = tp.kind === 'pace';
+        m.second = pace ? { icon: 'walk', html: 'On pace <span class="m">· ' + walkMin + ' min to the platform</span>' }
+                        : { icon: 'walk', html: 'Walk faster to make it', cls: 'rush' };
+        m.alarm = !pace; m.chime = pace ? '' : 'now';
+      }
+      m.bigKey = tag + 'train|' + t.trip; m.secondKey = 'pace|' + tp.kind;
       return m;
     }
-    // Not on your way yet: when your train comes in, and when to leave for it.
+    // Not on your way yet: when the train comes in, and when to leave for it.
+    if (tp.kind === 'missed' || tp.kind === 'early') {   // only a train you picked can be one of these
+      m.toggle = false; m.label = whose + ' in'; m.big = trainIn; m.sub = pullsIn;
+      if (tp.kind === 'early') m.second = { icon: 'walk', html: 'Before you planned to leave', cls: 'muted' };
+      else { m.second = tooSoon; m.altHtml = hereHint; }
+      m.bigKey = tag + 'train|' + t.trip; m.secondKey = 'x|' + t.trip + '|' + tp.kind;
+      return m;
+    }
     var lead = state.bigShows;
     if (planned && tp.kind === 'leave' && tp.slack > 60 * 60000) {   // a while off: clock times read better
-      var trainAt = { label: 'Planned: your train at ' + fromS[2], big: clock(t.arr), unit: ampm(t.arr), sub: train + ' · in ' + dur(t.arr - now),
+      var trainAt = { label: (picked ? 'Planned: this train at ' : 'Planned: your train at ') + fromS[2], big: clock(t.arr), unit: ampm(t.arr), sub: train + ' · in ' + dur(t.arr - now),
         pill: { icon: 'train', html: 'Train at <span class="n">' + clock(t.arr) + '</span> <span class="m">· in ' + dur(t.arr - now) + '</span>' } };
       var leaveAt = { label: 'Planned: leave at', big: clock(tp.at), unit: ampm(tp.at), sub: 'for the ' + clock(t.arr) + ' ' + train + ' at ' + fromS[2],
         pill: { icon: 'walk', html: 'Leave at <span class="n">' + clock(tp.at) + '</span> <span class="m">· ' + walkMin + ' min walk</span>' } };
       var front = lead === 'leave' ? leaveAt : trainAt, back = lead === 'leave' ? trainAt : leaveAt;
       m.label = front.label; m.big = front.big; m.unit = front.unit; m.sub = front.sub; m.second = back.pill;
       if (t.scheduled) m.alt = 'From the schedule. Live times take over about an hour before.';
-      m.bigKey = 'far|' + lead + '|' + t.trip; m.secondKey = m.bigKey;
+      m.bigKey = tag + 'far|' + lead + '|' + t.trip; m.secondKey = m.bigKey;
       return m;
     }
     var leaveCls, leaveLabel, leaveBig, leavePill;
@@ -917,16 +1012,16 @@ button{cursor:pointer}
     if (lead === 'leave') {
       m.cls = leaveCls; m.label = leaveLabel; m.big = leaveBig; m.sub = pullsIn;
       m.second = { icon: 'train', html: 'Train in <span class="n">' + trainIn + '</span>' };
-      m.bigKey = 'leave|' + t.trip + '|' + leaveCls; m.secondKey = 'train|' + t.trip;
+      m.bigKey = tag + 'leave|' + t.trip + '|' + leaveCls; m.secondKey = 'train|' + t.trip;
     } else {
-      m.label = 'Your train in'; m.big = trainIn; m.sub = pullsIn;
+      m.label = whose + ' in'; m.big = trainIn; m.sub = pullsIn;
       m.second = { icon: 'walk', html: leavePill, cls: leaveCls };
       m.alarm = leaveCls === 'now' || leaveCls === 'rush';   // the card lights up so "leave now" can't be missed
-      m.bigKey = 'train|' + t.trip; m.secondKey = 'leave|' + t.trip + '|' + leaveCls;
+      m.bigKey = tag + 'train|' + t.trip; m.secondKey = 'leave|' + t.trip + '|' + leaveCls;
     }
     if (tp.kind === 'rush') {
       var nextOk = null;
-      upcoming.forEach(function (u) { if (!nextOk && u.t !== t && u.p.kind === 'leave') nextOk = u; });
+      upcoming.forEach(function (u) { if (!nextOk && u.t !== t && u.t.arr > t.arr && u.p.kind === 'leave') nextOk = u; });
       if (nextOk) m.alt = 'Or relax: the ' + clock(nextOk.t.arr) + ', leave in ' + mmss(nextOk.p.slack);
     } else if (planned) m.alt = 'You planned to leave after ' + clock(ps) + '.';
     m.chime = tp.kind === 'leave' ? (tp.slack <= 60000 ? 'soon' : '') : 'now';
@@ -951,7 +1046,8 @@ button{cursor:pointer}
       sec.className = 'hero-second' + (m.second.cls ? ' ' + m.second.cls : '') + (m.toggle ? ' tap' : '');
       sec.innerHTML = ICON[m.second.icon] + '<span>' + m.second.html + '</span>';
     } else { sec.hidden = true; sec.innerHTML = ''; }
-    $('heroAlt').textContent = m.alt;
+    var alt = $('heroAlt'), altNow = m.altHtml || esc(m.alt);
+    if (alt._shown !== altNow) { alt.innerHTML = altNow; alt._shown = altNow; }   // only when it changes, so its button stays tappable
     var segAppears = seg.hidden && m.toggle;
     seg.hidden = !m.toggle;
     seg.classList.toggle('leave', state.bigShows === 'leave');
@@ -969,6 +1065,14 @@ button{cursor:pointer}
       anim(sub, [{ opacity: 0 }, { opacity: 1 }], { duration: 320, delay: 80, fill: 'backwards' });
       return;
     }
+    if ((how === 'next' || how === 'prev') && (bigChanged || secChanged)) {
+      // another train: it slides in from the side it's on (later trains from the right)
+      var dx = how === 'next' ? 30 : -30;
+      [label, big, sub, sec].forEach(function (el, i) {
+        if (!el.hidden) anim(el, [{ opacity: 0, transform: 'translateX(' + dx + 'px)' }, { opacity: 1, transform: 'none' }], { duration: 340, delay: i * 30, easing: EASE, fill: 'backwards' });
+      });
+      return;
+    }
     if (bigChanged) [label, big, sub].forEach(function (el, i) { anim(el, RISE, { duration: 380, delay: i * 45, easing: EASE, fill: 'backwards' }); });
     if (secChanged && !sec.hidden) anim(sec, RISE, { duration: 380, delay: bigChanged ? 140 : 0, easing: EASE, fill: 'backwards' });
   }
@@ -978,7 +1082,59 @@ button{cursor:pointer}
     heroAnim = 'swap'; render();
   }
 
-  var swapTurns = 0, listSkel = false;
+  // ---------- picking a train to look at ----------
+  // Tap one on the line, in the list or in the strip under the big number; or step with the arrows,
+  // a swipe on the card, or the arrow keys. Picking yours again (or it leaving) goes back to automatic.
+  var lastPick = { list: [], auto: null, shown: null };
+  function pickIndex(trip) {
+    for (var i = 0; i < lastPick.list.length; i++) if (lastPick.list[i].t.trip === trip) return i;
+    return -1;
+  }
+  function setPick(trip, how) {
+    if (!trip || trip === lastPick.shown) return;
+    if (!how) how = pickIndex(trip) < pickIndex(lastPick.shown) ? 'prev' : 'next';
+    state.pick = trip === lastPick.auto ? null : trip;
+    heroAnim = how; render();
+  }
+  function stepPick(d) {
+    var i = pickIndex(lastPick.shown), j = i < 0 ? 0 : i + d;
+    if (j < 0 || j >= lastPick.list.length) return;
+    setPick(lastPick.list[j].t.trip, d > 0 ? 'next' : 'prev');
+  }
+  // The strip of trains under the big number: their times, which is yours, which is at the platform
+  var stripKey = '', stripSel = '';
+  function renderStrip(list, autoTrip, shown, mode, now) {
+    var strip = $('tstrip'), chips = $('tchips');
+    if (list.length < 2 || !state.fetchedAt) { strip.hidden = true; stripKey = ''; stripSel = ''; return; }
+    var appeared = strip.hidden;
+    strip.hidden = false;
+    var sel = shown ? shown.trip : '';
+    var html = list.map(function (u) {
+      var t = u.t, cap, cls = [];
+      if (atPlatform(t)) { cap = 'here now'; cls.push('here'); }
+      else if (t.trip === autoTrip) cap = 'yours';
+      else if (u.p.kind === 'missed') { cap = mode === 'at' ? 'leaving' : 'too soon'; cls.push('soon'); }
+      else if (u.p.kind === 'early') { cap = 'early'; cls.push('soon'); }
+      else cap = inMin(t.arr - now);
+      if (t.trip === autoTrip) cls.push('yours');
+      if (t.trip === sel) cls.push('sel');
+      return '<button type="button" class="tchip ' + cls.join(' ') + '" data-trip="' + esc(t.trip) + '" aria-pressed="' + (t.trip === sel) + '" aria-label="' + esc('The ' + clock(t.arr) + ' train, ' + cap) + '">'
+        + clock(t.arr) + '<small>' + esc(cap) + '</small></button>';
+    }).join('');
+    if (html !== stripKey) { chips.innerHTML = html; stripKey = html; }   // only when it changes, so taps land
+    var i = -1;
+    list.forEach(function (u, k) { if (u.t.trip === sel) i = k; });
+    strip.querySelector('[data-step="-1"]').disabled = i <= 0;
+    strip.querySelector('[data-step="1"]').disabled = i < 0 || i >= list.length - 1;
+    if (sel !== stripSel) {   // keep the train on show in the middle of the strip
+      stripSel = sel;
+      var chip = chips.querySelector('.tchip.sel');
+      if (chip) chips.scrollTo({ left: Math.max(0, chip.offsetLeft - (chips.clientWidth - chip.offsetWidth) / 2), behavior: appeared || reduced() ? 'auto' : 'smooth' });
+    }
+    if (appeared && !inVT) anim(strip, [{ opacity: 0 }, { opacity: 1 }], { duration: 300 });
+  }
+
+  var swapTurns = 0, listSkel = false, listHtml = '';
   function render() {
     if (vtPending) return;   // a smooth change is about to paint this
     var now = Date.now();
@@ -996,6 +1152,7 @@ button{cursor:pointer}
     $('listHead').textContent = 'Next trains at ' + fromS[2];
     $('walkSrc').textContent = state.walkSource === 'location' ? 'Worked out from where you are' : state.walkSource === 'place' ? 'Worked out from that place' : '';
     renderGetThere(mode, wms);
+    $('locHelp').classList.toggle('quiet', manualHere());   // you said you're here, so no nagging about location
 
     // alerts
     var al = relevantAlerts();
@@ -1034,10 +1191,22 @@ button{cursor:pointer}
     }
     trackRide(mode, target, now);
 
+    // the train on show: yours, unless you picked another one to look at
+    var pickable = mode === 'ride' ? [] : upcoming.filter(function (u) { return u.t.dep > now - 5000; });
+    var shown = target, shownTp = tp, picked = false;
+    if (state.pick) {
+      var pu = null;
+      pickable.forEach(function (u) { if (u.t.trip === state.pick) pu = u; });
+      if (pu && pu.t !== target) { shown = pu.t; shownTp = pu.p; picked = true; }
+      else state.pick = null;   // it left, or it's yours again
+    }
+    lastPick = { list: pickable, auto: target ? target.trip : null, shown: shown ? shown.trip : null };
+
     // hero
-    var hm = heroModel(now, mode, target, tp, upcoming, planned, ps, wms, fromS, toS);
+    var hm = heroModel(now, mode, shown, shownTp, upcoming, planned, ps, wms, fromS, toS, picked);
     paintHero(hm);
-    if (target && hm.chime) maybeChime(target.trip, hm.chime);
+    if (shown && hm.chime) maybeChime(shown.trip, hm.chime);
+    renderStrip(pickable, lastPick.auto, shown, mode, now);
 
     // your train
     var card = $('trainCard'), waiting = !state.fetchedAt && !state.error && mode !== 'ride';
@@ -1052,28 +1221,28 @@ button{cursor:pointer}
       $('approach').setAttribute('aria-label', 'Finding your train');
       $('trainCars').innerHTML = '';
       $('rideNote').textContent = '';
-    } else if (target && mode !== 'ride' && !target.scheduled) {
+    } else if (shown && mode !== 'ride' && !shown.scheduled) {
       showEl(card, true);
-      var tp2 = position(target), away = tp2 ? stopsAway(tp2) : null, big2, sub2;
+      var tp2 = position(shown), away = tp2 ? stopsAway(tp2) : null, big2, sub2;
       if (!tp2) {
         var startName = STATIONS[dir() === 1 ? 0 : 19][2];
-        big2 = target.vehicle ? 'Turning around' : 'On its way';
-        sub2 = (target.vehicle ? 'at ' : 'from ') + startName + ' · here ' + inMin(target.arr - now);
+        big2 = shown.vehicle ? 'Turning around' : 'On its way';
+        sub2 = (shown.vehicle ? 'at ' : 'from ') + startName + ' · here ' + inMin(shown.arr - now);
       } else if (away <= 0) {
         big2 = tp2.status === 'STOPPED_AT' ? 'It\'s here' : 'Pulling in';
         sub2 = tp2.status === 'STOPPED_AT' ? 'doors open' : 'right now';
       } else {
         big2 = away + (away === 1 ? ' stop away' : ' stops away');
-        sub2 = 'here ' + inMin(target.arr - now);
+        sub2 = 'here ' + inMin(shown.arr - now);
       }
       $('awayBig').textContent = big2;
       $('awaySub').textContent = sub2;
-      $('trainTime').textContent = clock(target.arr);
-      $('trainHead').textContent = 'Your ' + headsign() + ' train · ' + fromS[2];
-      renderApproach(target, now);
-      $('approach').setAttribute('aria-label', 'Your train, ' + big2 + ', ' + sub2 + ', coming up to ' + fromS[2] + '.');
-      $('trainCars').innerHTML = consistHTML(target.vehicle);
-      $('rideNote').textContent = target.destArr ? 'Gets you to ' + toS[2] + ' at ' + clock(target.destArr) + '.' : '';
+      $('trainTime').textContent = clock(shown.arr);
+      $('trainHead').textContent = (picked ? 'The ' + clock(shown.arr) + ' ' : 'Your ') + headsign() + ' train · ' + fromS[2];
+      renderApproach(shown, now);
+      $('approach').setAttribute('aria-label', (picked ? 'This train, ' : 'Your train, ') + big2 + ', ' + sub2 + ', coming up to ' + fromS[2] + '. Tap a train to show it.');
+      $('trainCars').innerHTML = consistHTML(shown.vehicle);
+      $('rideNote').textContent = shown.destArr ? 'Gets you to ' + toS[2] + ' at ' + clock(shown.destArr) + '.' : '';
     } else card.hidden = true;
 
     // next trains
@@ -1092,14 +1261,17 @@ button{cursor:pointer}
       else if (p.kind === 'missed') { cls = 'missed'; tag = 'Too soon'; }
       else if (p.kind === 'leave') tag = 'Leave ' + clock(p.at);
       else { cls = 'rush'; tag = 'Walk fast'; }
-      return '<li class="' + cls + '"><span class="t">' + clock(t.arr) + '</span><span class="in">' + inMin(t.arr - now) + '</span><span class="tag">' + tag + '</span></li>';
+      if (picked && t === shown) cls += ' sel';
+      return '<li class="' + cls + '"><button type="button" class="row" data-trip="' + esc(t.trip) + '" aria-label="' + esc('The ' + clock(t.arr) + ' train, ' + inMin(t.arr - now) + (tag ? ', ' + tag : '') + '. Show it') + '">'
+        + '<span class="t">' + clock(t.arr) + '</span><span class="in">' + inMin(t.arr - now) + '</span><span class="tag">' + tag + '</span></button></li>';
     });
     var list = $('list');
     if (waiting) {
       list.innerHTML = '<li class="skrow"><span class="sk line" style="width:72%"></span></li><li class="skrow"><span class="sk line" style="width:56%"></span></li><li class="skrow"><span class="sk line" style="width:64%"></span></li>';
-      listSkel = true;
+      listSkel = true; listHtml = '';
     } else {
-      list.innerHTML = rows.length ? rows.join('') : '<li><span class="muted">No predictions yet.</span></li>';
+      var html = rows.length ? rows.join('') : '<li><span class="muted">No predictions yet.</span></li>';
+      if (html !== listHtml) { list.innerHTML = html; listHtml = html; }   // only when it changes, so taps land
       if (listSkel && !inVT) Array.prototype.forEach.call(list.children, function (li, i) {
         anim(li, RISE, { duration: 340, delay: i * 40, easing: EASE, fill: 'backwards' });
       });
@@ -1165,7 +1337,7 @@ button{cursor:pointer}
     var c = routeCache[state.from + '-' + state.to];
     if (c && Date.now() - c.at < 60000) { state.trains = c.trains; state.fetchedAt = c.at; }
     else { state.trains = []; state.fetchedAt = 0; }
-    state.error = ''; chimed = {}; trackKey = '';
+    state.error = ''; chimed = {}; trackKey = ''; state.pick = null;
     state.sched = []; state.schedKey = ''; setTimeout(loadSchedule, 0);
     state.startFix = state.here; state.riding = null; state.boardCandidate = null;
     saveSettings(); smooth(); loadTrains();
@@ -1182,24 +1354,27 @@ button{cursor:pointer}
     if (fromLat != null) u += '&saddr=' + fromLat.toFixed(5) + ',' + fromLon.toFixed(5);
     return u;
   }
+  var getThereHtml = '';
   function renderGetThere(mode, wms) {
     if (vtPending) return;
     if (mode == null) { mode = locMode(); wms = walkMs(); }
     var f = state.from, t = state.to, html;
-    if (state.locMsg) html = '<span class="warn">' + esc(state.locMsg) + '</span>';
+    var hereBtn = '<button type="button" class="lnk" data-act="here">I\'m here</button>';
+    if (state.locMsg) html = '<span class="warn">' + esc(state.locMsg) + '</span>' + (mode === 'wait' || mode === 'way' ? hereBtn : '');
     else if (mode === 'ride') html = '<span>On your way to ' + esc(STATIONS[t][2]) + '</span>';
-    else if (mode === 'at') html = '<span>You\'re at ' + esc(STATIONS[f][2]) + ' · ' + Math.abs(t - f) + (Math.abs(t - f) === 1 ? ' stop' : ' stops') + ' to ' + esc(STATIONS[t][2]) + '</span>';
+    else if (mode === 'at') html = '<span>You\'re at ' + esc(STATIONS[f][2]) + ' · ' + Math.abs(t - f) + (Math.abs(t - f) === 1 ? ' stop' : ' stops') + ' to ' + esc(STATIONS[t][2]) + '</span>'
+        + (manualHere() && !realAt() ? '<button type="button" class="lnk" data-act="nothere">Not here</button>' : '');
     else if (mode === 'way') html = '<span>About ' + Math.max(1, Math.round(wms / 60000)) + ' min to ' + esc(STATIONS[f][2]) + '</span>'
-        + '<a href="' + mapsLink(null, null, stLat(f), stLon(f)) + '" target="_blank" rel="noopener">Directions</a>';
+        + '<a href="' + mapsLink(null, null, stLat(f), stLon(f)) + '" target="_blank" rel="noopener">Directions</a>' + hereBtn;
     else {
       html = '<span>' + (state.walkSource === 'location' ? 'Walk about ' + state.walk + ' min to ' : state.walk + ' min walk to ') + esc(STATIONS[f][2]) + '</span>'
-        + '<a href="' + mapsLink(null, null, stLat(f), stLon(f)) + '" target="_blank" rel="noopener">Directions</a>';
+        + '<a href="' + mapsLink(null, null, stLat(f), stLon(f)) + '" target="_blank" rel="noopener">Directions</a>' + hereBtn;
       if (state.place) {
         html += '<span>Then ' + streetMin(state.place.m) + ' min from ' + esc(STATIONS[t][2]) + ' to ' + esc(state.place.name) + '</span>'
           + '<a href="' + mapsLink(stLat(t), stLon(t), state.place.lat, state.place.lon) + '" target="_blank" rel="noopener">Map</a>';
       }
     }
-    $('getThere').innerHTML = html;
+    if (html !== getThereHtml) { $('getThere').innerHTML = html; getThereHtml = html; }   // only when it changes, so taps land
   }
   var flashTimer = 0;
   function flash(msg) {
@@ -1230,8 +1405,11 @@ button{cursor:pointer}
       if (flipped) flash('You\'re nearest ' + name + ', so it flipped the direction.');
     }, function (err) {
       btn.classList.remove('busy'); state.locMsg = '';
-      if (err && err.code === 1) { showLocHelp(true); $('locSteps').hidden = false; $('locHelpBtn').setAttribute('aria-expanded', 'true'); $('locHelpBtn').textContent = 'Hide'; }
-      else flash('Couldn\'t find you just now. Tap From to pick your stop.');
+      if (err && err.code === 1) {
+        try { sessionStorage.removeItem('mc-lochelp'); } catch (e) {}
+        showLocHelp('denied'); $('locSteps').hidden = false; $('locHelpBtn').setAttribute('aria-expanded', 'true'); $('locHelpBtn').textContent = 'Hide';
+      }
+      else flash('This device couldn\'t find you. At the station?');
     }, { enableHighAccuracy: true, timeout: 12000, maximumAge: 10000 });
   }
   $('locBtn').addEventListener('click', function () { state.fromSource = 'auto'; startWatching(); useMyLocation(true); });
@@ -1242,7 +1420,54 @@ button{cursor:pointer}
   $('segTrain').addEventListener('click', function () { setBig('train'); });
   $('segLeave').addEventListener('click', function () { setBig('leave'); });
   $('heroSecond').addEventListener('click', function () {
+    if (Date.now() - swipedAt < 400) return;   // that was a swipe
     if (this.classList.contains('tap')) setBig(state.bigShows === 'train' ? 'leave' : 'train');
+  });
+  // Picking a train to look at: on the line, in the list, in the strip, by swiping the card, or the arrow keys
+  $('approach').addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('.ap-hit') : null;
+    if (b) setPick(b.getAttribute('data-trip'));
+  });
+  $('list').addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('.row') : null;
+    if (!b) return;
+    setPick(b.getAttribute('data-trip'));
+    if ($('hero').getBoundingClientRect().top < 0) $('hero').scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block: 'start' });
+  });
+  $('tstrip').addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('button') : null;
+    if (!b || b.disabled) return;
+    if (b.hasAttribute('data-step')) stepPick(+b.getAttribute('data-step'));
+    else setPick(b.getAttribute('data-trip'));
+  });
+  var swipe = null, swipedAt = 0;
+  $('hero').addEventListener('pointerdown', function (e) {
+    swipe = e.pointerType === 'mouse' || (e.target.closest && e.target.closest('button, .tstrip')) ? null : { x: e.clientX, y: e.clientY };
+  });
+  $('hero').addEventListener('pointerup', function (e) {
+    if (!swipe) return;
+    var dx = e.clientX - swipe.x, dy = e.clientY - swipe.y;
+    swipe = null;
+    if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.5) { swipedAt = Date.now(); stepPick(dx < 0 ? 1 : -1); }
+  });
+  $('hero').addEventListener('pointercancel', function () { swipe = null; });
+  document.addEventListener('keydown', function (e) {
+    if ((e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') || e.metaKey || e.ctrlKey || e.altKey || searchOpen) return;
+    if (/^(INPUT|TEXTAREA|SELECT)$/.test((e.target && e.target.tagName) || '')) return;
+    e.preventDefault();
+    stepPick(e.key === 'ArrowRight' ? 1 : -1);
+  });
+  // "I'm here" (you're at the station but this device can't tell) and "Not here"
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('[data-act="here"], [data-act="nothere"]') : null;
+    if (!b) return;
+    state.manualAt = b.getAttribute('data-act') === 'here' ? { i: state.from, at: Date.now() } : null;
+    state.pick = null; chimed = {};
+    smooth();
+  });
+  $('locHelpX').addEventListener('click', function () {
+    try { sessionStorage.setItem('mc-lochelp', 'hide'); } catch (e) {}
+    $('locHelp').hidden = true;
   });
   $('locHelpBtn').addEventListener('click', function () {
     var steps = $('locSteps'), open = steps.hidden;
@@ -1256,24 +1481,58 @@ button{cursor:pointer}
   function startWatching() {
     if (watchId != null || !('geolocation' in navigator)) return;
     watchId = navigator.geolocation.watchPosition(onFix, function (err) {
-      if (err && err.code === 1) {                       // refused: everything stays as you set it
+      if (!err) return;
+      if (err.code === 1) {                              // refused: everything stays as you set it
         if (watchId != null) navigator.geolocation.clearWatch(watchId);
         watchId = null;
-        showLocHelp(true);
-      }
+        showLocHelp('denied');
+      } else if (!freshFix()) showLocHelp('unavailable'); // this device can't find itself (say, a laptop with location off)
     }, { enableHighAccuracy: true, maximumAge: 5000, timeout: 30000 });
   }
-  function showLocHelp(on) {
-    state.locDenied = on;
-    showEl($('locHelp'), on);
+  function deviceKind() {
+    var ua = navigator.userAgent || '';
+    if (/iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) return 'ios';
+    if (/Android/.test(ua)) return 'android';
+    if (/Macintosh|Mac OS X/.test(ua)) return 'mac';
+    if (/Windows/.test(ua)) return 'windows';
+    return 'other';
+  }
+  function locStepsHTML() {
+    var site = '<li>Then let this page use it: the icon at the left of the address bar › <b>Location</b> › <b>Allow</b>. Reload the page.</li>';
+    switch (deviceKind()) {
+      case 'ios':
+        return '<li>iPhone <b>Settings</b> › <b>Privacy &amp; Security</b> › <b>Location Services</b>: on. Then <b>Safari Websites</b> › <b>While Using the App</b>, with <b>Precise Location</b> on.</li>'
+          + '<li>Back in Safari: tap <b>≡</b> next to the address › <b>Website Settings</b> › <b>Location</b> › <b>Allow</b>.</li>'
+          + '<li>Come back here. It finds your stop by itself.</li>';
+      case 'mac':
+        return '<li>Apple menu › <b>System Settings</b> › <b>Privacy &amp; Security</b> › <b>Location Services</b>: on, and on for your browser.</li>' + site;
+      case 'windows':
+        return '<li><b>Start</b> › <b>Settings</b> › <b>Privacy &amp; security</b> › <b>Location</b>: turn on <b>Location services</b> and <b>Let desktop apps access your location</b>.</li>' + site;
+      case 'android':
+        return '<li>Android <b>Settings</b> › <b>Location</b>: on.</li>' + site;
+      default:
+        return site;
+    }
+  }
+  // kind: 'denied' (this page isn't allowed), 'unavailable' (the device can't find itself), or false
+  function showLocHelp(kind) {
+    state.locDenied = kind || false;
+    var dismissed = false;
+    try { dismissed = sessionStorage.getItem('mc-lochelp') === 'hide'; } catch (e) {}
+    if (kind) {
+      $('locHelpText').textContent = (kind === 'unavailable' ? 'This device can\'t find where it is' : 'Location is off for this page')
+        + ', so it can\'t tell when you\'re at the station. Tap I\'m here when you are, or turn it on.';
+      $('locSteps').innerHTML = locStepsHTML();
+    }
+    showEl($('locHelp'), !!kind && !dismissed);
   }
   // When it's turned on in Settings and you come back, pick it up without a reload.
   function watchPermission() {
     if (!navigator.permissions || !navigator.permissions.query) { startWatching(); return; }
     navigator.permissions.query({ name: 'geolocation' }).then(function (status) {
       var apply = function () {
-        if (status.state === 'denied') showLocHelp(true);
-        else { showLocHelp(false); startWatching(); }
+        if (status.state === 'denied') showLocHelp('denied');
+        else { if (state.locDenied === 'denied') showLocHelp(false); startWatching(); }
       };
       apply();
       status.onchange = apply;
@@ -1322,7 +1581,7 @@ button{cursor:pointer}
       }
       return;
     }
-    if (mode === 'at' && target) state.boardCandidate = { trip: target.trip, dep: target.dep, destArr: target.destArr || null, at: now };
+    if (mode === 'at' && target && realAt()) state.boardCandidate = { trip: target.trip, dep: target.dep, destArr: target.destArr || null, at: now };
     var c = state.boardCandidate;
     if (!c) return;
     var gone = !state.trains.some(function (t) { return t.trip === c.trip; });
