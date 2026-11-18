@@ -231,6 +231,14 @@
   function loadFlags() {
     try { return Object.assign({}, FDEF, JSON.parse(localStorage.getItem('ilb-f') || '{}')); } catch (e) { return Object.assign({}, FDEF); }
   }
+  function loadTheme() {
+    try { const v = localStorage.getItem('ilb-theme'); return v === 'light' || v === 'dark' ? v : 'auto'; } catch (e) { return 'auto'; }
+  }
+  function applyTheme() {
+    const root = document.documentElement;
+    if (S.theme === 'auto') root.removeAttribute('data-theme'); else root.setAttribute('data-theme', S.theme);
+    try { if (S.theme === 'auto') localStorage.removeItem('ilb-theme'); else localStorage.setItem('ilb-theme', S.theme); } catch (e) { /* ignore */ }
+  }
   function saveFlags() {
     try { localStorage.setItem('ilb-f', JSON.stringify(S.f)); } catch (e) { /* ignore */ }
   }
@@ -242,7 +250,7 @@
     lang: detectLang(), langOpen: false,
     pTab: 'spots', badge: 'downtown', tracking: false,
     slide: 0, liveOpen: -1, liveSlide: 0,
-    f: loadFlags(), demoOpen: false, demoTab: 'looks', view: -1,
+    f: loadFlags(), demoOpen: false, demoTab: 'looks', view: -1, theme: loadTheme(),
   };
   function detectLang() {
     try {
@@ -445,7 +453,7 @@
     if (S.langOpen) { lw.innerHTML = langHTML(); lw.hidden = false; } else { lw.hidden = true; lw.innerHTML = ''; }
     // demo panel and the looks viewer
     const dw = $('#demoWrap');
-    const ds = [S.demoOpen, S.demoTab, fs].join('|');
+    const ds = [S.demoOpen, S.demoTab, fs, S.theme].join('|');
     if (S.demoOpen) {
       if (sig.demo !== ds) {
         const keep = dw.querySelector('.demo-sheet');
@@ -478,7 +486,7 @@
         <div class="tabs dtabs" role="tablist" aria-label="Demo"><button type="button" class="tab" role="tab" aria-selected="${S.demoTab === 'looks'}" data-act="demo-tab" data-v="looks">Other looks</button><button type="button" class="tab" role="tab" aria-selected="${S.demoTab === 'features'}" data-act="demo-tab" data-v="features">Features on/off</button></div>
         ${S.demoTab === 'looks'
           ? `<div class="lgrid">${looks}</div><p class="small muted demo-intro">Tap a look to see it big; swipe or use the arrows to flip through.</p>`
-          : `<div class="flist">${feats}</div>${allOn ? '' : '<button type="button" class="btn wide" data-act="flags-reset">Turn everything back on</button>'}<p class="small muted demo-intro">Your phone remembers these until you change them.</p>`}
+          : `<div class="appear"><span>Appearance</span><div class="seg3">${[['auto', 'Auto'], ['light', 'Light'], ['dark', 'Dark']].map(([v, l]) => `<button type="button" data-act="theme" data-v="${v}" aria-pressed="${S.theme === v}">${l}</button>`).join('')}</div></div><div class="flist">${feats}</div>${allOn ? '' : '<button type="button" class="btn wide" data-act="flags-reset">Turn everything back on</button>'}<p class="small muted demo-intro">Your phone remembers these until you change them.</p>`}
       </div>`;
   }
   function viewerHTML() {
@@ -512,8 +520,7 @@
       items.sort((a, b) => (a.on ? 1 : 0) - (b.on ? 1 : 0));
       return items.map(({ e, on }) => {
         const label = e.now ? t.now : (e.wd ? e.wd + ' ' : '') + e.time + ' ' + e.ap.toUpperCase();
-        const bg = on ? PICK : NAVY;
-        return `<button type="button" class="flagpin" data-act="pin" data-k="event:${e.id}" aria-label="${esc(e.name)}, ${e.now ? 'on now' : esc(label)}" style="left:${e.x}px;top:${e.y}px"><span class="fp" style="background:${bg}">${e.now ? '<span class="fpdot pdot"></span>' : ''}<span>${esc(label)}</span></span><span class="tail" style="border-top-color:${bg}"></span></button>`;
+        return `<button type="button" class="flagpin" data-act="pin" data-k="event:${e.id}" aria-label="${esc(e.name)}, ${e.now ? 'on now' : esc(label)}" style="left:${e.x}px;top:${e.y}px"><span class="fp${on ? ' on' : ''}">${e.now ? '<span class="fpdot pdot"></span>' : ''}<span>${esc(label)}</span></span><span class="tail${on ? ' on' : ''}"></span></button>`;
       }).join('');
     }
     const items = VENDORS.slice().sort((a, b) => a.dist - b.dist).map((v) => ({ v, on: S.sel === 'live:' + v.id }));
@@ -564,7 +571,7 @@
           <span class="st-walk">${esc(t.mins(st.walk))}</span>
           <span class="chev${open ? ' open' : ''}">${I.s(P.right, 16, 2.2)}</span>
         </button>
-        ${open ? `<div class="trains">${st.trains.map(([line, to, t1, t2]) => `<div class="tr"><span class="tbar" style="background:${LINE[line].c}"></span><span class="tto"><span class="tl">${line} Line to</span><span class="td">${esc(to)}</span></span><span class="t1"${t1 === 'Now' ? ' style="color:#C41E35"' : ''}>${esc(t1)}</span><span class="t2">${esc(t2)}</span></div>`).join('')}</div>` : ''}
+        ${open ? `<div class="trains">${st.trains.map(([line, to, t1, t2]) => `<div class="tr"><span class="tbar" style="background:${LINE[line].c}"></span><span class="tto"><span class="tl">${line} Line to</span><span class="td">${esc(to)}</span></span><span class="t1${t1 === 'Now' ? ' nowred' : ''}">${esc(t1)}</span><span class="t2">${esc(t2)}</span></div>`).join('')}</div>` : ''}
       </div>`;
     }).join('');
     return `
@@ -592,7 +599,7 @@
     const row = (e) => {
       const free = /^Free/.test(e.price);
       return `<button type="button" class="row ev" data-act="sel" data-k="event:${e.id}">
-        <span class="tcol">${e.wd ? `<span class="wd">${e.wd}</span>` : ''}<span class="tm"${e.now ? ' style="color:#C41E35"' : ''}>${esc(e.now ? t.now : e.time + ' ' + e.ap)}</span>${e.now ? `<span class="tilll">${esc(t.till(e.until))}</span>` : ''}</span>
+        <span class="tcol">${e.wd ? `<span class="wd">${e.wd}</span>` : ''}<span class="tm${e.now ? ' nowred' : ''}">${esc(e.now ? t.now : e.time + ' ' + e.ap)}</span>${e.now ? `<span class="tilll">${esc(t.till(e.until))}</span>` : ''}</span>
         <span class="lcol"><span class="estop${e.now ? ' now pdot' : ''}"></span></span>
         <span class="txt"><span class="nm"><b>${esc(e.name)}</b>${S.f.featured && e.sponsored ? `<span class="sp">${esc(t.sponsored)}</span>` : ''}</span><span class="sub">${esc(e.where)} · ${esc(t.mins(mins(e.dist)))} · <span class="evprice${free ? ' free' : ''}">${esc(e.price)}</span></span></span>
       </button>`;
@@ -611,7 +618,7 @@
     const t = T();
     const vendors = VENDORS.slice().sort((a, b) => a.dist - b.dist);
     const tiles = vendors.map((v) => `<button type="button" class="tile" data-act="sel" data-k="live:${v.id}" aria-label="${esc(v.name)}">
-        <span class="tile-media" style="background:${v.tint};color:${v.ink}">${I.s(P[v.icon], 48, 1.4)}<span class="livebadge">LIVE · ${esc(t.till(v.till))}</span>${v.video ? `<span class="playmini">${I.s(P.play, 12)}</span>` : ''}</span>
+        <span class="tile-media tinted" style="--tint:${v.tint};--tink:${v.ink}">${I.s(P[v.icon], 48, 1.4)}<span class="livebadge">LIVE · ${esc(t.till(v.till))}</span>${v.video ? `<span class="playmini">${I.s(P.play, 12)}</span>` : ''}</span>
         <span class="tile-name">${esc(v.name)}</span><span class="tile-sub">${esc(v.short)} · ${esc(t.mins(mins(v.dist)))}</span>
       </button>`).join('');
     const later = LATER.map((l, i) => `<div class="later"${i ? '' : ' style="border-top:0"'}>${I.s(P.clock)}<span class="lt"><b>${esc(l.name)}</b><span>${esc(l.what)}</span></span><span class="lo">${esc(t.opens(l.opens))}</span></div>`).join('');
@@ -635,7 +642,7 @@
       chip = S.f.featured && p.sponsored ? `<span class="sp">${esc(t.sponsored)}</span>` : '';
       line1 = t[p.kind] + ' · ' + t.walk(mins(p.dist));
       dot = S.f.colors ? `<i class="cdot" style="background:${CAT_COLOR[p.cat]}"></i>` : '';
-      thumb = S.f.featured && p.photo ? `<span class="thumb" style="background:${p.tint};color:${p.ink}">${I.s(P.photo, 30, 1.6)}</span>` : '';
+      thumb = S.f.featured && p.photo ? `<span class="thumb tinted" style="--tint:${p.tint};--tink:${p.ink}">${I.s(P.photo, 30, 1.6)}</span>` : '';
       primary = `<a class="btn primary" href="${maps(p.q)}" target="_blank" rel="noopener">${I.s(P.pin)}<span>${esc(t.directions)}</span></a>`;
       secondary = `<a class="btn" href="#/${p.page}">${esc(t.seePage)}</a>`;
     } else if (type === 'event') {
@@ -645,7 +652,7 @@
       chip = S.f.featured && e.sponsored ? `<span class="sp">${esc(t.sponsored)}</span>` : '';
       line1 = (e.now ? t.now + ', ' + t.till(e.until) : dayWord + ' · ' + e.time + ' ' + e.ap) + ' · ' + e.price;
       line2 = e.where + ' · ' + t.walk(mins(e.dist));
-      thumb = e.photo && (S.f.featured || !e.sponsored) ? `<span class="thumb" style="background:${e.tint};color:${e.ink}">${I.s(P.photo, 30, 1.6)}</span>` : '';
+      thumb = e.photo && (S.f.featured || !e.sponsored) ? `<span class="thumb tinted" style="--tint:${e.tint};--tink:${e.ink}">${I.s(P.photo, 30, 1.6)}</span>` : '';
       primary = `<button type="button" class="btn primary" data-act="demo" data-v="Added to your calendar (demo)">${I.s(P.cal)}<span>${esc(t.addCal)}</span></button>`;
       secondary = e.q ? `<a class="btn" href="${maps(e.q)}" target="_blank" rel="noopener">${esc(t.directions)}</a>` : `<button type="button" class="btn" data-act="demo">${esc(t.directions)}</button>`;
     } else {
@@ -653,7 +660,7 @@
       title = v.name;
       chip = `<span class="livebadge inline">LIVE · ${esc(t.till(v.till))}</span>`;
       line1 = v.what + ' · ' + t.walk(mins(v.dist));
-      thumb = `<span class="thumb" style="background:${v.tint};color:${v.ink}">${I.s(P[v.icon], 34, 1.5)}</span>`;
+      thumb = `<span class="thumb tinted" style="--tint:${v.tint};--tink:${v.ink}">${I.s(P[v.icon], 34, 1.5)}</span>`;
       primary = `<a class="btn primary" href="${maps('Downtown Crossing Boston')}" target="_blank" rel="noopener">${I.s(P.pin)}<span>${esc(t.directions)}</span></a>`;
       secondary = `<a class="btn" href="#/live/${v.id}">${esc(t.photos)}</a>`;
     }
@@ -802,11 +809,11 @@
     const i = Math.min(S.slide, f.slides.length - 1);
     const [kind, tint] = f.slides[i];
     return `<div class="scr page"><div class="scroll">
-      <div class="hero" style="background:${tint};color:${f.ink}" data-act="slide-next" aria-label="Next photo">
+      <div class="hero tinted" style="--tint:${tint};--tink:${f.ink}" data-act="slide-next" aria-label="Next photo">
         ${kind === 'Video' ? `<span class="playbig">${I.s(P.play, 26)}</span>` : I.s(P[f.icon], 92, 1.2)}
         <div class="hero-bar">${back()}<button type="button" class="round" data-act="demo" data-v="Share (demo)" aria-label="Share">${I.s(P.share, 19)}</button></div>
         <span class="hero-label">${kind} · ${i + 1} of ${f.slides.length}</span>
-        <div class="hero-dots">${f.slides.map((s, j) => `<button type="button" data-act="slide" data-v="${j}" aria-label="Show ${s[0].toLowerCase()} ${j + 1}" aria-pressed="${j === i}"><span style="width:${j === i ? 20 : 7}px;background:${j === i ? NAVY : 'rgba(19,37,74,.35)'}"></span></button>`).join('')}</div>
+        <div class="hero-dots">${f.slides.map((s, j) => `<button type="button" data-act="slide" data-v="${j}" aria-label="Show ${s[0].toLowerCase()} ${j + 1}" aria-pressed="${j === i}"><span class="hd${j === i ? ' on' : ''}" style="width:${j === i ? 20 : 7}px"></span></button>`).join('')}</div>
       </div>
       <div class="sheet-card">
         <div class="badges"><span class="sp big">${esc(t.sponsored)}</span><span class="fav">${I.s(P.star, 12)}Local favorite</span></div>
@@ -821,7 +828,7 @@
         <div class="deal"><span class="deal-ic">${I.s(P.gift, 20)}</span><span><span class="eyebrow light">Deal of the month</span><b>${esc(f.deal)}</b></span></div>
         <section><h2>About</h2><p>${esc(f.about)}</p></section>
         <section><h2>Hours</h2><p>${esc(f.hours)}</p></section>
-        <section><h2>Photos and videos</h2><div class="grid3">${f.tiles.map(([k, c]) => `<span class="gt" style="background:${c};color:${f.ink}">${k === 'Video' ? `<span class="playmini">${I.s(P.play, 14)}</span>` : I.s(P.photo, 30, 1.5)}</span>`).join('')}</div></section>
+        <section><h2>Photos and videos</h2><div class="grid3">${f.tiles.map(([k, c]) => `<span class="gt tinted" style="--tint:${c};--tink:${f.ink}">${k === 'Video' ? `<span class="playmini">${I.s(P.play, 14)}</span>` : I.s(P.photo, 30, 1.5)}</span>`).join('')}</div></section>
         <section><div class="rev-h"><h2>Reviews</h2><span class="small muted">From people who scanned a sign nearby</span></div>
           <article class="rev"><span class="stars" aria-label="Star rating">★★★★★</span><span class="small muted">Sample</span><p>[A visitor's review shows here, in your language]</p></article>
           <article class="rev"><span class="stars" aria-label="Star rating">★★★★★</span><span class="small muted">Translated from Español</span><p>[Reviews in other languages are translated, with the original a tap away]</p></article>
@@ -833,7 +840,7 @@
   function listingHTML(p) {
     const t = T();
     return `<div class="scr page"><div class="scroll">
-      <div class="hero small" style="background:#E6EDFA;color:#2A4E9B">${I.s(p.id === 'brattle' ? P.book : P.photo, 64, 1.4)}
+      <div class="hero small tinted" style="--tint:#E6EDFA;--tink:#2A4E9B">${I.s(p.id === 'brattle' ? P.book : P.photo, 64, 1.4)}
         <div class="hero-bar">${back()}</div><span class="hero-label">No photos yet</span></div>
       <div class="pad">
         <span class="freechip">Free listing</span>
@@ -854,7 +861,7 @@
   function liveScreen() {
     const t = T();
     const cards = VENDORS.map((v, i) => `<button type="button" class="vcard" data-act="vopen" data-v="${i}" aria-label="${esc(v.name)}">
-        <span class="vmedia" style="background:${v.tint};color:${v.ink}">${I.s(P[v.icon], 64, 1.4)}<span class="livebadge">LIVE · ${esc(t.till(v.till))}</span><span class="vlabel">${v.slides[0] === 'Video' ? 'Video preview' : 'Photo'}</span>${v.slides[0] === 'Video' ? `<span class="playmini big">${I.s(P.play, 14)}</span>` : ''}</span>
+        <span class="vmedia tinted" style="--tint:${v.tint};--tink:${v.ink}">${I.s(P[v.icon], 64, 1.4)}<span class="livebadge">LIVE · ${esc(t.till(v.till))}</span><span class="vlabel">${v.slides[0] === 'Video' ? 'Video preview' : 'Photo'}</span>${v.slides[0] === 'Video' ? `<span class="playmini big">${I.s(P.play, 14)}</span>` : ''}</span>
         <span class="tile-name">${esc(v.name)}</span><span class="tile-sub">${esc(v.what)} · ${esc(t.mins(mins(v.dist)))}</span>
       </button>`).join('');
     let sheet = '';
@@ -862,12 +869,12 @@
       const v = VENDORS[S.liveOpen];
       const k = v.slides[S.liveSlide] || 'Photo';
       sheet = `<div class="vsheet-dim" data-act="vclose"></div><div class="vsheet" role="dialog" aria-label="${esc(v.name)}">
-        <div class="vbig" style="background:${v.tint};color:${v.ink}">${I.s(P[v.icon], 96, 1.2)}
+        <div class="vbig tinted" style="--tint:${v.tint};--tink:${v.ink}">${I.s(P[v.icon], 96, 1.2)}
           <span class="livebadge big">LIVE · here ${esc(t.till(v.till))}</span>
           <button type="button" class="round pos-tr" data-act="vclose" aria-label="Close">${I.s(P.x, 20)}</button>
           <span class="vlabel big">${k} · ${S.liveSlide + 1} of ${v.slides.length}</span>
           ${k === 'Video' ? `<span class="playbig">${I.s(P.play, 24)}</span>` : ''}
-          <div class="vdots">${v.slides.map((s, j) => `<button type="button" data-act="vslide" data-v="${j}" aria-label="Show ${s.toLowerCase()} ${j + 1}"><span style="width:${j === S.liveSlide ? 22 : 8}px;background:${j === S.liveSlide ? NAVY : 'rgba(19,37,74,.35)'}"></span></button>`).join('')}</div>
+          <div class="vdots">${v.slides.map((s, j) => `<button type="button" data-act="vslide" data-v="${j}" aria-label="Show ${s.toLowerCase()} ${j + 1}"><span class="hd${j === S.liveSlide ? ' on' : ''}" style="width:${j === S.liveSlide ? 22 : 8}px"></span></button>`).join('')}</div>
         </div>
         <div class="vinfo"><b>${esc(v.name)}</b><span class="muted">${esc(v.what)} · ${esc(t.mins(mins(v.dist)))} · Downtown Crossing</span>
           <div class="two"><a class="btn red" href="${maps('Downtown Crossing Boston')}" target="_blank" rel="noopener">${I.s(P.pin)}<span>${esc(t.directions)}</span></a><button type="button" class="btn" data-act="demo">${I.s(P.insta)}<span>Instagram</span></button></div>
@@ -915,7 +922,7 @@
   ];
   const BADGES = [
     { id: 'first', name: 'First scan', how: 'Scan any I Love Boston sign.', have: 1, need: 1, color: '#B8232F', when: 'Nov 8', d: '<path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 7.5 2.6C19.5 15.4 12 20 12 20z"/>' },
-    { id: 'downtown', name: 'Downtown local', how: 'Collect all 3 Downtown spots.', have: 2, need: 3, color: NAVY, d: '<path d="M4 21V6l8-3.5L20 6v15M9.5 21v-4.5h5V21M8 9.5h2M14 9.5h2M8 13h2M14 13h2"/>' },
+    { id: 'downtown', name: 'Downtown local', how: 'Collect all 3 Downtown spots.', have: 2, need: 3, color: 'var(--navy-surface)', d: '<path d="M4 21V6l8-3.5L20 6v15M9.5 21v-4.5h5V21M8 9.5h2M14 9.5h2M8 13h2M14 13h2"/>' },
     { id: 'northend', name: 'North End explorer', how: 'Collect all 3 North End spots.', have: 1, need: 3, color: '#2F6B43', d: P.pin },
     { id: 'beacon', name: 'Beacon Hill', how: 'Collect both Beacon Hill spots.', have: 0, need: 2, color: '#8A5A00', d: '<path d="M9 3h6l1.5 4h-9zM10 7v5h4V7M12 12v8.5M9 21h6"/>' },
     { id: 'backbay', name: 'Back Bay', how: 'Collect both Back Bay spots.', have: 0, need: 2, color: '#5B3A8A', d: P.pin },
@@ -953,7 +960,7 @@
       body = `<div class="bgrid">${BADGES.map((b) => {
           const earned = b.have >= b.need, on = b.id === S.badge;
           return `<button type="button" class="badge${on ? ' on' : ''}" data-act="badge" data-v="${b.id}" aria-pressed="${on}" aria-label="${esc(b.name)}${earned ? ', earned' : ', ' + b.have + ' of ' + b.need}">
-            <span class="medal" style="background:${earned ? b.color : '#EEF0F3'};color:${earned ? '#fff' : '#8A93A3'};${earned ? `box-shadow:0 0 0 3px #fff,0 0 0 5px ${b.color}` : ''}">${I.s(b.d, 28, 1.8)}${earned ? '' : `<span class="lockmini">${I.s(P.lock, 12, 2.6)}</span>`}</span>
+            <span class="medal" style="background:${earned ? b.color : 'var(--surface3)'};color:${earned ? '#fff' : 'var(--faint)'};${earned ? `box-shadow:0 0 0 3px var(--surface),0 0 0 5px ${b.color}` : ''}">${I.s(b.d, 28, 1.8)}${earned ? '' : `<span class="lockmini">${I.s(P.lock, 12, 2.6)}</span>`}</span>
             <span class="bname">${esc(b.name)}</span><span class="bprog${earned ? ' ok' : ''}">${earned ? 'Earned ' + b.when : b.have + ' of ' + b.need}</span></button>`;
         }).join('')}</div>
         <div class="bdetail"><div class="bd-h"><b>${esc(sb.name)}</b><span${earnedSel ? ' class="ok"' : ''}>${earnedSel ? 'Earned ' + sb.when : sb.have + ' of ' + sb.need + ' · ' + (sb.need - sb.have) + ' to go'}</span></div><p>${esc(sb.how)}</p>
@@ -962,7 +969,7 @@
     } else {
       const dots = STOP_XY.map((xy, i) => {
         const done = i < DONE, next = i === DONE, size = done ? 12 : next ? 14 : 10;
-        return `<span class="tdot" style="left:${xy[0] - size / 2}px;top:${xy[1] - size / 2}px;width:${size}px;height:${size}px;border:${next ? 3 : 2}px solid ${done ? '#fff' : next ? '#C8102E' : '#9AA3B2'};background:${done ? '#C8102E' : '#fff'}"></span>`;
+        return `<span class="tdot" style="left:${xy[0] - size / 2}px;top:${xy[1] - size / 2}px;width:${size}px;height:${size}px;border:${next ? 3 : 2}px solid ${done ? 'var(--surface)' : next ? '#C8102E' : 'var(--faint)'};background:${done ? '#C8102E' : 'var(--surface)'}"></span>`;
       }).join('');
       body = `<div class="trailmap">
           <svg width="358" height="270" viewBox="0 0 358 270" role="img" aria-label="Sketch map of the Freedom Trail, from Boston Common through downtown and the North End to Bunker Hill. You've walked the first 5 stops.">
@@ -1037,6 +1044,7 @@
         break;
       }
       case 'flags-reset': S.f = Object.assign({}, FDEF); saveFlags(); updH(); break;
+      case 'theme': S.theme = v; applyTheme(); updH(); break;
       case 'look': {
         const i = +v;
         S.view = i; updH();
@@ -1095,5 +1103,6 @@
     rz = setTimeout(() => { if (S.route === 'h' && hMounted) { G = geo(); updH(); } }, 120);
   });
 
+  applyTheme();
   route();
 })();
