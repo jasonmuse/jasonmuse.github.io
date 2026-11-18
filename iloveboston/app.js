@@ -59,6 +59,7 @@
     fish: '<path d="M2.5 12c3-4.2 8.7-5.6 13-2.4L20.5 6v12l-5-3.6C11.2 17.6 5.5 16.2 2.5 12z"/><circle cx="7.6" cy="11.3" r=".9" fill="currentColor" stroke="none"/>',
     bag: '<path d="M5.5 8h13l1 13h-15z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/>',
     medal: '<circle cx="12" cy="15" r="5.5"/><path d="M8.6 10.6L6 3h4l2 5 2-5h4l-2.6 7.6"/>',
+    person: '<circle cx="12" cy="8.2" r="3.8"/><path d="M4.5 20.5c1.4-3.8 4.2-5.6 7.5-5.6s6.1 1.8 7.5 5.6"/>',
   };
 
   /* ---------- languages (strings from look A, plus H's own) ---------- */
@@ -217,6 +218,70 @@
       beenHere: 'यहाँ गए थे? पॉइंट कमाएँ', mostLiked: 'सबसे ज़्यादा लाइक', stations: (n) => n + ' स्टेशन' },
   };
   Object.keys(STR2).forEach((k) => Object.assign(STR[k], STR2[k]));
+  // Sign in, reviews and critics (merged into STR just below). recNote replaces the earlier one.
+  const STR3 = {
+    en: { signIn: 'Sign in', signToEarn: 'Sign in to earn points', signTitle: 'Sign in to check in, review and earn points',
+      signBody: 'Signing in with Google or Apple keeps reviews real: one person, one account. Looking around stays free, no account needed.',
+      withGoogle: 'Continue with Google', withApple: 'Continue with Apple', review: 'Review', reviewed: 'Reviewed',
+      wouldRec: (n) => 'Would you recommend ' + n + '?', yes: 'Yes', notReally: 'Not really', sayWhy: 'What did you get? What did you like? (optional)', post: 'Post review',
+      criticsPick: "Critics' pick", criticsRow: 'Local critics recommend',
+      recNote: 'Ranked by recommendations from signed-in visitors who checked in. 🏆 marks local critics’ picks. Sponsored places are labeled and can’t pay to rank higher.' },
+    es: { signIn: 'Entrar', signToEarn: 'Inicia sesión para ganar puntos', signTitle: 'Inicia sesión para hacer check-in, opinar y ganar puntos',
+      signBody: 'Entrar con Google o Apple mantiene las reseñas reales: una persona, una cuenta. Mirar sigue siendo gratis y sin cuenta.',
+      withGoogle: 'Continuar con Google', withApple: 'Continuar con Apple', review: 'Reseña', reviewed: 'Reseña hecha',
+      wouldRec: (n) => '¿Recomendarías ' + n + '?', yes: 'Sí', notReally: 'No mucho', sayWhy: '¿Qué pediste? ¿Qué te gustó? (opcional)', post: 'Publicar reseña',
+      criticsPick: 'Elegido por críticos', criticsRow: 'Lo que recomiendan los críticos locales',
+      recNote: 'Ordenado según las recomendaciones de visitantes con sesión iniciada que hicieron check-in. 🏆 marca lo que eligen los críticos locales. Los lugares patrocinados están señalados y no pueden pagar para subir.' },
+    pt: { signIn: 'Entrar', signToEarn: 'Entre para ganhar pontos', signTitle: 'Entre para fazer check-in, avaliar e ganhar pontos',
+      signBody: 'Entrar com Google ou Apple mantém as avaliações reais: uma pessoa, uma conta. Navegar continua grátis, sem conta.',
+      withGoogle: 'Continuar com o Google', withApple: 'Continuar com a Apple', review: 'Avaliar', reviewed: 'Avaliado',
+      wouldRec: (n) => 'Você recomendaria ' + n + '?', yes: 'Sim', notReally: 'Não muito', sayWhy: 'O que você pediu? Do que gostou? (opcional)', post: 'Publicar avaliação',
+      criticsPick: 'Escolha dos críticos', criticsRow: 'Os críticos locais recomendam',
+      recNote: 'Ordenado pelas recomendações de visitantes conectados que fizeram check-in. 🏆 marca as escolhas dos críticos locais. Lugares patrocinados são identificados e não podem pagar para subir.' },
+    zh: { signIn: '登录', signToEarn: '登录即可赚积分', signTitle: '登录后即可打卡、评价并赚积分',
+      signBody: '用 Google 或 Apple 登录，让评价更真实：一人一个账号。随便看看无需登录，完全免费。',
+      withGoogle: '使用 Google 继续', withApple: '使用 Apple 继续', review: '评价', reviewed: '已评价',
+      wouldRec: (n) => '你会推荐' + n + '吗？', yes: '会', notReally: '不太会', sayWhy: '你点了什么？喜欢什么？（选填）', post: '发布评价',
+      criticsPick: '评论家推荐', criticsRow: '本地评论家推荐',
+      recNote: '按已登录并打卡的访客推荐数排序。🏆 表示本地评论家的推荐。赞助商家都有标注，不能花钱提高排名。' },
+    fr: { signIn: 'Connexion', signToEarn: 'Connectez-vous pour gagner des points', signTitle: 'Connectez-vous pour faire un check-in, donner votre avis et gagner des points',
+      signBody: 'Se connecter avec Google ou Apple garde les avis authentiques : une personne, un compte. Regarder reste gratuit, sans compte.',
+      withGoogle: 'Continuer avec Google', withApple: 'Continuer avec Apple', review: 'Avis', reviewed: 'Avis publié',
+      wouldRec: (n) => 'Recommanderiez-vous ' + n + ' ?', yes: 'Oui', notReally: 'Pas vraiment', sayWhy: 'Qu’avez-vous pris ? Qu’avez-vous aimé ? (facultatif)', post: 'Publier l’avis',
+      criticsPick: 'Choix des critiques', criticsRow: 'Les critiques locaux recommandent',
+      recNote: 'Classé selon les recommandations des visiteurs connectés venus sur place. 🏆 indique les choix des critiques locaux. Les lieux sponsorisés sont signalés et ne peuvent pas payer pour monter.' },
+    vi: { signIn: 'Đăng nhập', signToEarn: 'Đăng nhập để nhận điểm', signTitle: 'Đăng nhập để check-in, đánh giá và nhận điểm',
+      signBody: 'Đăng nhập bằng Google hoặc Apple giúp đánh giá luôn thật: mỗi người một tài khoản. Xem thì vẫn miễn phí, không cần tài khoản.',
+      withGoogle: 'Tiếp tục với Google', withApple: 'Tiếp tục với Apple', review: 'Đánh giá', reviewed: 'Đã đánh giá',
+      wouldRec: (n) => 'Bạn có giới thiệu ' + n + ' không?', yes: 'Có', notReally: 'Không hẳn', sayWhy: 'Bạn đã gọi gì? Bạn thích gì? (không bắt buộc)', post: 'Đăng đánh giá',
+      criticsPick: 'Nhà phê bình chọn', criticsRow: 'Nhà phê bình địa phương giới thiệu',
+      recNote: 'Xếp hạng theo đề xuất của khách đã đăng nhập và check-in. 🏆 là lựa chọn của nhà phê bình địa phương. Nơi được tài trợ luôn có nhãn và không thể trả tiền để lên hạng.' },
+    it: { signIn: 'Accedi', signToEarn: 'Accedi per guadagnare punti', signTitle: 'Accedi per fare check-in, recensire e guadagnare punti',
+      signBody: 'Accedere con Google o Apple mantiene le recensioni vere: una persona, un account. Guardare resta gratis, senza account.',
+      withGoogle: 'Continua con Google', withApple: 'Continua con Apple', review: 'Recensisci', reviewed: 'Recensito',
+      wouldRec: (n) => 'Consiglieresti ' + n + '?', yes: 'Sì', notReally: 'Non proprio', sayWhy: 'Cosa hai preso? Cosa ti è piaciuto? (facoltativo)', post: 'Pubblica recensione',
+      criticsPick: 'Scelto dai critici', criticsRow: 'I critici locali consigliano',
+      recNote: 'In ordine di consigli dei visitatori registrati che hanno fatto check-in. 🏆 indica le scelte dei critici locali. I luoghi sponsorizzati sono segnalati e non possono pagare per salire.' },
+    ja: { signIn: 'ログイン', signToEarn: 'ログインしてポイントをためる', signTitle: 'ログインしてチェックイン、レビュー、ポイント獲得',
+      signBody: 'Google か Apple でログインすると、レビューが本物に保たれます（1人1アカウント）。見るだけならアカウント不要・無料です。',
+      withGoogle: 'Google で続ける', withApple: 'Apple で続ける', review: 'レビュー', reviewed: 'レビュー済み',
+      wouldRec: (n) => n + 'をおすすめしますか？', yes: 'はい', notReally: 'あまり', sayWhy: '何を頼みましたか？どこが良かったですか？（任意）', post: 'レビューを投稿',
+      criticsPick: '評論家のおすすめ', criticsRow: '地元の評論家のおすすめ',
+      recNote: 'ログインしてチェックインした人のおすすめ数で並べています。🏆 は地元の評論家のおすすめ。スポンサーには表示があり、お金で順位を上げることはできません。' },
+    ko: { signIn: '로그인', signToEarn: '로그인하고 포인트 받기', signTitle: '로그인하고 체크인, 리뷰, 포인트 받기',
+      signBody: 'Google이나 Apple로 로그인하면 리뷰가 진짜로 유지돼요. 한 사람에 한 계정. 둘러보기는 계정 없이 무료예요.',
+      withGoogle: 'Google로 계속하기', withApple: 'Apple로 계속하기', review: '리뷰', reviewed: '리뷰 완료',
+      wouldRec: (n) => n + ', 추천하시겠어요?', yes: '네', notReally: '별로요', sayWhy: '무엇을 주문했나요? 무엇이 좋았나요? (선택)', post: '리뷰 올리기',
+      criticsPick: '평론가 추천', criticsRow: '지역 평론가 추천',
+      recNote: '로그인하고 체크인한 방문자의 추천 수로 순위를 매겨요. 🏆는 지역 평론가의 추천이에요. 스폰서 장소는 표시되며, 돈으로 순위를 올릴 수 없어요.' },
+    hi: { signIn: 'साइन इन', signToEarn: 'पॉइंट कमाने के लिए साइन इन करें', signTitle: 'चेक-इन, रिव्यू और पॉइंट के लिए साइन इन करें',
+      signBody: 'Google या Apple से साइन इन करने से रिव्यू असली रहते हैं: एक व्यक्ति, एक अकाउंट। घूमना-देखना मुफ़्त है, अकाउंट की ज़रूरत नहीं।',
+      withGoogle: 'Google के साथ जारी रखें', withApple: 'Apple के साथ जारी रखें', review: 'रिव्यू', reviewed: 'रिव्यू दिया',
+      wouldRec: (n) => 'क्या आप ' + n + ' की सिफ़ारिश करेंगे?', yes: 'हाँ', notReally: 'ज़्यादा नहीं', sayWhy: 'आपने क्या लिया? क्या अच्छा लगा? (वैकल्पिक)', post: 'रिव्यू पोस्ट करें',
+      criticsPick: 'समीक्षकों की पसंद', criticsRow: 'स्थानीय समीक्षक सुझाते हैं',
+      recNote: 'साइन इन करके चेक-इन करने वाले लोगों की सिफ़ारिशों के हिसाब से क्रम। 🏆 स्थानीय समीक्षकों की पसंद है। प्रायोजित जगहों पर लेबल होता है और वे पैसे देकर ऊपर नहीं आ सकतीं।' },
+  };
+  Object.keys(STR3).forEach((k) => Object.assign(STR[k], STR3[k]));
 
   /* ---------- sample data (same as the canvas) ---------- */
   const PLACES = [
@@ -343,7 +408,7 @@
     ['spots', 'Spots & badges', 'Tap DTC-001 to collect signs and walk the Freedom Trail'],
     ['featured', 'Featured businesses', 'Paid spots with photos and a deal, always labeled Sponsored'],
     ['langs', '10 languages', 'The flag button up top'],
-    ['points', 'Points', 'Check in, recommend and add photos to earn points'],
+    ['points', 'Points', 'Sign in, then check in, review and add photos to earn points and level up'],
     ['colors', 'Category colors', 'Eat, Shop, See and Services each get a color on the map and the list'],
   ];
   const FDEF = { events: true, live: true, transit: true, spots: true, featured: true, langs: true, points: true, colors: true };
@@ -385,6 +450,7 @@
     f: loadFlags(), demoOpen: false, demoTab: 'looks', view: -1, theme: loadTheme(), style: loadStyle(), z: 1,
     // points and the visitor's own check-ins, recommendations, likes and photos (this visit only)
     points: 135, checked: {}, recd: {}, liked: {}, mine: {}, sv: 0, howOpen: false, firstCheck: false, likedOnce: false,
+    user: loadUser(), myRev: {}, signOpen: false, signing: '', pending: null, reviewFor: null, rvUp: null, rvText: '',
   };
   function detectLang() {
     try {
@@ -434,34 +500,136 @@
     const on = !!S.liked[ph.pid];
     return `<button type="button" class="ph-like" data-act="like" data-v="${ph.pid}" aria-pressed="${on}" aria-label="Like this photo. ${ph.likes} likes">${I.heart(15, 14, on ? '#E0344B' : 'none', on ? '#E0344B' : 'currentColor', 2.2)}<span>${ph.likes}</span></button>`;
   }
+  /* ---------- accounts: sign in with Google or Apple (a demo here) ----------
+     Points, levels, spots, reviews, photos and likes need an account, so every review comes
+     from a real person who signed in and checked in. Looking around never needs one. */
+  function loadUser() {
+    try { const u = JSON.parse(localStorage.getItem('ilb-user') || 'null'); return u && u.name ? u : null; } catch (e) { return null; }
+  }
+  function saveUser() {
+    try { if (S.user) localStorage.setItem('ilb-user', JSON.stringify(S.user)); else localStorage.removeItem('ilb-user'); } catch (e) { /* ignore */ }
+  }
+  const GLOGO = '<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.26 21.3 7.31 24 12 24z"/><path fill="#FBBC05" d="M5.27 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.98-3.09z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.98 3.09c.95-2.85 3.6-4.96 6.73-4.96z"/></svg>';
+  const ALOGO = '<svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>';
+  const AV_COLORS = ['#1F5BD8', '#B8232F', '#15803D', '#7E22CE', '#C2410C', '#0E7490', '#9D174D'];
+  const avColor = (name) => AV_COLORS[[...name].reduce((a, c) => a + c.charCodeAt(0), 0) % AV_COLORS.length];
+  const avatar = (name, size) => `<span class="av" style="width:${size}px;height:${size}px;font-size:${Math.round(size * 0.45)}px;background:${avColor(name)}" aria-hidden="true">${esc([...name][0])}</span>`;
+  const levelOf = (pts) => { let i = 0; LEVELS.forEach((l, j) => { if (pts >= l[0]) i = j; }); return i; };
+  function signBtns() {
+    const t = T();
+    const btn = (prov, logo, label) => `<button type="button" class="sbtn ${prov === 'Google' ? 'g' : 'a'}" data-act="signin" data-v="${prov}"${S.signing ? ' disabled' : ''}>${S.signing === prov ? '<span class="ldspin" aria-hidden="true"></span>' : logo}<span>${esc(label)}</span></button>`;
+    return btn('Google', GLOGO, t.withGoogle) + btn('Apple', ALOGO, t.withApple);
+  }
+  // returns true (and asks you to sign in) when there's no account yet; the action runs right after signing in
+  function needSign(act, v) {
+    if (S.user) return false;
+    S.pending = act ? { act, v } : null;
+    S.signOpen = true; S.signing = '';
+    refresh();
+    return true;
+  }
+  function signHTML() {
+    const t = T();
+    return `<div class="lang-dim" data-act="sign-close"></div>
+      <div class="lang-sheet sign-sheet" role="dialog" aria-label="${esc(t.signIn)}">
+        <div class="lang-head"><h2>${I.heart(20, 18, '#B8232F')} ${esc(t.signIn)}</h2><button type="button" class="pv-x" data-act="sign-close" aria-label="Close">${I.s(P.x, 20)}</button></div>
+        <p class="sign-t">${esc(t.signTitle)}</p>
+        <p class="sign-b">${esc(t.signBody)}</p>
+        ${signBtns()}
+        <p class="small muted sign-demo">Demo: nothing is sent to Google or Apple. The real site only gets your name and profile photo.</p>
+      </div>`;
+  }
+  function doSignIn(prov) {
+    if (S.signing) return;
+    S.signing = prov; refresh();
+    setTimeout(() => {
+      S.user = { name: 'Alex R.', provider: prov };
+      S.signing = ''; S.signOpen = false; S.sv++;
+      saveUser();
+      const p = S.pending; S.pending = null;
+      refresh();
+      toast('Signed in with ' + prov + ' as Alex R. (demo)\n' + (S.f.points ? S.points + ' points · Level ' + (levelOf(S.points) + 1) + ' · ' + LEVELS[levelOf(S.points)][1] : 'Reviews, photos and likes are on'), 2800);
+      if (p) setTimeout(() => runAct(p.act, p.v), 500);
+    }, 650);
+  }
+  function signOut() {
+    S.user = null; S.points = 135; S.checked = {}; S.recd = {}; S.liked = {}; S.mine = {}; S.myRev = {}; S.firstCheck = false; S.sv++;
+    saveUser(); refresh();
+    toast('Signed out. Points, reviews and likes need an account.');
+  }
+  function runAct(act, v) {
+    if (act === 'checkin') doCheckin(v);
+    else if (act === 'review') doReview(v);
+    else if (act === 'like') doLike(v);
+    else if (act === 'photo') toast('You’re signed in. Tap Add photo to pick one.');
+  }
   function earnHTML(id) {
     if (!S.f.points) return '';
     const t = T();
-    const c = !!S.checked[id];
-    const b = (act, icon, label, doneLabel, pts, done, locked) => `<button type="button" class="earn-b${done ? ' done' : ''}${locked ? ' locked' : ''}" data-act="${act}" data-v="${id}"${done ? ' aria-disabled="true"' : ''}>
+    const b = (act, icon, label, doneLabel, pts, done) => `<button type="button" class="earn-b${done ? ' done' : ''}" data-act="${act}" data-v="${id}"${done ? ' aria-disabled="true"' : ''}>
         <span class="eb-top">${I.s(done ? P.check : icon, 18, done ? 2.6 : 2)}${done ? '' : `<span class="eb-p">+${pts}</span>`}</span><span class="eb-l">${esc(done ? doneLabel : label)}</span></button>`;
-    return `<div class="earn"><span class="earn-h">${esc(t.beenHere)}</span><div class="earn-row">${b('checkin', P.pin, t.checkIn, t.checkedIn, 10, c, false)}${b('rec', P.thumb, t.recommend, t.recommended, 5, !!S.recd[id], !c)}${b('photo', P.camera, t.addPhoto, t.photoAdded, 20, !!S.mine[id], !c)}</div></div>`;
+    const head = S.user ? `<span class="earn-h">${esc(t.beenHere)}</span>` : `<button type="button" class="earn-h sign-link" data-act="sign-open">${I.s(P.lock, 13, 2.4)}<span>${esc(t.signToEarn)}</span></button>`;
+    return `<div class="earn">${head}<div class="earn-row">${b('checkin', P.pin, t.checkIn, t.checkedIn, 10, !!S.checked[id])}${b('review', P.thumb, t.review, t.reviewed, 5, !!S.myRev[id])}${b('photo', P.camera, t.addPhoto, t.photoAdded, 20, !!S.mine[id])}</div></div>`;
   }
   function refresh() {
     if (S.route === 'h' || !SCREENS[S.route]) { if (hMounted) updH(); } else rerenderScreen();
   }
   function earn(n, msg, extra) {
-    S.points += n; S.sv++;
+    if (S.f.points) S.points += n;
+    S.sv++;
     refresh();
-    toast('+' + n + ' points · ' + msg + '\n' + (extra || S.points + ' points in all'), 3000);
+    toast(S.f.points ? '+' + n + ' points · ' + msg + '\n' + (extra || S.points + ' points in all') : msg, 3000);
+  }
+  // Every action checks your location first (a stand-in here). Reviews and photos check you in on the way.
+  function autoCheck(id) {
+    if (S.checked[id]) return 0;
+    S.checked[id] = true;
+    return 10;
   }
   function doCheckin(id) {
+    if (needSign('checkin', id)) return;
     if (S.checked[id]) { toast('You already checked in here today.'); return; }
     S.checked[id] = true;
     earn(10, 'Checked in at ' + placeById(id).name, S.firstCheck ? '' : 'Demo: on the real site, your phone’s location confirms you’re there.');
     S.firstCheck = true;
   }
-  function doRec(id) {
-    if (!S.checked[id]) { toast('Check in first, so we know you’ve been here.', 2400); return; }
-    if (S.recd[id]) { toast('You can recommend a place once a day.'); return; }
-    S.recd[id] = true;
-    earn(5, 'You recommend ' + placeById(id).name);
+  function doReview(id) {
+    if (needSign('review', id)) return;
+    if (S.myRev[id]) { toast('You already reviewed this place today.'); return; }
+    S.reviewFor = id; S.rvUp = null; S.rvText = '';
+    refresh();
   }
+  function postReview() {
+    const id = S.reviewFor;
+    if (!id || S.rvUp == null) return;
+    const text = (S.rvText || '').trim().slice(0, 280);
+    S.myRev[id] = { up: S.rvUp, text };
+    if (S.rvUp) S.recd[id] = true;
+    S.reviewFor = null;
+    const chk = autoCheck(id);
+    const words = text.length >= 10;
+    earn(5 + (words ? 5 : 0) + chk, 'Review posted for ' + placeById(id).name, (chk ? 'Checked in too (+10). ' : '') + (words ? 'A few words: +5 more.' : 'Add a few words next time for +5 more.'));
+  }
+  function reviewHTML() {
+    const t = T(), p = placeById(S.reviewFor), up = S.rvUp;
+    return `<div class="lang-dim" data-act="rv-close"></div>
+      <div class="lang-sheet rv-sheet" role="dialog" aria-label="${esc(t.review)}: ${esc(p.name)}">
+        <div class="lang-head"><h2>${esc(t.wouldRec(p.name))}</h2><button type="button" class="pv-x" data-act="rv-close" aria-label="Close">${I.s(P.x, 20)}</button></div>
+        <div class="rv-pick">
+          <button type="button" class="rvb${up === true ? ' on' : ''}" data-act="rv-up" data-v="1" aria-pressed="${up === true}">${I.s(P.thumb, 20, 2.2)}<span>${esc(t.yes)}</span></button>
+          <button type="button" class="rvb dn${up === false ? ' on' : ''}" data-act="rv-up" data-v="0" aria-pressed="${up === false}"><span class="tdown">${I.s(P.thumb, 20, 2.2)}</span><span>${esc(t.notReally)}</span></button>
+        </div>
+        <textarea class="rv-text" id="rvText" rows="3" maxlength="280" placeholder="${esc(t.sayWhy)}">${esc(S.rvText || '')}</textarea>
+        <button type="button" class="btn primary wide" data-act="rv-post"${up == null ? ' disabled' : ''}>${esc(t.post)}${S.f.points ? ' · +5' : ''}</button>
+        <p class="rv-as">${avatar(S.user.name, 24)}<span>${esc(S.user.name)} · signed in with ${esc(S.user.provider)} · ${S.checked[p.id] ? '✓ checked in' : 'checks you in when you post'}</span></p>
+      </div>`;
+  }
+  function overlaysHTML() {
+    if (S.signOpen) return signHTML();
+    if (S.reviewFor && S.user) return reviewHTML();
+    return '';
+  }
+  const ovWrap = () => { const o = overlaysHTML(); return o ? `<div class="lang-wrap ov">${o}</div>` : ''; };
   // "Add photo" opens the phone's camera or photo library. The photo stays on the phone: nothing is uploaded.
   let photoFor = null;
   const fileIn = document.createElement('input');
@@ -475,21 +643,65 @@
     fileIn.value = '';
     if (!f || !id || !/^image\//.test(f.type || 'image/')) return;
     S.mine[id] = URL.createObjectURL(f);
-    earn(20, 'Photo added at ' + placeById(id).name, 'Demo: it stays on your phone. The more likes it gets, the higher it shows.');
+    const chk = autoCheck(id);
+    earn(20 + chk, 'Photo added at ' + placeById(id).name, (chk ? 'Checked in too (+10). ' : '') + 'Demo: it stays on your phone.');
   });
   function doPhoto(id) {
-    if (!S.checked[id]) { toast('Check in first, so we know you’ve been here.', 2400); return; }
+    if (needSign('photo', id)) return;
     if (S.mine[id]) { toast('You already added a photo here.'); return; }
     photoFor = id;
     fileIn.click();
   }
   function doLike(pid) {
+    if (needSign('like', pid)) return;
     S.liked[pid] = !S.liked[pid]; S.sv++;
     refresh();
     if (S.liked[pid] && !S.likedOnce) { S.likedOnce = true; toast('Liked. The most-liked photos get featured, and whoever took it gets a point.', 2800); }
   }
   const LEVELS = [[0, 'Visitor'], [100, 'Explorer'], [250, 'Local'], [500, 'Insider'], [1000, 'Legend']];
-  const EARN = [['Scan a sign', 15], ['Check in at a place', 10], ['Recommend a place', 5], ['Add a photo of what you got', 20], ['Someone likes your photo', 1], ['Your photo gets featured', 50]];
+  const EARN = [['Scan a sign', 15], ['Check in at a place', 10], ['Review a place', 5], ['Write a few words in it', 5], ['Add a photo of what you got', 20], ['Someone likes your photo', 1], ['Your photo gets featured', 50]];
+
+  /* ---------- reviews and local critics (sample) ---------- */
+  // Sample reviews from signed-in visitors who checked in: [name, level, when, recommends, text]
+  const REVIEWS = {
+    common: [['Maya R.', 3, 'Nov 15', true, 'Walked the whole loop at golden hour. Skating on Frog Pond starts soon.'], ['Kenji T.', 2, 'Nov 12', true, 'Perfect spot to sit with a coffee between everything else.']],
+    faneuil: [['Priya S.', 4, 'Nov 16', true, 'Touristy but fun. Grab food inside Quincy Market and eat on the steps.'], ['Tom B.', 1, 'Nov 9', false, 'Packed on a Saturday. Go on a weekday morning.']],
+    paku: [['Kenji T.', 2, 'Nov 17', true, 'Huge, crispy katsu. The curry version is my go-to.'], ['Ana L.', 3, 'Nov 14', true, 'Fast lunch, friendly staff, fair prices.']],
+    brattle: [['Leo M.', 3, 'Nov 16', true, 'Lost an hour at the outdoor carts. Found a first edition inside.'], ['Sofia G.', 2, 'Nov 10', true, 'A real Boston classic. Three floors of books.']],
+    florabella: [['Mei W.', 2, 'Nov 17', true, 'Gorgeous sunflowers, wrapped while I waited.'], ['Arjun P.', 1, 'Nov 13', true, 'Grabbed roses on the way to dinner. Super sweet people.']],
+    genki: [['Lucas F.', 3, 'Nov 15', true, 'Fresh rolls and big portions for the price.'], ['Maya R.', 3, 'Nov 8', true, 'Quiet and cozy. The torched nigiri is worth it.']],
+    drphil: [['Tom B.', 1, 'Nov 16', true, 'Cracked screen fixed in under an hour while I got lunch.'], ['Sam K.', 2, 'Nov 11', true, 'Honest price, and they explained everything.']],
+    opera: [['Sofia G.', 2, 'Nov 14', true, 'The lobby alone is worth it. Stunning.'], ['Priya S.', 4, 'Nov 7', false, 'Beautiful, but the upper balcony seats are tight.']],
+    oldstate: [['Leo M.', 3, 'Nov 12', true, 'Small museum, big history. Look up at the lion and the unicorn.'], ['Kenji T.', 2, 'Nov 6', true, 'Quick stop on the Freedom Trail, very well done.']],
+    chinatown: [['Mei W.', 2, 'Nov 15', true, 'Pretty at night, with great food just past the gate.'], ['Ji-woo H.', 1, 'Nov 10', true, 'A good start for a dumpling crawl.']],
+  };
+  // Sample critics' picks. The real site would name the critic and publication and link to the review.
+  const CRITICS = {
+    paku: ['A local food critic', 'Crispy, generous katsu, and one of the easiest good lunches downtown.'],
+    genki: ['A local food critic', 'Bright, carefully made rolls and a calm, friendly room.'],
+    brattle: ['A Boston guidebook', 'One of the oldest antiquarian bookshops in the country. Start at the outdoor carts.'],
+    oldstate: ['A Boston history writer', 'Where the Declaration of Independence was read to Bostonians in July 1776.'],
+  };
+  const critPill = (id, onImg) => (CRITICS[id] ? `<span class="crit${onImg ? ' onimg' : ''}">🏆<span>${esc(T().criticsPick)}</span></span>` : '');
+  function critHTML(id) {
+    const c = CRITICS[id];
+    if (!c) return '';
+    return `<section class="critsec"><div class="rev-h"><h2>🏆 What critics say</h2><span class="small muted">Sample</span></div>
+        <blockquote class="critq"><p>“${esc(c[1])}”</p><footer>${esc(c[0])} · <button type="button" class="linkbtn2" data-act="demo" data-v="Opens the critic's review (demo)">Read the review</button></footer></blockquote></section>`;
+  }
+  function reviewsHTML(id) {
+    const list = (REVIEWS[id] || []).slice();
+    const mine = S.myRev[id];
+    const card = (name, lvl, when, up, text, isMine) => `<article class="rv">
+        <div class="rv-h">${avatar(name, 34)}<span class="rv-who"><b>${esc(name)}${isMine ? ' · you' : ''}</b><span>Level ${lvl} · ${LEVELS[lvl - 1][1]} · ✓ checked in ${esc(when)}</span></span>
+          <span class="rv-up${up ? '' : ' dn'}" aria-label="${up ? 'Recommends it' : "Doesn't recommend it"}">${up ? I.s(P.thumb, 15, 2.4) : `<span class="tdown">${I.s(P.thumb, 15, 2.4)}</span>`}</span></div>
+        ${text ? `<p>${esc(text)}</p>` : ''}</article>`;
+    const rows = (mine && S.user ? card(S.user.name, levelOf(S.points) + 1, 'today', mine.up, mine.text, true) : '') + list.map((r) => card(r[0], r[1], r[2], r[3], r[4], false)).join('');
+    return `<section class="revs"><div class="rev-h"><h2>Reviews</h2><span class="small muted">Sample</span></div>
+        <p class="revs-note">${I.s(P.check, 14, 2.6)} Only people who signed in with Google or Apple and checked in here can review, so every review is a real visit.</p>
+        ${rows}
+        ${mine ? '' : `<button type="button" class="btn wide" data-act="review" data-v="${id}">${I.s(P.thumb, 18, 2.2)}<span>Write a review</span></button>`}</section>`;
+  }
 
   /* ---------- router ---------- */
   function route() {
@@ -507,14 +719,14 @@
   function render() {
     if (S.route === 'h' || !SCREENS[S.route]) { mountH(); return; }
     hMounted = false;
-    app.innerHTML = SCREENS[S.route]();
+    app.innerHTML = SCREENS[S.route]() + ovWrap();
     const sc = $('.scroll', app);
     if (sc) sc.scrollTop = 0;
   }
   function rerenderScreen() {
     const sc = $('.scroll', app);
     const top = sc ? sc.scrollTop : 0;
-    app.innerHTML = SCREENS[S.route]();
+    app.innerHTML = SCREENS[S.route]() + ovWrap();
     const sc2 = $('.scroll', app);
     if (sc2) sc2.scrollTop = top;
   }
@@ -527,7 +739,7 @@
   let cur = { tx: 0, ty: 0, k: 1 };   // live translate and zoom while dragging or pinching
   let md = null, sd = null, moved = false, dragTop = null, justDragged = false;
   let sig = { pins: '', body: '', prev: '' };
-  const prevSig = () => [S.sel, S.lang, S.sv, JSON.stringify(S.f)].join('|');
+  const prevSig = () => [S.sel, S.lang, S.sv, JSON.stringify(S.f), !!S.user].join('|');
 
   function geo() {
     const W = app.clientWidth, H = app.clientHeight;
@@ -632,10 +844,11 @@
         <button type="button" class="mapbtn" id="mapBtn" data-act="half" hidden>${I.s(P.map)}<span>Map</span></button>
         <div class="lang-wrap" id="langWrap" hidden></div>
         <div class="lang-wrap" id="demoWrap" hidden></div>
+        <div class="lang-wrap ov" id="ovWrap" hidden></div>
         <div class="viewer-wrap" id="viewerWrap" hidden></div>
       </div>`;
     hMounted = true;
-    sig = { pins: '', body: '', prev: '', layers: '', dtc: '', demo: '', view: '' };
+    sig = { pins: '', body: '', prev: '', layers: '', dtc: '', demo: '', view: '', ov: '' };
     bindH();
     // First paint without animation, then turn transitions on.
     app.classList.add('instant');
@@ -665,17 +878,18 @@
     setWorld(cur);
     // map layers that features turn on and off
     const fs = JSON.stringify(S.f);
-    if (sig.layers !== fs) {
+    if (sig.layers !== fs + !!S.user) {
       $('#stationsL').innerHTML = S.f.transit ? STATIONS.map((st) => `<span class="chip-st" style="left:${st.x}px;top:${st.y - 10}px">${st.lines.map((l) => `<span class="dot8" style="background:${LINE[l].c}"></span>`).join('')}<span>${esc(st.short)}</span></span>`).join('') : '';
-      $('#spotsL').innerHTML = S.f.spots ? SPOTS.map((p) => `<a class="spot" href="#/spots" style="left:${p.x}px;top:${p.y}px" aria-label="Sign ${p.code}, ${esc(p.area)}${p.got ? ', collected' : ''}. See every spot">${I.heart(12, 11, p.got ? '#B8232F' : 'none', '#B8232F', 2.5)}<span>${p.code}</span></a>`).join('') : '';
-      sig.layers = fs;
+      $('#spotsL').innerHTML = S.f.spots ? SPOTS.map((p) => `<a class="spot" href="#/spots" style="left:${p.x}px;top:${p.y}px" aria-label="Sign ${p.code}, ${esc(p.area)}${p.got && S.user ? ', collected' : ''}. See every spot">${I.heart(12, 11, p.got && S.user ? '#B8232F' : 'none', '#B8232F', 2.5)}<span>${p.code}</span></a>`).join('') : '';
+      sig.layers = fs + !!S.user;
     }
     // the sign chip in the header, with your points under it
-    const dtcSig = fs + '|' + S.points;
+    const u = S.user;
+    const dtcSig = [fs, S.points, u ? u.name : '', S.lang].join('|');
     if (sig.dtc !== dtcSig) {
-      const pts = S.f.spots && S.f.points;
+      const line2 = u ? (S.f.points ? '★ ' + S.points : esc(u.name.split(' ')[0])) : esc(t.signIn);
       $('#dtcSlot').innerHTML = S.f.spots
-        ? `<a class="dtc${pts ? ' wpts' : ''}" href="#/spots" aria-label="Sign DTC-001: see every spot, your badges${pts ? ', your ' + S.points + ' points' : ''} and the Freedom Trail"><span class="dtc-t"><span>DTC-001</span>${pts ? `<span class="dtc-p">★ ${S.points}</span>` : ''}</span>${I.s(P.right, 14, 2.4)}</a>`
+        ? `<a class="dtc wpts" href="#/spots" aria-label="Sign DTC-001: spots, badges${S.f.points ? ' and points' : ''}. ${u ? 'Signed in as ' + esc(u.name) + (S.f.points ? ', ' + S.points + ' points' : '') : 'Not signed in'}">${u ? avatar(u.name, 26) : `<span class="av out">${I.s(P.person, 15, 2.2)}</span>`}<span class="dtc-t"><span>DTC-001</span><span class="dtc-p${u ? '' : ' out'}">${line2}</span></span>${I.s(P.right, 14, 2.4)}</a>`
         : '<span class="dtc static">DTC-001</span>';
       sig.dtc = dtcSig;
     }
@@ -698,7 +912,7 @@
     tabsEl.style.gridTemplateColumns = `repeat(${on.length},minmax(0,1fr))`;
     tabsEl.innerHTML = on.map((id) =>
       `<button type="button" class="tab" role="tab" aria-selected="${S.tab === id}" data-act="tab" data-v="${id}">${id === 'live' ? '<span class="ldot pdot"></span>' : ''}<span>${esc(tabLabel[id])}</span></button>`).join('');
-    const bodySig = [S.tab, S.cat, S.day, S.tOpen, S.tShow, S.lang, S.style, S.sv, fs].join('|');
+    const bodySig = [S.tab, S.cat, S.day, S.tOpen, S.tShow, S.lang, S.style, S.sv, fs, !!S.user].join('|');
     if (sig.body !== bodySig) {
       const body = $('#shBody');
       const keep = sig.body.split('|')[0] === S.tab ? body.scrollTop : 0;
@@ -722,7 +936,7 @@
     if (S.langOpen) { lw.innerHTML = langHTML(); lw.hidden = false; } else { lw.hidden = true; lw.innerHTML = ''; }
     // demo panel and the looks viewer
     const dw = $('#demoWrap');
-    const ds = [S.demoOpen, S.demoTab, fs, S.theme, S.style].join('|');
+    const ds = [S.demoOpen, S.demoTab, fs, S.theme, S.style, u ? 1 : 0].join('|');
     if (S.demoOpen) {
       if (sig.demo !== ds) {
         const keep = dw.querySelector('.demo-sheet');
@@ -734,6 +948,13 @@
       }
       dw.hidden = false;
     } else { dw.hidden = true; dw.innerHTML = ''; sig.demo = ''; }
+    const ow = $('#ovWrap');
+    const oh = overlaysHTML();
+    if (oh) {
+      const os = [S.signOpen, S.signing, S.reviewFor, S.rvUp, S.lang, u ? 1 : 0, fs].join('|');
+      if (sig.ov !== os) { ow.innerHTML = oh; sig.ov = os; }
+      ow.hidden = false;
+    } else { ow.hidden = true; ow.innerHTML = ''; sig.ov = ''; }
     const vw = $('#viewerWrap');
     if (S.view >= 0) {
       if (sig.view !== String(S.view)) { vw.innerHTML = viewerHTML(); sig.view = String(S.view); }
@@ -758,7 +979,7 @@
         ${S.demoTab === 'looks'
           ? `<h3 class="demo-sec">The Nearby list <span class="newtag">New</span></h3><p class="small muted demo-intro">Four ways to show what's around the sign. Tap one to use it.</p><div class="sgrid">${styles}</div>
              <h3 class="demo-sec">Whole-page looks</h3><div class="lgrid">${looks}</div><p class="small muted demo-intro">Tap a look to see it big; swipe or use the arrows to flip through.</p>`
-          : `<div class="appear"><span>Appearance</span><div class="seg3">${[['auto', 'Auto'], ['light', 'Light'], ['dark', 'Dark']].map(([v, l]) => `<button type="button" data-act="theme" data-v="${v}" aria-pressed="${S.theme === v}">${l}</button>`).join('')}</div></div><div class="flist">${feats}</div>${allOn ? '' : '<button type="button" class="btn wide" data-act="flags-reset">Turn everything back on</button>'}<p class="small muted demo-intro">Your phone remembers these until you change them.</p>`}
+          : `<div class="appear acct"><span>Account<small>${S.user ? esc(S.user.name) + ' · ' + esc(S.user.provider) + ' (demo)' : 'Signed out: no points or reviews'}</small></span><button type="button" class="btn small2" data-act="demo-sign">${S.user ? 'Sign out' : 'Sign in'}</button></div><div class="appear"><span>Appearance</span><div class="seg3">${[['auto', 'Auto'], ['light', 'Light'], ['dark', 'Dark']].map(([v, l]) => `<button type="button" data-act="theme" data-v="${v}" aria-pressed="${S.theme === v}">${l}</button>`).join('')}</div></div><div class="flist">${feats}</div>${allOn ? '' : '<button type="button" class="btn wide" data-act="flags-reset">Turn everything back on</button>'}<p class="small muted demo-intro">Your phone remembers these until you change them.</p>`}
       </div>`;
   }
   function viewerHTML() {
@@ -853,7 +1074,7 @@
     const col = S.f.colors ? ` style="background:${CAT_COLOR[p.cat]}"` : '';
     return `<button type="button" class="pk" data-act="sel" data-k="place:${p.id}">
         <span class="pk-img" style="background:${ph.color}">${phImg(ph, false, n > 2)}</span><span class="pk-shade"></span>
-        <span class="pk-top"><span class="pk-n"${col}>${n}</span>${S.f.featured && p.sponsored ? `<span class="sp onimg">${esc(t.sponsored)}</span>` : ''}${hot ? `<span class="pk-hot">${I.s(P.flame, 13, 2.4)}${esc(t.todayN(hot))}</span>` : ''}</span>
+        <span class="pk-top"><span class="pk-n"${col}>${n}</span>${S.f.featured && p.sponsored ? `<span class="sp onimg">${esc(t.sponsored)}</span>` : ''}${critPill(p.id, true)}${hot ? `<span class="pk-hot">${I.s(P.flame, 13, 2.4)}${esc(t.todayN(hot))}</span>` : ''}</span>
         <span class="pk-bot"><span class="pk-txt"><b>${esc(p.name)}</b><span>${metaLine(p)}</span></span><span class="pk-rec" aria-label="${esc(t.rec(bucket(recOf(p.id))))}">${I.s(P.thumb, 14, 2.4)}${esc(bucket(recOf(p.id)))}</span></span>
       </button>`;
   }
@@ -867,10 +1088,21 @@
           <span class="soc"><span class="rec">${I.s(P.thumb, 14, 2.2)}${esc(bucket(recOf(p.id)))}</span>${hot ? `<span class="hot">${I.s(P.flame, 12, 2.4)}${esc(t.todayN(hot))}</span>` : ''}</span></span>
       </button>`;
   }
+  // Local critics' picks, as their own row in the list (separate from visitors' ranking and from Sponsored)
+  function critRail() {
+    const t = T();
+    const picks = rankedPlaces(S.cat).filter((p) => CRITICS[p.id]);
+    if (picks.length < 2) return '';
+    return `<div class="crail"><div class="crail-h"><h3>🏆 ${esc(t.criticsRow)}</h3><span class="small muted">Sample</span></div><div class="crail-scroll">${picks.map((p) => {
+      const ph = topPhoto(p.id), c = CRITICS[p.id];
+      return `<button type="button" class="crc" data-act="sel" data-k="place:${p.id}"><span class="crc-img" style="background:${ph.color}">${phImg(ph)}</span>
+        <span class="crc-name">${esc(p.name)}</span><span class="crc-q">“${esc(c[1])}”</span><span class="crc-src">${esc(c[0])}</span></button>`;
+    }).join('')}</div></div>`;
+  }
   function boCard(p, n) {
     const t = T(), ph = topPhoto(p.id);
     return `<button type="button" class="boc" data-act="sel" data-k="place:${p.id}">
-        <span class="boc-img" style="background:${ph.color}">${phImg(ph)}<span class="medal-s m${Math.min(n, 4)}" aria-label="${MEDAL[n - 1] || 'No. ' + n}">${n}</span></span>
+        <span class="boc-img" style="background:${ph.color}">${phImg(ph)}<span class="medal-s m${Math.min(n, 4)}" aria-label="${MEDAL[n - 1] || 'No. ' + n}">${n}</span>${CRITICS[p.id] ? `<span class="crit onimg mini" aria-label="${esc(t.criticsPick)}">🏆</span>` : ''}</span>
         <span class="boc-name">${esc(p.name)}</span>${sponTag(p)}<span class="sub">${metaLine(p)}</span>
         <span class="rec">${I.s(P.thumb, 13, 2.2)}${esc(t.rec(bucket(recOf(p.id))))}</span>
       </button>`;
@@ -935,7 +1167,7 @@
       body = walkHTML(m.list); note = t.allWithin;
     } else if (m.st === 'picks') {
       body = (m.spot ? spotCard(m.spot) : '')
-        + (m.list.length ? `<div class="sec-h"><h3>${esc(t.topPicks)}</h3></div><div class="pklist">${m.list.map((p, i) => pkCard(p, i + 1)).join('')}</div>` : '');
+        + (m.list.length ? `<div class="sec-h"><h3>${esc(t.topPicks)}</h3></div><div class="pklist">${m.list.map((p, i) => pkCard(p, i + 1) + (i === 2 ? critRail() : '')).join('')}</div>` : '');
     } else if (m.st === 'best') {
       const one = m.groups.length === 1;
       body = m.groups.map((g) => `<section class="bo"><div class="bo-h">${S.f.colors ? `<i class="cdot" style="background:${CAT_COLOR[g.c]}"></i>` : ''}<h3>${esc(t['best' + g.c[0].toUpperCase() + g.c.slice(1)])}</h3></div>
@@ -1009,7 +1241,7 @@
       chip = S.f.featured && p.sponsored ? `<span class="sp">${esc(t.sponsored)}</span>` : '';
       line1 = t[p.kind] + ' · ' + t.walk(mins(p.dist));
       dot = S.f.colors ? `<i class="cdot" style="background:${CAT_COLOR[p.cat]}"></i>` : '';
-      soc = socHTML(p.id, true);
+      soc = socHTML(p.id, true) + critPill(p.id, false);
       thumb = `<span class="thumb" style="background:${ph.color}">${phImg(ph, true, false)}</span>`;
       primary = `<a class="btn primary" href="${maps(p.q)}" target="_blank" rel="noopener">${I.s(P.pin)}<span>${esc(t.directions)}</span></a>`;
       secondary = `<a class="btn" href="#/${p.page}">${esc(t.seePage)}</a>`;
@@ -1242,7 +1474,7 @@
         <span class="ph-img" style="background:${ph.color}">${phImg(ph, false, i > 1)}${i === 0 && !ph.mine ? `<span class="ph-top">${esc(t.mostLiked)}</span>` : ''}</span>
         ${likeBtn(ph)}
         <span class="ph-cap">${esc(ph.cap)}</span><span class="ph-sub">${ph.mine ? 'by you, just now' : 'by ' + esc(ph.by)}</span></div>`).join('');
-    return `<section class="vis"><div class="rev-h"><h2>From visitors</h2><span class="small muted">People who checked in here</span></div>
+    return `<section class="vis"><div class="rev-h"><h2>From visitors</h2><span class="small muted">Signed in and checked in</span></div>
         <div class="vis-stats"><span class="rec big">${I.s(P.thumb, 18, 2.2)}${esc(t.rec(recOf(id)))}</span>${d ? `<span class="hot">${I.s(P.flame, 13, 2.4)}${esc(t.todayN(d))}</span>` : ''}</div>
         ${earnHTML(id)}
         <div class="vgrid">${tiles}</div>
@@ -1282,10 +1514,9 @@
         <section><h2>About</h2><p>${esc(f.about)}</p></section>
         <section><h2>Hours</h2><p>${esc(f.hours)}</p></section>
         <section><h2>Photos and videos</h2><div class="grid3">${f.tiles.map(([k], j) => { const ph = phs[(j + 1) % phs.length]; return `<span class="gt" style="background:${ph.color}">${phImg(ph)}${k === 'Video' ? `<span class="playmini">${I.s(P.play, 14)}</span>` : ''}</span>`; }).join('')}</div></section>
+        ${critHTML(S.arg)}
         ${visitorsHTML(S.arg, true)}
-        <section><h2>What people say</h2>
-          <article class="rev"><span class="rec">${I.s(P.thumb, 14, 2.2)}Recommends it</span><span class="small muted">Sample</span><p>[A note from someone who recommends it shows here, in your language]</p></article>
-          <article class="rev"><span class="rec">${I.s(P.thumb, 14, 2.2)}Recommends it</span><span class="small muted">Translated from Español</span><p>[Notes in other languages are translated, with the original a tap away]</p></article></section>
+        ${reviewsHTML(S.arg)}
         <footer class="foot"><a href="#/business">Is this your business? Manage this page</a></footer>
       </div>
     </div></div>`;
@@ -1305,7 +1536,9 @@
           <button type="button" class="btn" data-act="demo">${I.s(P.call)}<span>Call</span></button>
         </div>
         <section class="box"><h2>Hours</h2><p>[Hours]</p></section>
+        ${critHTML(p.id)}
         ${visitorsHTML(p.id, false)}
+        ${reviewsHTML(p.id)}
         <section class="pitch"><b>Own ${esc(p.name)}?</b><span>Add your own photos, videos, story and a deal of the month. Visitors' recommendations set your rank; a Sponsored spot can put you on top of the list.</span><a class="btn red" href="#/business">See Featured</a></section>
         <footer class="foot"><a href="#/place/florabella">See what a Featured page looks like</a></footer>
       </div>
@@ -1347,8 +1580,8 @@
   // --- For businesses
   function businessScreen() {
     const plans = [
-      { name: 'Basic', price: 'Free', period: '', cta: 'Start free', strong: false, features: ['A listing on nearby signs', 'Visitors can recommend you and post photos', 'Address, hours and directions', 'In 10 languages'] },
-      { name: 'Featured', price: '$50', period: ' / month', cta: 'Get Featured', strong: true, features: ['Everything in Basic', 'Your own photos, menu and a deal of the month', 'A Sponsored label and your photo wherever you show up', 'A monthly report: how many people saw and tapped you'] },
+      { name: 'Basic', price: 'Free', period: '', cta: 'Start free', strong: false, features: ['A listing on nearby signs', 'Reviews and photos from signed-in visitors who checked in', 'Address, hours and directions', 'In 10 languages'] },
+      { name: 'Featured', price: '$50', period: ' / month', cta: 'Get Featured', strong: true, features: ['Everything in Basic', 'Your own photos, menu and a deal of the month', 'Reply to reviews', 'A Sponsored label and your photo wherever you show up', 'A monthly report: how many people saw and tapped you'] },
       { name: 'Spotlight', price: '[YOUR PRICE]', period: '', cta: 'Ask about Spotlight', strong: false, features: ['Everything in Featured', 'The Sponsored card at the top of Nearby, on every sign within ½ mile', 'Your own I Love Boston sign at your door'] },
     ];
     return `<div class="scr page"><div class="scroll">
@@ -1361,7 +1594,7 @@
         ${plans.map((p) => `<article class="plan${p.strong ? ' strong' : ''}"><div class="plan-h"><h3>${esc(p.name)}</h3><span class="price">${esc(p.price)}<small>${esc(p.period)}</small></span></div>
           <ul>${p.features.map((f) => `<li>${I.s(P.check, 18, 2.4)}<span>${esc(f)}</span></li>`).join('')}</ul>
           <button type="button" class="btn${p.strong ? ' primary' : ''} wide" data-act="demo">${esc(p.cta)}</button></article>`).join('')}
-        <div class="box fair"><h2>${I.s(P.thumb, 18, 2.2)} A fair ranking</h2><p class="muted">The list on every sign is ranked by recommendations from visitors who checked in. Nobody can pay to move up. Paid spots sit above the ranking and always say Sponsored.</p></div></section>
+        <div class="box fair"><h2>${I.s(P.thumb, 18, 2.2)} A fair ranking</h2><p class="muted">The list on every sign is ranked by recommendations from visitors who signed in with Google or Apple and checked in. Local critics' picks get a 🏆. Nobody can pay to move up or change a review: paid spots sit above the ranking and always say Sponsored.</p></div></section>
       <section class="pad"><div class="box"><h2>Questions?</h2><p class="muted">Reach us at [CONTACT EMAIL OR PHONE].</p></div></section>
       <footer class="foot pb"><a href="#/">See the visitor page</a></footer>
     </div></div>`;
@@ -1391,34 +1624,41 @@
   const STOP_XY = [[70, 242], [80, 212], [104, 224], [118, 210], [142, 196], [154, 208], [166, 220], [176, 234], [196, 190], [206, 178], [222, 160], [258, 138], [272, 116], [254, 104], [310, 50], [246, 38]];
   const DONE = 5;
   function pointsCard() {
-    if (!S.f.points) return '';
-    let i = 0;
-    LEVELS.forEach((l, j) => { if (S.points >= l[0]) i = j; });
-    const next = LEVELS[i + 1];
+    const t = T();
+    if (!S.user) {
+      return `<div class="ptc signc"><b class="signc-t">${I.s(P.star, 18)}<span>${esc(t.signTitle)}</span></b><p>${esc(t.signBody)}</p>${signBtns()}
+          <p class="small muted sign-demo">Demo: nothing is sent to Google or Apple.</p></div>`;
+    }
+    const u = S.user;
+    const prof = `<div class="prof">${avatar(u.name, 44)}<span class="prof-t"><b>${esc(u.name)}</b><span>Signed in with ${esc(u.provider)} (demo)</span></span><button type="button" class="linkbtn2" data-act="signout">Sign out</button></div>`;
+    if (!S.f.points) return `<div class="ptc">${prof}</div>`;
+    const i = levelOf(S.points), next = LEVELS[i + 1];
     const pct = next ? Math.round((S.points - LEVELS[i][0]) / (next[0] - LEVELS[i][0]) * 100) : 100;
-    return `<div class="ptc">
+    return `<div class="ptc">${prof}
         <div class="ptc-top"><span class="ptc-star" aria-hidden="true">★</span><b>${S.points}</b><span class="ptc-w">points</span><span class="ptc-lvl">Level ${i + 1} · ${LEVELS[i][1]}</span></div>
         <div class="bar8"><div style="width:${pct}%;background:#E2A90F"></div></div>
         <span class="ptc-next">${next ? `${next[0] - S.points} more for Level ${i + 2} · ${next[1]}` : 'Top level!'}</span>
         <button type="button" class="ptc-how" data-act="how" aria-expanded="${S.howOpen}"><span>How to earn points</span><span class="chev${S.howOpen ? ' open' : ''}">${I.s(P.right, 16, 2.4)}</span></button>
         ${S.howOpen ? `<div class="ptc-list">${EARN.map(([l, n]) => `<div><span>${esc(l)}</span><b>+${n}</b></div>`).join('')}</div>
-          <p class="ptc-note">Check-ins only count when your phone's location shows you're there, and you can recommend a place once a day. Photos are checked before they show up.</p>` : ''}
+          <p class="ptc-note">You need to be signed in with Google or Apple, so every review is a real person. Check-ins only count when your phone's location shows you're there, you can review a place once a day, and photos are checked before they show up.</p>` : ''}
       </div>`;
   }
   function passportScreen() {
     const tabs = [['spots', 'Spots'], ['badges', 'Badges'], ['trail', 'Freedom Trail']].map(([id, l]) => `<button type="button" class="tab" role="tab" aria-selected="${S.pTab === id}" data-act="ptab" data-v="${id}">${l}</button>`).join('');
     let body = '';
     if (S.pTab === 'spots') {
+      const signed = !!S.user;
+      const has3 = (s) => (signed ? s[3] : '');
       const all = []; AREAS.forEach((a) => a.spots.forEach((s) => all.push(s)));
-      const got = all.filter((s) => s[3]).length;
-      const stamps = all.slice().sort((a, b) => (b[3] ? 1 : 0) - (a[3] ? 1 : 0)).map((s) => I.heart(22, 20, s[3] ? '#FF5A6E' : 'none', s[3] ? '#FF5A6E' : 'rgba(255,255,255,.4)', 2)).join('');
+      const got = all.filter(has3).length;
+      const stamps = all.slice().sort((a, b) => (has3(b) ? 1 : 0) - (has3(a) ? 1 : 0)).map((s) => I.heart(22, 20, has3(s) ? '#FF5A6E' : 'none', has3(s) ? '#FF5A6E' : 'rgba(255,255,255,.4)', 2)).join('');
       body = `<div class="pcard"><div class="pc-top"><b>${got}</b><span>of ${all.length} spots collected</span></div><div class="stamps">${stamps}</div>
-          <p>Closest one you haven't collected: <b>DTC-002 · Post Office Square</b>, a 6 min walk.</p></div>
+          <p>${signed ? "Closest one you haven't collected: <b>DTC-002 · Post Office Square</b>, a 6 min walk." : "Sign in, then scan this sign (<b>DTC-001</b>) to collect your first spot."}</p></div>
         ${AREAS.map((a) => {
-          const n = a.spots.filter((s) => s[3]).length;
+          const n = a.spots.filter(has3).length;
           return `<section class="area"><div class="area-h"><h2>${esc(a.name)}</h2><span${n === a.spots.length ? ' class="ok"' : ''}>${n} of ${a.spots.length}</span></div>
             ${a.spots.map((s, i) => {
-              const has = !!s[3];
+              const has = !!has3(s);
               return `<div class="spotrow"${i ? '' : ' style="border-top:0"'}><span class="stamp${has ? ' got' : ''}">${I.heart(20, 18, has ? '#FF5A6E' : 'none', has ? '#FF5A6E' : '#AEB6C4', 2.2)}</span>
                 <span class="sr-txt"><span class="code">${s[0]}</span><b>${esc(s[1])}</b><span class="${s[4] ? 'here' : 'muted'}">${esc(s[2])}</span></span>
                 ${has ? `<span class="okc">${I.s(P.check, 15, 2.6)}${esc(s[3])}</span>` : '<span class="notyet">Not yet</span>'}</div>`;
@@ -1426,9 +1666,12 @@
         }).join('')}
         <p class="small muted pad pb">Sample spots. DTC-001 is the real sign today; the others show how more signs would look.</p>`;
     } else if (S.pTab === 'badges') {
-      const sb = BADGES.find((b) => b.id === S.badge) || BADGES[0];
+      const hv = (b) => (S.user ? b.have : 0);
+      const sb0 = BADGES.find((b) => b.id === S.badge) || BADGES[0];
+      const sb = Object.assign({}, sb0, { have: hv(sb0) });
       const earnedSel = sb.have >= sb.need;
-      body = `<div class="bgrid">${BADGES.map((b) => {
+      body = `<div class="bgrid">${BADGES.map((b0) => {
+          const b = Object.assign({}, b0, { have: hv(b0) });
           const earned = b.have >= b.need, on = b.id === S.badge;
           return `<button type="button" class="badge${on ? ' on' : ''}" data-act="badge" data-v="${b.id}" aria-pressed="${on}" aria-label="${esc(b.name)}${earned ? ', earned' : ', ' + b.have + ' of ' + b.need}">
             <span class="medal" style="background:${earned ? b.color : 'var(--surface3)'};color:${earned ? '#fff' : 'var(--faint)'};${earned ? `box-shadow:0 0 0 3px var(--surface),0 0 0 5px ${b.color}` : ''}">${I.s(b.d, 28, 1.8)}${earned ? '' : `<span class="lockmini">${I.s(P.lock, 12, 2.6)}</span>`}</span>
@@ -1438,28 +1681,29 @@
           <div class="bar8"><div style="width:${Math.round(Math.min(sb.have, sb.need) / sb.need * 100)}%;background:${sb.color}"></div></div></div>
         <p class="small muted pad pb">Your location is only checked when you scan a sign, to make sure you're really there. It isn't kept.</p>`;
     } else {
+      const DN = S.user ? DONE : 0;
       const dots = STOP_XY.map((xy, i) => {
-        const done = i < DONE, next = i === DONE, size = done ? 12 : next ? 14 : 10;
+        const done = i < DN, next = i === DN, size = done ? 12 : next ? 14 : 10;
         return `<span class="tdot" style="left:${xy[0] - size / 2}px;top:${xy[1] - size / 2}px;width:${size}px;height:${size}px;border:${next ? 3 : 2}px solid ${done ? 'var(--surface)' : next ? '#C8102E' : 'var(--faint)'};background:${done ? '#C8102E' : 'var(--surface)'}"></span>`;
       }).join('');
       body = `<div class="trailmap">
-          <svg width="358" height="270" viewBox="0 0 358 270" role="img" aria-label="Sketch map of the Freedom Trail, from Boston Common through downtown and the North End to Bunker Hill. You've walked the first 5 stops.">
+          <svg width="358" height="270" viewBox="0 0 358 270" role="img" aria-label="Sketch map of the Freedom Trail, from Boston Common through downtown and the North End to Bunker Hill. ${DN ? "You've walked the first " + DN + ' stops.' : 'Sign in to track your walk.'}">
             <path d="M0 70 C 100 58, 220 88, 358 64 L358 90 C 220 114, 100 84, 0 96 Z" fill="#CFE1F2"/><path d="M332 120 C 318 170, 342 220, 300 270 L358 270 L358 96 Z" fill="#CFE1F2"/>
             <polygon points="20,218 96,206 92,262 24,266" fill="#CFE5D2"/>
-            <g fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M142 196 L154 208 L166 220 L176 234 L196 190 L206 178 L222 160 L258 138 L272 116 L254 104 L310 50 L246 38" stroke="#C8102E" stroke-opacity="0.7" stroke-width="3" stroke-dasharray="5 6"/><path d="M70 242 L80 212 L104 224 L118 210 L142 196" stroke="#C8102E" stroke-width="4.5"/></g>
+            <g fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M142 196 L154 208 L166 220 L176 234 L196 190 L206 178 L222 160 L258 138 L272 116 L254 104 L310 50 L246 38" stroke="#C8102E" stroke-opacity="0.7" stroke-width="3" stroke-dasharray="5 6"/>${DN ? '<path d="M70 242 L80 212 L104 224 L118 210 L142 196" stroke="#C8102E" stroke-width="4.5"/>' : '<path d="M70 242 L80 212 L104 224 L118 210 L142 196" stroke="#C8102E" stroke-opacity="0.7" stroke-width="3" stroke-dasharray="5 6"/>'}</g>
             <g font-family="Inter, sans-serif" font-size="9.5" font-weight="700" fill="#13254A" stroke="#E9EDF2" stroke-width="3" stroke-linejoin="round" paint-order="stroke"><text x="28" y="262">Boston Common</text><text x="230" y="168">Faneuil Hall</text><text x="262" y="121" text-anchor="end">Old North Church</text><text x="352" y="70" text-anchor="end">USS Constitution</text><text x="236" y="42" text-anchor="end">Bunker Hill</text></g>
             <text x="16" y="88" font-family="Inter, sans-serif" font-size="9" font-style="italic" font-weight="600" fill="#3E6A93">Charles River</text>
           </svg>${dots}<span class="you-halo"></span><span class="you"></span></div>
-        <div class="tprog"><span><b>5 of 16</b> stops</span><span class="muted">0.5 of 2.5 mi</span></div>
-        <div class="bar8 pad0"><div style="width:31%;background:#C8102E"></div></div>
+        <div class="tprog"><span><b>${DN} of 16</b> stops</span><span class="muted">${DN ? '0.5' : '0'} of 2.5 mi</span></div>
+        <div class="bar8 pad0"><div style="width:${Math.round(DN / 16 * 100)}%;background:#C8102E"></div></div>
         <button type="button" class="track${S.tracking ? ' on' : ''}" data-act="track" aria-pressed="${S.tracking}">${S.tracking ? '<span class="wdot pdot"></span>' : I.s(P.nav, 18)}<span>${S.tracking ? 'Tracking your walk · Stop' : 'Track my walk'}</span></button>
-        <p class="small muted center pad">${S.tracking ? 'Location is on while you walk. Next stop: Boston Latin School site, 2 min away.' : 'Your location stays on only while you track, and you can stop any time.'}</p>
+        <p class="small muted center pad">${S.tracking ? 'Location is on while you walk. Next stop: ' + STOPS[DN] + ', 2 min away.' : S.user ? 'Your location stays on only while you track, and you can stop any time.' : 'Sign in to save your progress. Your location stays on only while you track.'}</p>
         <h3 class="eyebrow pad">The 16 stops</h3>
         <div class="stops">${STOPS.map((n, i) => {
-          const done = i < DONE, next = i === DONE;
+          const done = i < DN, next = i === DN;
           return `<div class="stoprow"${i ? '' : ' style="border-top:0"'}><span class="sn${done ? ' done' : next ? ' next' : ''}">${done ? I.s(P.check, 14, 3) : i + 1}</span><span class="sname${done ? ' muted' : ''}${next ? ' strong' : ''}">${esc(n)}</span><span class="stag${done ? ' ok' : ''}">${done ? 'Done' : next ? 'Next · 2 min' : ''}</span></div>`;
         }).join('')}</div>
-        <div class="finisher"><span class="fmedal">${I.s(P.steps, 26, 1.8)}<span class="lockmini">${I.s(P.lock, 12, 2.6)}</span></span><span><b>Freedom Trail finisher</b><span class="muted">Walk all 16 stops to earn it. 11 to go.</span></span></div>
+        <div class="finisher"><span class="fmedal">${I.s(P.steps, 26, 1.8)}<span class="lockmini">${I.s(P.lock, 12, 2.6)}</span></span><span><b>Freedom Trail finisher</b><span class="muted">Walk all 16 stops to earn it. ${16 - DN} to go.</span></span></div>
         <p class="small muted pad pb">The stops are the trail's 16 official sites. Your progress here is a sample.</p>`;
     }
     return `<div class="scr page white"><div class="scroll">
@@ -1516,7 +1760,15 @@
         toast('Nearby list: ' + STYLES.find((s) => s.k === v).name);
         break;
       case 'checkin': doCheckin(v); break;
-      case 'rec': doRec(v); break;
+      case 'review': doReview(v); break;
+      case 'sign-open': needSign(null); break;
+      case 'sign-close': S.signOpen = false; S.pending = null; S.signing = ''; refresh(); break;
+      case 'signin': doSignIn(v); break;
+      case 'signout': signOut(); break;
+      case 'demo-sign': S.demoOpen = false; if (S.user) signOut(); else needSign(null); break;
+      case 'rv-close': S.reviewFor = null; refresh(); break;
+      case 'rv-up': S.rvUp = v === '1'; refresh(); break;
+      case 'rv-post': postReview(); break;
       case 'photo': doPhoto(v); break;
       case 'like': doLike(v); break;
       case 'how': S.howOpen = !S.howOpen; rerenderScreen(); break;
@@ -1571,12 +1823,15 @@
       default: break;
     }
   });
+  app.addEventListener('input', (e) => { if (e.target.id === 'rvText') S.rvText = e.target.value; });
   document.addEventListener('keydown', (e) => {
     if (S.view >= 0 && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) {
       S.view = (S.view + (e.key === 'ArrowRight' ? 1 : LOOKS.length - 1)) % LOOKS.length; updH(); return;
     }
     if (e.key === 'Escape') {
-      if (S.view >= 0) { S.view = -1; updH(); }
+      if (S.signOpen) { S.signOpen = false; S.pending = null; refresh(); }
+      else if (S.reviewFor) { S.reviewFor = null; refresh(); }
+      else if (S.view >= 0) { S.view = -1; updH(); }
       else if (S.demoOpen) { S.demoOpen = false; updH(); }
       else if (S.langOpen) { S.langOpen = false; updH(); }
       else if (S.sel) { S.sel = null; updH(); }
