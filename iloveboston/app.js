@@ -300,7 +300,7 @@
   let hMounted = false;
   let G = null;                 // geometry
   let cur = { tx: 0, ty: 0 };   // live translate while dragging
-  let md = null, sd = null, moved = false, dragTop = null;
+  let md = null, sd = null, moved = false, dragTop = null, justDragged = false;
   let sig = { pins: '', body: '', prev: '' };
 
   function geo() {
@@ -349,7 +349,7 @@
         <section class="sheet" id="sheet">
           <div class="sheet-list" id="sheetList">
             <div class="sh-head" id="shHead">
-              <span class="handle" aria-hidden="true"></span>
+              <button type="button" class="handle-btn" id="shHandle" data-act="toggle"><span class="handle" aria-hidden="true"></span></button>
               <button type="button" class="sh-title" id="shToggle" data-act="toggle"><span class="cap" id="tHere"></span><span class="ttl">Downtown Crossing</span></button>
               <span class="dtc-slot" id="dtcSlot"></span>
             </div>
@@ -411,6 +411,9 @@
     const tog = $('#shToggle');
     tog.setAttribute('aria-label', labels[S.sheet]);
     tog.setAttribute('aria-expanded', S.sheet === 'full' ? 'true' : 'false');
+    const hb = $('#shHandle');
+    hb.setAttribute('aria-label', { half: 'Show the whole list', full: 'Show the map', peek: 'Show the list' }[S.sheet]);
+    hb.setAttribute('aria-expanded', S.sheet === 'full' ? 'true' : 'false');
     const on = tabsOn();
     const tabLabel = { near: t.tabNear, events: t.tabEvents, live: t.tabLive };
     const tabsEl = $('#tabs');
@@ -712,6 +715,7 @@
 
     head.addEventListener('pointerdown', (e) => {
       if (e.pointerType === 'mouse' && e.button !== 0) return;
+      justDragged = false;
       sd = { y: e.clientY, top: sheetTop(), id: e.pointerId, on: false };
     });
     head.addEventListener('pointermove', (e) => {
@@ -732,6 +736,8 @@
       if (!sd || (e && e.pointerId !== sd.id)) return;
       const d = sd; sd = null;
       if (!d.on) return;
+      justDragged = true;
+      setTimeout(() => { justDragged = false; }, 400);
       sheet.classList.remove('nodrag');
       const tNow = dragTop != null ? dragTop : d.top;
       const aim = tNow + Math.sign(tNow - d.top) * 70;
@@ -992,8 +998,10 @@
      One click handler for everything
      ================================================================= */
   app.addEventListener('click', (e) => {
+    if (justDragged && e.target.closest('#shHead')) { justDragged = false; return; }
     const el = e.target.closest('[data-act]');
     if (!el) {
+      if (S.route === 'h' && e.target.closest('#shHead') && !e.target.closest('a')) { S.sheet = S.sheet === 'half' ? 'full' : 'half'; updH(); return; }
       // a tap on the map's background closes the preview
       if (S.route === 'h' && e.target.closest('#map') && !moved && S.sel) { S.sel = null; updH(); }
       return;

@@ -74,7 +74,9 @@ h1,h2,h3,p{margin:0}
 .sheet.nodrag{transition:none}
 .sheet-list{position:absolute;inset:0;display:flex;flex-direction:column}
 .sh-head{flex:none;position:relative;display:flex;align-items:center;gap:12px;padding:18px 16px 12px 20px;background:var(--navy);color:#fff;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab}
-.handle{position:absolute;left:50%;top:7px;width:36px;height:4px;margin-left:-18px;border-radius:2px;background:rgba(255,255,255,.35)}
+.handle-btn{position:absolute;left:50%;top:0;width:120px;height:24px;margin-left:-60px;padding:0;border:0;border-radius:0 0 12px 12px;background:transparent;cursor:pointer}
+.handle{position:absolute;left:50%;top:7px;width:36px;height:4px;margin-left:-18px;border-radius:2px;background:rgba(255,255,255,.35);pointer-events:none}
+.handle-btn:hover .handle,.handle-btn:focus-visible .handle{background:rgba(255,255,255,.7)}
 .sh-title{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;padding:2px 0;border:0;background:transparent;color:#fff;text-align:left;cursor:pointer}
 .cap{font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#C9D2E3}
 .ttl{font-family:var(--head);font-weight:800;font-size:20px;white-space:nowrap}
@@ -484,6 +486,6 @@ h1,h2,h3,p{margin:0}
         <circle cx="216" cy="256" r="7.5" fill="#1F5BD8" stroke="#FFFFFF" stroke-width="3"></circle>
       </svg></template>
 <noscript><p style="padding:20px;font-family:sans-serif">This demo needs JavaScript.</p></noscript>
-<script src="app.js?v=3"></script>
+<script src="app.js?v=4"></script>
 </body>
 </html>
