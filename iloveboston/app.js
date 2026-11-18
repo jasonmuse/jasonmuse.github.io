@@ -12,7 +12,7 @@
 
   const NAVY = '#13254A', PICK = '#1F5BD8', LIVE = '#D7263D';
   // One color per category, used on the map pin, the stop in the list and the filter chip.
-  const CAT_COLOR = { eat: '#C2410C', shop: '#1D4ED8', see: '#15803D', services: '#7E22CE' };
+  const CAT_COLOR = { eat: '#C2410C', drinks: '#DB2777', shop: '#1D4ED8', see: '#15803D', services: '#7E22CE' };
   const WORLD = { x0: -260, y0: -300, x1: 650, y1: 900 };
 
   /* ---------- icons ---------- */
@@ -59,6 +59,11 @@
     fish: '<path d="M2.5 12c3-4.2 8.7-5.6 13-2.4L20.5 6v12l-5-3.6C11.2 17.6 5.5 16.2 2.5 12z"/><circle cx="7.6" cy="11.3" r=".9" fill="currentColor" stroke="none"/>',
     bag: '<path d="M5.5 8h13l1 13h-15z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/>',
     medal: '<circle cx="12" cy="15" r="5.5"/><path d="M8.6 10.6L6 3h4l2 5 2-5h4l-2.6 7.6"/>',
+    cocktail: '<path d="M4 4h16l-8 9.5z"/><path d="M12 13.5V20"/><path d="M8 20.5h8"/><path d="M7.5 8h9"/>',
+    beer: '<path d="M6 8.5h9v10.5a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2z"/><path d="M15 11h2.2a2 2 0 0 1 2 2v2.5a2 2 0 0 1-2 2H15"/><path d="M6 8.5c-.8-2.4 1-4.6 3.3-4 .9-1.5 3-1.7 4.2-.4 1.6-.3 2.9 1.2 2.4 2.8"/>',
+    plus: '<path d="M12 5v14M5 12h14"/>',
+    search: '<circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/>',
+    users: '<circle cx="9" cy="8.5" r="3.4"/><path d="M2.8 19.5c.9-3.4 3.2-5.2 6.2-5.2s5.3 1.8 6.2 5.2"/><path d="M15.5 5.3a3.3 3.3 0 0 1 0 6.4M17.6 14.6c1.8.6 3 2.2 3.6 4.9"/>',
     person: '<circle cx="12" cy="8.2" r="3.8"/><path d="M4.5 20.5c1.4-3.8 4.2-5.6 7.5-5.6s6.1 1.8 7.5 5.6"/>',
   };
 
@@ -282,6 +287,40 @@
       recNote: 'साइन इन करके चेक-इन करने वाले लोगों की सिफ़ारिशों के हिसाब से क्रम। 🏆 स्थानीय समीक्षकों की पसंद है। प्रायोजित जगहों पर लेबल होता है और वे पैसे देकर ऊपर नहीं आ सकतीं।' },
   };
   Object.keys(STR3).forEach((k) => Object.assign(STR[k], STR3[k]));
+  // Bars, friends, Nearest and "Recommend a place" (merged into STR just below)
+  const STR4 = {
+    en: { drinks: 'Drinks', friends: 'Friends', cocktails: 'Cocktail bar', pub: 'Irish pub', tavern: 'Historic tavern', dive: 'Dive bar', grill: 'Bar & grill', seafood: 'Seafood', bakery: 'Bakery', library: 'Library',
+      bestDrinks: 'Best bars', sortTop: 'Top picks', sortNear: 'Nearest', recPlace: 'Recommend a place', recPlaceSub: 'Been somewhere good? One tap tells everyone, and your friends see your name.',
+      searchPlaces: 'Search places', newTag: 'New', inviteFriends: 'Invite friends', friendsHere: 'Your friends here', you: 'You' },
+    es: { drinks: 'Bares', friends: 'Amigos', cocktails: 'Coctelería', pub: 'Pub irlandés', tavern: 'Taberna histórica', dive: 'Bar de barrio', grill: 'Bar y parrilla', seafood: 'Mariscos', bakery: 'Pastelería', library: 'Biblioteca',
+      bestDrinks: 'Los mejores bares', sortTop: 'Lo mejor', sortNear: 'Más cerca', recPlace: 'Recomienda un lugar', recPlaceSub: '¿Fuiste a un buen sitio? Con un toque se lo cuentas a todos, y tus amigos ven tu nombre.',
+      searchPlaces: 'Buscar lugares', newTag: 'Nuevo', inviteFriends: 'Invitar amigos', friendsHere: 'Tus amigos aquí', you: 'Tú' },
+    pt: { drinks: 'Bares', friends: 'Amigos', cocktails: 'Coquetelaria', pub: 'Pub irlandês', tavern: 'Taverna histórica', dive: 'Boteco', grill: 'Bar e grelhados', seafood: 'Frutos do mar', bakery: 'Confeitaria', library: 'Biblioteca',
+      bestDrinks: 'Melhores bares', sortTop: 'Destaques', sortNear: 'Mais perto', recPlace: 'Recomende um lugar', recPlaceSub: 'Foi a um lugar bom? Um toque conta para todos, e seus amigos veem seu nome.',
+      searchPlaces: 'Buscar lugares', newTag: 'Novo', inviteFriends: 'Convidar amigos', friendsHere: 'Seus amigos aqui', you: 'Você' },
+    zh: { drinks: '酒吧', friends: '好友', cocktails: '鸡尾酒吧', pub: '爱尔兰酒馆', tavern: '老字号酒馆', dive: '平价小酒吧', grill: '酒吧餐厅', seafood: '海鲜', bakery: '甜品店', library: '图书馆',
+      bestDrinks: '最佳酒吧', sortTop: '精选', sortNear: '最近', recPlace: '推荐一个地方', recPlaceSub: '去过好地方？点一下就能告诉大家，好友还能看到你的名字。',
+      searchPlaces: '搜索地点', newTag: '新', inviteFriends: '邀请好友', friendsHere: '你在这里的好友', you: '你' },
+    fr: { drinks: 'Bars', friends: 'Amis', cocktails: 'Bar à cocktails', pub: 'Pub irlandais', tavern: 'Taverne historique', dive: 'Bar de quartier', grill: 'Bar-grill', seafood: 'Fruits de mer', bakery: 'Pâtisserie', library: 'Bibliothèque',
+      bestDrinks: 'Les meilleurs bars', sortTop: 'Le top', sortNear: 'Les plus proches', recPlace: 'Recommander un lieu', recPlaceSub: 'Un bon endroit ? Un geste suffit pour le dire à tous, et vos amis voient votre nom.',
+      searchPlaces: 'Rechercher un lieu', newTag: 'Nouveau', inviteFriends: 'Inviter des amis', friendsHere: 'Vos amis ici', you: 'Vous' },
+    vi: { drinks: 'Quán bar', friends: 'Bạn bè', cocktails: 'Quán cocktail', pub: 'Quán rượu Ireland', tavern: 'Quán rượu lâu đời', dive: 'Quán bar bình dân', grill: 'Bar & đồ nướng', seafood: 'Hải sản', bakery: 'Tiệm bánh', library: 'Thư viện',
+      bestDrinks: 'Quán bar tốt nhất', sortTop: 'Nổi bật', sortNear: 'Gần nhất', recPlace: 'Đề xuất một nơi', recPlaceSub: 'Đã đến nơi hay? Chạm một lần để mọi người biết, bạn bè sẽ thấy tên bạn.',
+      searchPlaces: 'Tìm địa điểm', newTag: 'Mới', inviteFriends: 'Mời bạn bè', friendsHere: 'Bạn bè của bạn ở đây', you: 'Bạn' },
+    it: { drinks: 'Bar', friends: 'Amici', cocktails: 'Cocktail bar', pub: 'Pub irlandese', tavern: 'Taverna storica', dive: 'Bar alla buona', grill: 'Bar e griglia', seafood: 'Pesce', bakery: 'Pasticceria', library: 'Biblioteca',
+      bestDrinks: 'I bar migliori', sortTop: 'I migliori', sortNear: 'Più vicini', recPlace: 'Consiglia un posto', recPlaceSub: 'Sei stato in un bel posto? Con un tocco lo dici a tutti, e i tuoi amici vedono il tuo nome.',
+      searchPlaces: 'Cerca un posto', newTag: 'Nuovo', inviteFriends: 'Invita amici', friendsHere: 'I tuoi amici qui', you: 'Tu' },
+    ja: { drinks: 'バー', friends: '友だち', cocktails: 'カクテルバー', pub: 'アイリッシュパブ', tavern: '老舗の酒場', dive: '気軽なバー', grill: 'バー＆グリル', seafood: 'シーフード', bakery: 'ベーカリー', library: '図書館',
+      bestDrinks: 'おすすめバー', sortTop: 'おすすめ順', sortNear: '近い順', recPlace: '場所をおすすめする', recPlaceSub: 'いい場所に行った？ワンタップでみんなに伝わり、友だちにはあなたの名前が表示されます。',
+      searchPlaces: '場所を検索', newTag: '新着', inviteFriends: '友だちを招待', friendsHere: 'ここにいる友だち', you: 'あなた' },
+    ko: { drinks: '바', friends: '친구', cocktails: '칵테일 바', pub: '아이리시 펍', tavern: '오래된 선술집', dive: '동네 바', grill: '바 & 그릴', seafood: '해산물', bakery: '베이커리', library: '도서관',
+      bestDrinks: '최고의 바', sortTop: '추천순', sortNear: '가까운 순', recPlace: '장소 추천하기', recPlaceSub: '좋은 곳에 다녀왔나요? 한 번 탭으로 모두에게 알리고, 친구에게는 내 이름이 보여요.',
+      searchPlaces: '장소 검색', newTag: '새로운', inviteFriends: '친구 초대', friendsHere: '여기 있는 친구', you: '나' },
+    hi: { drinks: 'बार', friends: 'दोस्त', cocktails: 'कॉकटेल बार', pub: 'आयरिश पब', tavern: 'पुराना टैवर्न', dive: 'सादा बार', grill: 'बार और ग्रिल', seafood: 'सीफ़ूड', bakery: 'बेकरी', library: 'पुस्तकालय',
+      bestDrinks: 'सबसे अच्छे बार', sortTop: 'टॉप पसंद', sortNear: 'सबसे पास', recPlace: 'कोई जगह सुझाएँ', recPlaceSub: 'कहीं अच्छी जगह गए? एक टैप में सबको बताएँ, और दोस्तों को आपका नाम दिखेगा।',
+      searchPlaces: 'जगह खोजें', newTag: 'नया', inviteFriends: 'दोस्तों को बुलाएँ', friendsHere: 'यहाँ आपके दोस्त', you: 'आप' },
+  };
+  Object.keys(STR4).forEach((k) => Object.assign(STR[k], STR4[k]));
 
   /* ---------- sample data (same as the canvas) ---------- */
   const PLACES = [
@@ -295,11 +334,22 @@
     { id: 'genki', name: 'Genki Ya', cat: 'eat', kind: 'sushi', dist: 0.3, page: 'place/genki', q: 'Genki Ya Boston', x: 150, y: 370 },
     { id: 'faneuil', name: 'Faneuil Hall Marketplace', cat: 'see', kind: 'market', dist: 0.4, page: 'place/faneuil', q: 'Faneuil Hall Marketplace Boston', x: 326, y: 82 },
     { id: 'chinatown', name: 'Chinatown Gate', cat: 'see', kind: 'landmark', dist: 0.4, page: 'place/chinatown', q: 'Chinatown Gate Boston', x: 300, y: 372 },
+    { id: 'yvonnes', name: "Yvonne's", cat: 'drinks', kind: 'cocktails', dist: 0.1, till: '1 am', page: 'place/yvonnes', q: "Yvonne's Boston", x: 188, y: 250 },
+    { id: 'silvertone', name: 'Silvertone Bar & Grill', cat: 'drinks', kind: 'grill', dist: 0.15, till: '2 am', page: 'place/silvertone', q: 'Silvertone Bar & Grill Boston', x: 198, y: 206 },
+    { id: 'tam', name: 'The Tam', cat: 'drinks', kind: 'dive', dist: 0.25, till: '2 am', page: 'place/tam', q: 'The Tam Tremont St Boston', x: 132, y: 352 },
+    { id: 'blackrose', name: 'The Black Rose', cat: 'drinks', kind: 'pub', dist: 0.4, till: '2 am', page: 'place/blackrose', q: 'The Black Rose State St Boston', x: 372, y: 96 },
+    { id: 'bellinhand', name: 'Bell in Hand Tavern', cat: 'drinks', kind: 'tavern', dist: 0.45, till: '2 am', page: 'place/bellinhand', q: 'Bell in Hand Tavern Boston', x: 300, y: 50 },
+    { id: 'unionoyster', name: 'Union Oyster House', cat: 'eat', kind: 'seafood', dist: 0.45, sug: true, page: 'place/unionoyster', q: 'Union Oyster House Boston', x: 286, y: 34 },
+    { id: 'mikes', name: "Mike's Pastry", cat: 'eat', kind: 'bakery', dist: 0.8, sug: true, page: 'place/mikes', q: "Mike's Pastry Boston", x: 452, y: -158 },
+    { id: 'bpl', name: 'Boston Public Library', cat: 'see', kind: 'library', dist: 1, sug: true, page: 'place/bpl', q: 'Boston Public Library Copley', x: -200, y: 640 },
   ];
-  const PICON = { florabella: 'flower', brattle: 'book', opera: 'ticket', drphil: 'wrench', paku: 'food', common: 'tree', oldstate: 'columns', genki: 'fish', faneuil: 'bag', chinatown: 'gate' };
+  const PICON = { florabella: 'flower', brattle: 'book', opera: 'ticket', drphil: 'wrench', paku: 'food', common: 'tree', oldstate: 'columns', genki: 'fish', faneuil: 'bag', chinatown: 'gate',
+    yvonnes: 'cocktail', silvertone: 'beer', tam: 'beer', blackrose: 'beer', bellinhand: 'beer', unionoyster: 'fish', mikes: 'food', bpl: 'book' };
   // Sample recommendations. On the real site they come from people who checked in.
   const SOCIAL = { common: { rec: 55, today: 12 }, faneuil: { rec: 47, today: 7 }, paku: { rec: 42, today: 8 }, brattle: { rec: 38, today: 4 }, florabella: { rec: 31, today: 6 },
-    genki: { rec: 27, today: 3 }, drphil: { rec: 24, today: 2 }, opera: { rec: 22, today: 2 }, oldstate: { rec: 19, today: 1 }, chinatown: { rec: 16, today: 2 } };
+    genki: { rec: 27, today: 3 }, drphil: { rec: 24, today: 2 }, opera: { rec: 22, today: 2 }, oldstate: { rec: 19, today: 1 }, chinatown: { rec: 16, today: 2 },
+    bellinhand: { rec: 36, today: 9 }, silvertone: { rec: 33, today: 6 }, yvonnes: { rec: 29, today: 5 }, blackrose: { rec: 25, today: 4 }, tam: { rec: 21, today: 3 },
+    unionoyster: { rec: 0, today: 0 }, mikes: { rec: 0, today: 0 }, bpl: { rec: 0, today: 0 } };
   // Sample visitor photos: real photos from Wikimedia Commons under free licenses (credits at #/credits).
   // Most aren't from these exact places. [place, caption, likes, who took it, average color, author, license, Commons file]
   const PHOTOS = [
@@ -326,6 +376,17 @@
     ['oldstate', 'The golden lion', 11, 'Kenji', '#927e6d', 'Farragutful', 'CC BY-SA 4.0', '2024_Old_State_House_Lion_-_Boston.jpg'],
     ['chinatown', 'The gate on Beach St', 20, 'Mei', '#616f77', '4300streetcar', 'CC BY 4.0', 'Chinatown_Gate_Boston_July_2025.jpg'],
     ['chinatown', 'The gate at night', 16, 'Ji-woo', '#584e45', 'FASTILY', 'CC BY-SA 4.0', 'Chinatown_gate,_Boston_1_2019-12-18.jpg'],
+    ['yvonnes', 'Cocktails at the bar', 31, 'Priya', '#624b32', 'Cocktailmarler (derivative work: Jocian)', 'CC BY-SA 3.0', 'Rum,_Manhattan,_Tequila_Old_Fashioned_(1).jpg'],
+    ['yvonnes', 'An old fashioned', 14, 'Lucas', '#f3dbc1', 'Tim Sackton', 'CC BY-SA 2.0', 'Rye_Old_Fashioned_(57-366)_-_Flickr_-_timsackton.jpg'],
+    ['silvertone', 'Burger, fries and a beer', 27, 'Sam', '#795b43', 'JIP', 'CC BY-SA 4.0', 'Chipotle_burger_and_beer_at_Speakeasy_Finlayson.jpg'],
+    ['tam', 'Beer on tap', 15, 'Leo', '#4a3e35', 'Bernt Rostad', 'CC BY 2.0', 'Taps_@_McGivney’s_(15089278651).jpg'],
+    ['blackrose', 'A pint by the window', 19, 'Leo', '#60563d', 'Avatar (German Wikipedia)', 'Public domain', 'Guinness_on_table.jpg'],
+    ['bellinhand', 'The front on Union St', 30, 'Priya', '#68635f', 'Seasider53', 'CC BY-SA 4.0', 'Bell_in_Hand_Tavern_2023.jpg'],
+    ['bellinhand', 'The sign out front', 12, 'Maya', '#73787e', 'Rhododendrites', 'CC BY-SA 4.0', 'Bell_in_Hand_Tavern_(36199).jpg'],
+    ['unionoyster', 'The brick front on Union St', 0, 'Tom', '#7a777a', 'Manuel Velazquez', 'CC BY 3.0', 'EL_VIEJO_UNION_OYSTER_HOUSE_-_panoramio.jpg'],
+    ['mikes', 'Cannoli to go', 0, 'Mei', '#93775c', 'Gatorfan252525', 'CC BY-SA 4.0', "A_chocolate_chip_cannoli_(left)_and_cookies_&_cream_cannoli_(right)_from_Mike's_Pastry_in_Boston,_MA.jpg"],
+    ['mikes', 'The line out the door', 0, 'Sam', '#72665b', 'Tim Sackton', 'CC BY-SA 2.0', "Mike's_Pastry_-2_(6709504099).jpg"],
+    ['bpl', 'The library on Copley Square', 0, 'Leo', '#99989a', 'Lëa-Kim Châteauneuf', 'CC BY-SA 4.0', 'Boston_Public_Library,_McKim_Building_(11-2019).jpg'],
   ];
   const PH = {};
   PHOTOS.forEach(([place, cap, likes, by, color, artist, lic, file]) => {
@@ -333,7 +394,11 @@
     const key = place + '-' + list.length;
     list.push({ pid: key, place, cap, base: likes, by, color, src: 'p/' + key + '.webp', thumb: 'p/' + key + '-t.webp', artist, lic, file });
   });
-  const CATS = ['eat', 'shop', 'see', 'services'];
+  const CATS = ['eat', 'drinks', 'shop', 'see', 'services'];
+  // Sample friends (once you're signed in) and what they recommend
+  const FRIENDS = ['Sam K.', 'Priya S.', 'Leo M.'];
+  const FRIEND_RECS = { silvertone: ['Sam K.', 'Priya S.'], tam: ['Sam K.'], bellinhand: ['Priya S.', 'Leo M.'], blackrose: ['Leo M.'], faneuil: ['Priya S.'], brattle: ['Leo M.'], paku: ['Leo M.'], drphil: ['Sam K.'] };
+  const firstName = (n) => String(n).split(' ')[0];
   const EVENTS = [
     { id: 'market', day: 'today', now: true, until: '7 pm', name: 'Holiday market stalls', where: 'Summer St plaza', dist: 0.1, price: 'Free', q: 'Downtown Crossing Boston', x: 266, y: 314 },
     { id: 'music', day: 'today', now: true, until: '3 pm', name: 'Lunchtime street music', where: 'Winter St', dist: 0.1, price: 'Free', q: 'Winter St Boston', x: 176, y: 236 },
@@ -451,6 +516,7 @@
     // points and the visitor's own check-ins, recommendations, likes and photos (this visit only)
     points: 135, checked: {}, recd: {}, liked: {}, mine: {}, sv: 0, howOpen: false, firstCheck: false, likedOnce: false,
     user: loadUser(), myRev: {}, signOpen: false, signing: '', pending: null, reviewFor: null, rvUp: null, rvText: '',
+    sort: 'top', added: {}, addOpen: false, addQ: '',
   };
   function detectLang() {
     try {
@@ -553,15 +619,19 @@
     }, 650);
   }
   function signOut() {
-    S.user = null; S.points = 135; S.checked = {}; S.recd = {}; S.liked = {}; S.mine = {}; S.myRev = {}; S.firstCheck = false; S.sv++;
+    S.user = null; S.points = 135; S.checked = {}; S.recd = {}; S.liked = {}; S.mine = {}; S.myRev = {}; S.added = {}; S.firstCheck = false; S.sv++;
+    if (S.cat === 'friends') S.cat = 'all';
     saveUser(); refresh();
     toast('Signed out. Points, reviews and likes need an account.');
   }
   function runAct(act, v) {
     if (act === 'checkin') doCheckin(v);
     else if (act === 'review') doReview(v);
+    else if (act === 'recommend') doRecommend(v);
+    else if (act === 'cat') { S.cat = v; refresh(); }
     else if (act === 'like') doLike(v);
     else if (act === 'photo') toast('You’re signed in. Tap Add photo to pick one.');
+    else if (act === 'add-open') { S.addOpen = true; S.addQ = ''; refresh(); }
   }
   function earnHTML(id) {
     if (!S.f.points) return '';
@@ -569,7 +639,7 @@
     const b = (act, icon, label, doneLabel, pts, done) => `<button type="button" class="earn-b${done ? ' done' : ''}" data-act="${act}" data-v="${id}"${done ? ' aria-disabled="true"' : ''}>
         <span class="eb-top">${I.s(done ? P.check : icon, 18, done ? 2.6 : 2)}${done ? '' : `<span class="eb-p">+${pts}</span>`}</span><span class="eb-l">${esc(done ? doneLabel : label)}</span></button>`;
     const head = S.user ? `<span class="earn-h">${esc(t.beenHere)}</span>` : `<button type="button" class="earn-h sign-link" data-act="sign-open">${I.s(P.lock, 13, 2.4)}<span>${esc(t.signToEarn)}</span></button>`;
-    return `<div class="earn">${head}<div class="earn-row">${b('checkin', P.pin, t.checkIn, t.checkedIn, 10, !!S.checked[id])}${b('review', P.thumb, t.review, t.reviewed, 5, !!S.myRev[id])}${b('photo', P.camera, t.addPhoto, t.photoAdded, 20, !!S.mine[id])}</div></div>`;
+    return `<div class="earn">${head}<div class="earn-row">${b('checkin', P.pin, t.checkIn, t.checkedIn, 10, !!S.checked[id])}${b('recommend', P.thumb, t.recommend, t.recommended, 5, !!S.recd[id])}${b('photo', P.camera, t.addPhoto, t.photoAdded, 20, !!S.mine[id])}</div></div>`;
   }
   function refresh() {
     if (S.route === 'h' || !SCREENS[S.route]) { if (hMounted) updH(); } else rerenderScreen();
@@ -624,8 +694,55 @@
         <p class="rv-as">${avatar(S.user.name, 24)}<span>${esc(S.user.name)} · signed in with ${esc(S.user.provider)} · ${S.checked[p.id] ? '✓ checked in' : 'checks you in when you post'}</span></p>
       </div>`;
   }
+  // One tap to recommend a place you went to. Everyone sees the count; your friends see your name.
+  function doRecommend(id) {
+    if (needSign('recommend', id)) return;
+    const p = placeById(id);
+    if (S.recd[id]) { toast('You already recommend ' + p.name + '.'); return; }
+    S.recd[id] = true;
+    if (p.sug) S.added[id] = true;
+    const chk = autoCheck(id);
+    earn(5 + chk, 'You recommend ' + p.name, (chk ? 'Checked in too (+10). ' : '') + (p.sug ? 'It’s on the map now for everyone.' : 'Everyone sees it, and your friends see your name.'));
+  }
+  // "Recommend a place": search what's around and recommend it in one tap, even places that aren't listed yet
+  function addHTML() {
+    const t = T();
+    const q = (S.addQ || '').trim().toLowerCase();
+    const rows = PLACES.slice().sort((a, b) => a.dist - b.dist).map((p) => {
+      const ph = topPhoto(p.id), done = !!S.recd[p.id];
+      const key = (p.name + ' ' + t[p.kind] + ' ' + (STR.en[p.kind] || '')).toLowerCase();
+      return `<div class="addrow" data-name="${esc(key)}"${q && !key.includes(q) ? ' hidden' : ''}><span class="addimg" style="background:${ph.color}">${phImg(ph, true)}</span>
+        <span class="addtxt"><b>${esc(p.name)}</b><span>${metaLine(p)}${p.sug && !S.added[p.id] ? ` · <em>${esc(t.newTag)}</em>` : ''}</span></span>
+        <button type="button" class="addgo${done ? ' done' : ''}" data-act="recommend" data-v="${p.id}"${done ? ' aria-disabled="true"' : ''}>${I.s(done ? P.check : P.thumb, 15, 2.4)}<span>${esc(done ? t.recommended : t.recommend)}</span></button></div>`;
+    }).join('');
+    return `<div class="lang-dim" data-act="add-close"></div>
+      <div class="lang-sheet add-sheet" role="dialog" aria-label="${esc(t.recPlace)}">
+        <div class="lang-head"><h2>${I.s(P.thumb, 20, 2.2)} ${esc(t.recPlace)}</h2><button type="button" class="pv-x" data-act="add-close" aria-label="Close">${I.s(P.x, 20)}</button></div>
+        <p class="sign-b">${esc(t.recPlaceSub)}</p>
+        <label class="addsearch">${I.s(P.search, 18, 2.2)}<input id="addQ" type="search" placeholder="${esc(t.searchPlaces)}" value="${esc(S.addQ || '')}" autocomplete="off" enterkeyhint="search"></label>
+        <div class="addlist">${rows}</div>
+        <p class="small muted sign-demo">Demo: places near this sign. On the real site you can search any place in Boston, and its photos and details fill in from Google on their own.</p>
+      </div>`;
+  }
+  function toolsHTML(st) {
+    const t = T();
+    const seg = st === 'picks' ? `<div class="seg2" role="group" aria-label="Sort"><button type="button" data-act="sort" data-v="top" aria-pressed="${S.sort !== 'near'}">${I.s(P.thumb, 15, 2.3)}<span>${esc(t.sortTop)}</span></button><button type="button" data-act="sort" data-v="near" aria-pressed="${S.sort === 'near'}">${I.s(P.pin, 15, 2.3)}<span>${esc(t.sortNear)}</span></button></div>` : '<span></span>';
+    return `<div class="tools">${seg}<button type="button" class="addbtn" data-act="add-open">${I.s(P.plus, 16, 2.6)}<span>${esc(t.recommend)}</span></button></div>`;
+  }
+  function friendsBanner() {
+    const t = T();
+    return `<div class="frb"><span class="avs">${FRIENDS.map((n) => avatar(n, 28)).join('')}</span><span class="frb-t"><b>${esc(t.friendsHere)}</b><span>${esc(FRIENDS.map(firstName).join(', '))}</span></span><button type="button" class="btn small2" data-act="invite">${I.s(P.share, 15, 2.2)}<span>${esc(t.inviteFriends)}</span></button></div>`;
+  }
+  async function invite() {
+    const url = location.origin + location.pathname;
+    try {
+      if (navigator.share) { await navigator.share({ title: 'I Love Boston', text: 'See what our friends recommend near Downtown Crossing', url }); return; }
+      await navigator.clipboard.writeText(url); toast('Invite link copied');
+    } catch (e) { if (!(e && e.name === 'AbortError')) toast('Invite link: ' + url, 3200); }
+  }
   function overlaysHTML() {
     if (S.signOpen) return signHTML();
+    if (S.addOpen) return addHTML();
     if (S.reviewFor && S.user) return reviewHTML();
     return '';
   }
@@ -659,7 +776,7 @@
     if (S.liked[pid] && !S.likedOnce) { S.likedOnce = true; toast('Liked. The most-liked photos get featured, and whoever took it gets a point.', 2800); }
   }
   const LEVELS = [[0, 'Visitor'], [100, 'Explorer'], [250, 'Local'], [500, 'Insider'], [1000, 'Legend']];
-  const EARN = [['Scan a sign', 15], ['Check in at a place', 10], ['Review a place', 5], ['Write a few words in it', 5], ['Add a photo of what you got', 20], ['Someone likes your photo', 1], ['Your photo gets featured', 50]];
+  const EARN = [['Scan a sign', 15], ['Check in at a place', 10], ['Recommend a place', 5], ['Write a review', 5], ['Write a few words in it', 5], ['Add a photo of what you got', 20], ['Someone likes your photo', 1], ['Your photo gets featured', 50]];
 
   /* ---------- reviews and local critics (sample) ---------- */
   // Sample reviews from signed-in visitors who checked in: [name, level, when, recommends, text]
@@ -674,6 +791,11 @@
     opera: [['Sofia G.', 2, 'Nov 14', true, 'The lobby alone is worth it. Stunning.'], ['Priya S.', 4, 'Nov 7', false, 'Beautiful, but the upper balcony seats are tight.']],
     oldstate: [['Leo M.', 3, 'Nov 12', true, 'Small museum, big history. Look up at the lion and the unicorn.'], ['Kenji T.', 2, 'Nov 6', true, 'Quick stop on the Freedom Trail, very well done.']],
     chinatown: [['Mei W.', 2, 'Nov 15', true, 'Pretty at night, with great food just past the gate.'], ['Ji-woo H.', 1, 'Nov 10', true, 'A good start for a dumpling crawl.']],
+    yvonnes: [['Priya S.', 4, 'Nov 15', true, 'Gorgeous room and great cocktails. Book ahead on weekends.'], ['Lucas F.', 3, 'Nov 8', true, 'Pricey, but worth it for a night out.']],
+    silvertone: [['Sam K.', 2, 'Nov 16', true, 'Cozy booths and solid comfort food after work.'], ['Ana L.', 3, 'Nov 12', true, 'Easy spot to meet friends right by Downtown Crossing.']],
+    tam: [['Leo M.', 3, 'Nov 14', true, 'No frills, cheap drinks, friendly bartenders.'], ['Ji-woo H.', 1, 'Nov 9', true, 'A true dive, in the best way.']],
+    blackrose: [['Leo M.', 3, 'Nov 15', true, 'Classic Irish pub. Good pints, good music.'], ['Kenji T.', 2, 'Nov 10', true, 'Cozy spot near Faneuil Hall.']],
+    bellinhand: [['Priya S.', 4, 'Nov 17', true, 'Old-school tavern, fun with a group.'], ['Tom B.', 1, 'Nov 13', false, 'Fun, but loud and packed on weekends.']],
   };
   // Sample critics' picks. The real site would name the critic and publication and link to the review.
   const CRITICS = {
@@ -894,7 +1016,7 @@
       sig.dtc = dtcSig;
     }
     // pins
-    const pinSig = [S.tab, S.cat, S.day, S.sel, S.lang, S.style, S.sv, fs].join('|');
+    const pinSig = [S.tab, S.cat, S.day, S.sel, S.lang, S.style, S.sv, fs, !!S.user, S.sort].join('|');
     if (sig.pins !== pinSig) { $('#pinsL').innerHTML = pinsHTML(); sig.pins = pinSig; }
     // header + tabs + body
     $('#tHere').textContent = t.here;
@@ -912,7 +1034,7 @@
     tabsEl.style.gridTemplateColumns = `repeat(${on.length},minmax(0,1fr))`;
     tabsEl.innerHTML = on.map((id) =>
       `<button type="button" class="tab" role="tab" aria-selected="${S.tab === id}" data-act="tab" data-v="${id}">${id === 'live' ? '<span class="ldot pdot"></span>' : ''}<span>${esc(tabLabel[id])}</span></button>`).join('');
-    const bodySig = [S.tab, S.cat, S.day, S.tOpen, S.tShow, S.lang, S.style, S.sv, fs, !!S.user].join('|');
+    const bodySig = [S.tab, S.cat, S.day, S.tOpen, S.tShow, S.lang, S.style, S.sv, fs, !!S.user, S.sort].join('|');
     if (sig.body !== bodySig) {
       const body = $('#shBody');
       const keep = sig.body.split('|')[0] === S.tab ? body.scrollTop : 0;
@@ -951,7 +1073,7 @@
     const ow = $('#ovWrap');
     const oh = overlaysHTML();
     if (oh) {
-      const os = [S.signOpen, S.signing, S.reviewFor, S.rvUp, S.lang, u ? 1 : 0, fs].join('|');
+      const os = [S.signOpen, S.signing, S.reviewFor, S.rvUp, S.addOpen, S.sv, S.lang, u ? 1 : 0, fs].join('|');
       if (sig.ov !== os) { ow.innerHTML = oh; sig.ov = os; }
       ow.hidden = false;
     } else { ow.hidden = true; ow.innerHTML = ''; sig.ov = ''; }
@@ -1027,20 +1149,24 @@
   }
 
   /* ----- Nearby: top picks, photos, best of, or the walk line ----- */
+  const listed = () => PLACES.filter((p) => !p.sug || S.added[p.id]);
+  const friendRecs = (id) => (S.user ? FRIEND_RECS[id] || [] : []);
+  const inCat = (p, cat) => cat === 'all' || (cat === 'friends' ? friendRecs(p.id).length > 0 || !!S.recd[p.id] : p.cat === cat);
   function rankedPlaces(cat) {
-    return PLACES.filter((p) => cat === 'all' || p.cat === cat).slice().sort((a, b) => recOf(b.id) - recOf(a.id) || a.dist - b.dist);
+    return listed().filter((p) => inCat(p, cat)).sort((a, b) => recOf(b.id) - recOf(a.id) || a.dist - b.dist);
   }
   function nearModel() {
     const st = S.style;
-    if (st === 'walk') return { st, list: PLACES.filter((p) => S.cat === 'all' || p.cat === S.cat).slice().sort((a, b) => a.dist - b.dist) };
+    if (st === 'walk') return { st, list: listed().filter((p) => inCat(p, S.cat)).sort((a, b) => a.dist - b.dist) };
     const ranked = rankedPlaces(S.cat);
     if (st === 'picks') {
+      if (S.sort === 'near') ranked.sort((a, b) => a.dist - b.dist);
       // One paid Spotlight card sits above the ranking, labeled Sponsored. It never changes the order below.
       const spot = S.f.featured ? ranked.find((p) => p.spotlight) || null : null;
       return { st, spot, list: ranked.filter((p) => p !== spot) };
     }
     if (st === 'best') {
-      const cats = S.cat === 'all' ? CATS : [S.cat];
+      const cats = S.cat === 'all' || S.cat === 'friends' ? CATS : [S.cat];
       return { st, groups: cats.map((c) => ({ c, all: ranked.filter((p) => p.cat === c) })).filter((g) => g.all.length) };
     }
     // Photos: every visitor photo, most-liked first; the map gets one photo pin per place
@@ -1065,7 +1191,27 @@
     return `<button type="button" class="pin${S.f.colors ? ' cpin' : ''}${on ? ' on' : ''}" ${key} aria-label="${it.n}. ${esc(p.name)}" style="${pos}${col}">${it.n}</button>`;
   }
   const sponTag = (p) => (S.f.featured && p.sponsored ? `<span class="sp">${esc(T().sponsored)}</span>` : '');
-  const metaLine = (p) => esc(T()[p.kind]) + ' · ' + esc(T().mins(mins(p.dist)));
+  const metaLine = (p) => esc(T()[p.kind]) + ' · ' + esc(T().mins(mins(p.dist))) + (p.till ? ' · ' + esc(T().till(p.till)) : '');
+  function recommenders(id) {
+    const names = [];
+    if (S.user && S.recd[id]) names.push(S.user.name);
+    friendRecs(id).forEach((n) => { if (!names.includes(n)) names.push(n); });
+    (REVIEWS[id] || []).forEach((r) => { if (r[3] && !names.includes(r[0])) names.push(r[0]); });
+    return names;
+  }
+  const isMe = (n) => S.user && n === S.user.name;
+  function recByHTML(id, size) {
+    const total = recOf(id);
+    if (!total) return '';
+    const shown = recommenders(id).slice(0, 2);
+    const more = Math.max(0, total - shown.length);
+    const label = shown.map((n) => (isMe(n) ? T().you : firstName(n))).join(', ') + (more ? ' +' + more : '');
+    return `<span class="recby"><span class="avs">${shown.map((n) => avatar(n, size || 22)).join('')}</span><span>${I.s(P.thumb, 13, 2.4)}${esc(label)}</span></span>`;
+  }
+  function friendsLine(id) {
+    const fr = friendRecs(id);
+    return fr.length ? `<span class="pk-fr">${I.s(P.users, 13, 2.2)}${esc(T().friends)}: ${esc(fr.map(firstName).join(', '))}</span>` : '';
+  }
   // Top picks: a big card per place, its most-liked photo with the rank, name and badges on top
   function pkCard(p, n) {
     const t = T();
@@ -1074,8 +1220,8 @@
     const col = S.f.colors ? ` style="background:${CAT_COLOR[p.cat]}"` : '';
     return `<button type="button" class="pk" data-act="sel" data-k="place:${p.id}">
         <span class="pk-img" style="background:${ph.color}">${phImg(ph, false, n > 2)}</span><span class="pk-shade"></span>
-        <span class="pk-top"><span class="pk-n"${col}>${n}</span>${S.f.featured && p.sponsored ? `<span class="sp onimg">${esc(t.sponsored)}</span>` : ''}${critPill(p.id, true)}${hot ? `<span class="pk-hot">${I.s(P.flame, 13, 2.4)}${esc(t.todayN(hot))}</span>` : ''}</span>
-        <span class="pk-bot"><span class="pk-txt"><b>${esc(p.name)}</b><span>${metaLine(p)}</span></span><span class="pk-rec" aria-label="${esc(t.rec(bucket(recOf(p.id))))}">${I.s(P.thumb, 14, 2.4)}${esc(bucket(recOf(p.id)))}</span></span>
+        <span class="pk-top"><span class="pk-n"${col}>${n}</span>${S.f.featured && p.sponsored ? `<span class="sp onimg">${esc(t.sponsored)}</span>` : ''}${p.sug ? `<span class="newtag2">${esc(t.newTag)}</span>` : ''}${critPill(p.id, true)}${hot ? `<span class="pk-hot">${I.s(P.flame, 13, 2.4)}${esc(t.todayN(hot))}</span>` : ''}</span>
+        <span class="pk-bot"><span class="pk-txt"><b>${esc(p.name)}</b><span>${metaLine(p)}</span>${friendsLine(p.id)}</span><span class="pk-rec" aria-label="${esc(t.rec(bucket(recOf(p.id))))}"><span class="avs mini">${recommenders(p.id).slice(0, 2).map((nm) => avatar(nm, 20)).join('')}</span>${I.s(P.thumb, 14, 2.4)}${esc(bucket(recOf(p.id)))}</span></span>
       </button>`;
   }
   // the paid Spotlight: smaller, so the first real pick still shows at half height
@@ -1155,11 +1301,11 @@
   }
   function nearHTML() {
     const t = T();
-    const chips = ['all', 'eat', 'shop', 'see', 'services'].map((c) => {
-      const col = S.f.colors && c !== 'all' ? CAT_COLOR[c] : null;
+    const chips = ['all', 'eat', 'drinks', 'shop', 'see', 'services', 'friends'].map((c) => {
+      const col = S.f.colors && CAT_COLOR[c] ? CAT_COLOR[c] : null;
       const on = S.cat === c;
       const st = col && on ? ` style="background:${col};border-color:${col};color:#fff"` : '';
-      return `<button type="button" class="chip" aria-pressed="${on}" data-act="cat" data-v="${c}"><span${st}>${col ? `<i class="cdot" style="background:${on ? '#fff' : col}"></i>` : ''}${esc(t[c])}</span></button>`;
+      return `<button type="button" class="chip${c === 'friends' ? ' frchip' : ''}" aria-pressed="${on}" data-act="cat" data-v="${c}"><span${st}>${col ? `<i class="cdot" style="background:${on ? '#fff' : col}"></i>` : ''}${c === 'friends' ? I.s(P.users, 15, 2.2) : ''}${esc(t[c])}</span></button>`;
     }).join('');
     const m = nearModel();
     let body = '', note = t.recNote;
@@ -1167,7 +1313,7 @@
       body = walkHTML(m.list); note = t.allWithin;
     } else if (m.st === 'picks') {
       body = (m.spot ? spotCard(m.spot) : '')
-        + (m.list.length ? `<div class="sec-h"><h3>${esc(t.topPicks)}</h3></div><div class="pklist">${m.list.map((p, i) => pkCard(p, i + 1) + (i === 2 ? critRail() : '')).join('')}</div>` : '');
+        + (m.list.length ? `<div class="sec-h"><h3>${esc(S.sort === 'near' ? t.sortNear : t.topPicks)}</h3></div><div class="pklist">${m.list.map((p, i) => pkCard(p, i + 1) + (i === 2 ? critRail() : '')).join('')}</div>` : '');
     } else if (m.st === 'best') {
       const one = m.groups.length === 1;
       body = m.groups.map((g) => `<section class="bo"><div class="bo-h">${S.f.colors ? `<i class="cdot" style="background:${CAT_COLOR[g.c]}"></i>` : ''}<h3>${esc(t['best' + g.c[0].toUpperCase() + g.c.slice(1)])}</h3></div>
@@ -1178,6 +1324,8 @@
     }
     return `
       <div class="chips">${chips}</div>
+      ${toolsHTML(m.st)}
+      ${S.cat === 'friends' && S.user ? friendsBanner() : ''}
       ${body}
       <p class="note">${esc(note)}</p>
       ${tSecHTML()}
@@ -1241,7 +1389,7 @@
       chip = S.f.featured && p.sponsored ? `<span class="sp">${esc(t.sponsored)}</span>` : '';
       line1 = t[p.kind] + ' · ' + t.walk(mins(p.dist));
       dot = S.f.colors ? `<i class="cdot" style="background:${CAT_COLOR[p.cat]}"></i>` : '';
-      soc = socHTML(p.id, true) + critPill(p.id, false);
+      soc = socHTML(p.id, true) + recByHTML(p.id) + critPill(p.id, false);
       thumb = `<span class="thumb" style="background:${ph.color}">${phImg(ph, true, false)}</span>`;
       primary = `<a class="btn primary" href="${maps(p.q)}" target="_blank" rel="noopener">${I.s(P.pin)}<span>${esc(t.directions)}</span></a>`;
       secondary = `<a class="btn" href="#/${p.page}">${esc(t.seePage)}</a>`;
@@ -1476,6 +1624,7 @@
         <span class="ph-cap">${esc(ph.cap)}</span><span class="ph-sub">${ph.mine ? 'by you, just now' : 'by ' + esc(ph.by)}</span></div>`).join('');
     return `<section class="vis"><div class="rev-h"><h2>From visitors</h2><span class="small muted">Signed in and checked in</span></div>
         <div class="vis-stats"><span class="rec big">${I.s(P.thumb, 18, 2.2)}${esc(t.rec(recOf(id)))}</span>${d ? `<span class="hot">${I.s(P.flame, 13, 2.4)}${esc(t.todayN(d))}</span>` : ''}</div>
+        ${recByHTML(id, 26)}${friendsLine(id)}
         ${earnHTML(id)}
         <div class="vgrid">${tiles}</div>
         <p class="vis-note">${featured ? 'The most-liked visitor photos show up first.' : 'The most-liked photo becomes this page’s cover and shows up first.'}</p>
@@ -1748,7 +1897,9 @@
     const act = el.dataset.act, v = el.dataset.v;
     switch (act) {
       case 'tab': S.tab = v; S.sel = null; updH(); break;
-      case 'cat': S.cat = v; updH(); break;
+      case 'cat':
+        if (v === 'friends' && needSign('cat', 'friends')) break;
+        S.cat = v; updH(); break;
       case 'day': S.day = v; S.sel = null; updH(); break;
       case 'station': S.tOpen = S.tOpen === v ? '' : v; updH(); break;
       case 'tshow': S.tShow = !S.tShow; updH(); break;
@@ -1761,6 +1912,11 @@
         break;
       case 'checkin': doCheckin(v); break;
       case 'review': doReview(v); break;
+      case 'recommend': doRecommend(v); break;
+      case 'sort': S.sort = v; updH(); $('#shBody').scrollTop = 0; break;
+      case 'add-open': if (!needSign('add-open')) { S.addOpen = true; S.addQ = ''; refresh(); } break;
+      case 'add-close': S.addOpen = false; refresh(); break;
+      case 'invite': invite(); break;
       case 'sign-open': needSign(null); break;
       case 'sign-close': S.signOpen = false; S.pending = null; S.signing = ''; refresh(); break;
       case 'signin': doSignIn(v); break;
@@ -1823,13 +1979,21 @@
       default: break;
     }
   });
-  app.addEventListener('input', (e) => { if (e.target.id === 'rvText') S.rvText = e.target.value; });
+  app.addEventListener('input', (e) => {
+    if (e.target.id === 'rvText') S.rvText = e.target.value;
+    if (e.target.id === 'addQ') {
+      S.addQ = e.target.value;
+      const q = S.addQ.trim().toLowerCase();
+      app.querySelectorAll('.addrow').forEach((r) => { r.hidden = !!q && !r.dataset.name.includes(q); });
+    }
+  });
   document.addEventListener('keydown', (e) => {
     if (S.view >= 0 && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) {
       S.view = (S.view + (e.key === 'ArrowRight' ? 1 : LOOKS.length - 1)) % LOOKS.length; updH(); return;
     }
     if (e.key === 'Escape') {
       if (S.signOpen) { S.signOpen = false; S.pending = null; refresh(); }
+      else if (S.addOpen) { S.addOpen = false; refresh(); }
       else if (S.reviewFor) { S.reviewFor = null; refresh(); }
       else if (S.view >= 0) { S.view = -1; updH(); }
       else if (S.demoOpen) { S.demoOpen = false; updH(); }
