@@ -6,7 +6,18 @@
 <meta name="theme-color" content="#13224A">
 <meta name="robots" content="noindex">
 <title>I ♥ Boston · Downtown Crossing</title>
-<!-- Mockup (Nov 19, 2026): what a visitor sees after scanning sign DTC-001. Sample listings only. -->
+<!-- The simple version (Nov 19, 2026): what a visitor sees after scanning sign DTC-001. Sample listings only.
+     The same file is at iloveboston/index.html (the main demo link) and iloveboston/s/DTC-001/index.html (the test sign's QR link): change both.
+     The older, bigger demo is iloveboston/full.html. -->
+<meta name="description" content="Everything Boston. One scan away. The best of Downtown Crossing within a 10-minute walk of the sign (a demo).">
+<meta property="og:title" content="I ♥ Boston · Downtown Crossing">
+<meta property="og:description" content="Everything Boston. One scan away.">
+<meta property="og:image" content="https://jasonmuse.github.io/iloveboston/og.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="apple-mobile-web-app-title" content="I Love Boston">
+<link rel="apple-touch-icon" href="/iloveboston/icon.png">
+<link rel="icon" type="image/png" href="/iloveboston/icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Inter:wght@400;500;600;700&family=Montserrat:wght@800;900&display=swap">
@@ -194,9 +205,12 @@ body.intro-on .rise{opacity:0;transform:translateY(18px)}
 
 <script>
 (function () {
+  if (/^#\/(looks|place|live|credits|business|spots)\b/.test(location.hash)) { location.replace('/iloveboston/full.html' + location.hash); return; }
+  const fromMockups = location.hash === '#/mockups';
+  if (fromMockups) history.replaceState(null, '', location.pathname + location.search);
   const Q = new URLSearchParams(location.search);
   const CAPTURE = Q.has('capture');            // used to record the mockup GIF frame by frame
-  const IMG = '../../p/';
+  const IMG = '/iloveboston/p/';
   const IC = {
     utensils: '<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/>',
     martini: '<path d="M8 22h8"/><path d="M12 11v11"/><path d="m19 3-7 8-7-8Z"/>',
@@ -306,6 +320,7 @@ body.intro-on .rise{opacity:0;transform:translateY(18px)}
 
   const app = document.getElementById('app');
   function render() {
+    if (/^#\/(looks|place|live|credits|business|spots)\b/.test(location.hash)) { location.replace('/iloveboston/full.html' + location.hash); return; }
     const h = location.hash.replace(/^#\/?/, '').split('/');
     if (h[0] === 'c') app.innerHTML = listPage(h[1]);
     else if (h[0] === 'p') app.innerHTML = placePage(h[1]);
@@ -323,7 +338,7 @@ body.intro-on .rise{opacity:0;transform:translateY(18px)}
   const intro = document.getElementById('intro');
   const onHome = !location.hash || location.hash === '#/';
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (!onHome || reduce || (!CAPTURE && !Q.has('intro') && sessionStorage.getItem('ilb-intro'))) { intro.remove(); document.body.classList.remove('intro-on'); return; }
+  if (!onHome || reduce || (!CAPTURE && !Q.has('intro') && !fromMockups && sessionStorage.getItem('ilb-intro'))) { intro.remove(); document.body.classList.remove('intro-on'); return; }
   sessionStorage.setItem('ilb-intro', '1');
   // the heart pops where the QR code was (the middle), then slides into its spot in I ♥ BOSTON
   const heart = document.getElementById('iHeart');
