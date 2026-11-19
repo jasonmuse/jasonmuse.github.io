@@ -164,6 +164,21 @@
             vertical-align: 2px;
         }
 
+        .map-path {
+            display: block;
+            margin: 0 0 6px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-size: 14px;
+            color: #ffe9a8;
+            text-decoration: none;
+            overflow-wrap: anywhere;
+        }
+
+        a.map-path:hover,
+        a.map-path:focus-visible {
+            text-decoration: underline;
+        }
+
         .map-item p {
             margin: 0 0 10px;
             font-size: 16px;
@@ -215,6 +230,7 @@
             <p class="text map-intro">Everything I make, in one place.</p>
 
             <nav class="map-jump" aria-label="Jump to a section">
+                <a href="#here">On this site</a>
                 <a href="#portfolio">Portfolio</a>
                 <a href="#apps">Apps</a>
                 <a href="#games">Games</a>
@@ -222,6 +238,69 @@
                 <a href="#web">Web</a>
                 <a href="#elsewhere">Elsewhere</a>
             </nav>
+
+            <section class="map-group" id="here" aria-labelledby="here-heading">
+                <h2 id="here-heading">On this site</h2>
+                <p class="text map-intro" style="font-size: 17px; margin-top: 0;">Every page that lives at
+                    jasonmuse.github.io.</p>
+                <ul class="map-list">
+                    <li class="map-item">
+                        <h3>Portfolio</h3>
+                        <a class="map-path" href="../">jasonmuse.github.io/</a>
+                        <p>The home page: about me, software, apps, games and design.</p>
+                        <div class="map-links">
+                            <a class="map-pill map-pill--main" href="../">Open</a>
+                            <a class="map-pill" href="../documents/Jason_Muse_Software_Engineer_Resume.pdf"
+                                target="_blank" rel="noopener noreferrer">Resume (PDF)</a>
+                        </div>
+                    </li>
+                    <li class="map-item">
+                        <h3>Muse Jukebox</h3>
+                        <a class="map-path" href="https://jasonmuse.github.io/muse-jukebox/">jasonmuse.github.io/muse-jukebox/</a>
+                        <p>The interactive jukebox for my original music and game soundtracks.</p>
+                        <div class="map-links">
+                            <a class="map-pill map-pill--main" href="https://jasonmuse.github.io/muse-jukebox/">Open</a>
+                        </div>
+                    </li>
+                    <li class="map-item">
+                        <h3>Muse Shelf support</h3>
+                        <a class="map-path" href="https://jasonmuse.github.io/muse-media-tracker-support/">jasonmuse.github.io/muse-media-tracker-support/</a>
+                        <p>Help, privacy and terms for the Muse Shelf app.</p>
+                        <div class="map-links">
+                            <a class="map-pill map-pill--main" href="https://jasonmuse.github.io/muse-media-tracker-support/">Help</a>
+                            <a class="map-pill" href="https://jasonmuse.github.io/muse-media-tracker-support/privacy.html">Privacy</a>
+                            <a class="map-pill" href="https://jasonmuse.github.io/muse-media-tracker-support/terms.html">Terms</a>
+                            <a class="map-pill" href="https://jasonmuse.github.io/muse-media-tracker-support/community.html">Community</a>
+                            <a class="map-pill" href="https://jasonmuse.github.io/muse-media-tracker-support/contact.html">Contact</a>
+                        </div>
+                    </li>
+                    <li class="map-item">
+                        <h3>Muse Commute <span class="map-tag">Prototype</span></h3>
+                        <a class="map-path" href="../commute/">jasonmuse.github.io/commute/</a>
+                        <p>A commute app for Boston's Orange Line: when to leave for the train you can make, then that
+                            train tracked up the line. The web prototype of the iPhone app I'm building.</p>
+                        <div class="map-links">
+                            <a class="map-pill map-pill--main" href="../commute/">Open</a>
+                        </div>
+                    </li>
+                    <li class="map-item">
+                        <h3>I &hearts; Boston <span class="map-tag">Demo</span></h3>
+                        <a class="map-path" href="../iloveboston/">jasonmuse.github.io/iloveboston/</a>
+                        <p>A city guide you open by scanning a sign in Downtown Crossing: what's around you, right
+                            now. A demo in the works.</p>
+                        <div class="map-links">
+                            <a class="map-pill map-pill--main" href="../iloveboston/">Open</a>
+                            <a class="map-pill" href="../iloveboston/s/DTC-001/">Scan a sign (DTC-001)</a>
+                            <a class="map-pill" href="../iloveboston/full.html">The bigger demo</a>
+                        </div>
+                    </li>
+                    <li class="map-item">
+                        <h3>Site map</h3>
+                        <a class="map-path" href="./">jasonmuse.github.io/sitemap/</a>
+                        <p>This page.</p>
+                    </li>
+                </ul>
+            </section>
 
             <section class="map-group" id="portfolio" aria-labelledby="portfolio-heading">
                 <h2 id="portfolio-heading">Portfolio</h2>
