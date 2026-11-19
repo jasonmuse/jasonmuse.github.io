@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Site map | Jason Muse</title>
+    <meta name="description"
+        content="Every app, game, song and site by Jason Muse in one place: Muse Shelf, Frog Quest+, Poof, Muse Penguin, his games on itch.io, Muse Jukebox and Muse Labs." />
+    <meta name="author" content="Jason Muse" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#373593" />
+    <link rel="canonical" href="https://jasonmuse.pages.dev/sitemap/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Jason Muse Portfolio" />
+    <meta property="og:title" content="Site map | Jason Muse" />
+    <meta property="og:description" content="Every app, game, song and site by Jason Muse, in one place." />
+    <meta property="og:url" content="https://jasonmuse.pages.dev/sitemap/" />
+    <meta property="og:image" content="https://jasonmuse.pages.dev/images/howhollows.png" />
+    <link rel="icon" href="../images/wiz.png" />
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
+    <link rel="preload" href="../fonts/lato-v24-latin-regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="../style.css" />
+    <style>
+        /* The site map: one card per thing, grouped, with its links as small pills. It borrows the
+           portfolio's look (style.css) and only adds the list styles below. */
+        html {
+            background-color: #3b4ea5;
+            scroll-behavior: smooth;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+        }
+
+        .map-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .map-back {
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 700;
+            text-decoration: none;
+            text-shadow: 0 2px 2px #000000;
+            padding: 8px 0;
+        }
+
+        .map-back:hover,
+        .map-back:focus-visible {
+            text-decoration: underline;
+        }
+
+        .map-logo {
+            width: 120px;
+            height: auto;
+            filter: drop-shadow(0 0 3px #ffffff);
+        }
+
+        .map-intro {
+            margin-bottom: 18px;
+        }
+
+        .map-jump {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin: 0 auto 30px;
+        }
+
+        .map-jump a,
+        .map-pill {
+            display: inline-flex;
+            align-items: center;
+            min-height: 36px;
+            padding: 0 14px;
+            box-sizing: border-box;
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            border-radius: 999px;
+            background-color: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 700;
+            text-decoration: none;
+            text-shadow: 0 1px 1px #000000;
+            transition: background-color 0.15s ease;
+        }
+
+        .map-pill--main {
+            background-color: #cc4159;
+            border-color: #cc4159;
+        }
+
+        @media (hover: hover) {
+            .map-jump a:hover,
+            .map-pill:hover {
+                background-color: rgba(255, 255, 255, 0.18);
+            }
+
+            .map-pill--main:hover {
+                background-color: #d9506a;
+            }
+        }
+
+        .map-jump a:focus-visible,
+        .map-pill:focus-visible,
+        .map-back:focus-visible {
+            outline: 3px solid #ffffff;
+            outline-offset: 2px;
+        }
+
+        .map-group {
+            margin: 0 0 34px;
+            scroll-margin-top: 16px;
+        }
+
+        .map-group > h2 {
+            color: #ffffff;
+            font-size: 24px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            margin: 0 0 12px;
+        }
+
+        .map-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            gap: 10px;
+        }
+
+        .map-item {
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 12px;
+            background-color: rgba(0, 0, 0, 0.22);
+            padding: 14px 16px;
+            color: #ffffff;
+            text-shadow: 0 1px 2px #000000;
+        }
+
+        .map-item h3 {
+            font-size: 19px;
+            margin: 0 0 4px;
+        }
+
+        .map-tag {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 8px;
+            border-radius: 999px;
+            background-color: rgba(255, 255, 255, 0.16);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            vertical-align: 2px;
+        }
+
+        .map-item p {
+            margin: 0 0 10px;
+            font-size: 16px;
+            line-height: 1.45;
+        }
+
+        .map-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .map-footer {
+            padding: 6px 0 34px;
+            color: #ffffff;
+            font-size: 15px;
+            text-align: center;
+            text-shadow: 0 2px 2px #000000;
+        }
+
+        .map-footer a {
+            color: #ffffff;
+        }
+
+        @media (max-width: 600px) {
+            .map-logo {
+                width: 96px;
+            }
+
+            .map-item {
+                padding: 12px 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="main-container">
+        <main>
+            <div class="map-top">
+                <a class="map-back" href="../">&larr; Portfolio</a>
+                <a href="../" aria-label="Jason Muse portfolio home">
+                    <img class="map-logo" src="../images/JASONMUSELOGO.webp" alt="Jason Muse logo" width="1600"
+                        height="900" decoding="async" />
+                </a>
+            </div>
+
+            <h1 class="section-title">SITE MAP</h1>
+            <p class="text map-intro">Everything I make, in one place.</p>
+
+            <nav class="map-jump" aria-label="Jump to a section">
+                <a href="#portfolio">Portfolio</a>
+                <a href="#apps">Apps</a>
+                <a href="#games">Games</a>
+                <a href="#music">Music</a>
+                <a href="#web">Web</a>
+                <a href="#elsewhere">Elsewhere</a>
+            </nav>
+
+            <section class="map-group" id="portfolio" aria-labelledby="portfolio-heading">
+                <h2 id="portfolio-heading">Portfolio</h2>
+                <ul class="map-list">
+                    <li class="map-item">
+                        <h3>This portfolio</h3>
+                        <p>Who I am and what I've built, on one page.</p>
+                        <div class="map-links">
+                            <a class="map-pill" href="../#about">About me</a>
+                            <a class="map-pill" href="../#software-heading">Software</a>
+                            <a class="map-pill" href="../#apps-heading">Apps</a>
+                            <a class="map-pill" href="../#games-title">Games</a>
+                            <a class="map-pill" href="../#design">Design</a>
+                        </div>
+                    </li>
+                    <li class="map-item">
+                        <h3>Resume</h3>
+                        <p>Software engineer at Karen Clark &amp; Company in Boston; B.S. in Computer Engineering,
+                            Florida State.</p>
+                        <div class="map-links">
+                            <a class="map-pill map-pill--main" href="../documents/Jason_Muse_Software_Engineer_Resume.pdf"
+                                target="_blank" rel="noopener noreferrer">Open the resume (PDF)</a>
+                        </div>
+                    </li>
+                </ul>
+            </section>
+
+            <section class="map-group" id="apps" aria-labelledby="apps-map-heading">
+                <h2 id="apps-map-heading">Apps</h2>
+                <ul class="map-list">
+                    <li class="map-item">
+                        <h3>Muse Shelf <span class="map-tag">iPhone</span></h3>
+                        <p>One shelf for everything you watch, play and read: movies, shows, anime, games and books,
+                            in your own categories. (It used to be called Muse Media Tracker.)</p>
+                        <div class="map-links">
+                            <a class="map-pill map-pill--main" href="https://apps.apple.com/us/app/muse-media-tracker/id6761553132"
+                                target="_blank" rel="noopener noreferrer">App Store</a>
+                            <a class="map-pill" href="https://musemedia.app/" target="_blank"
+                                rel="noopener noreferrer">Help &amp; privacy</a>
+                        </div>
+                    </li>
+                    <li class="map-item">
+                        <h3>Frog Quest+ <span class="map-tag">iPhone &amp; iPad</span></h3>
+                        <p>A solo-made platformer: climb the World Tree, then keep going in endless mode.</p>
+                        <div class="map-links">
+                            <a class="map-pill map-pill--main" href="https://apps.apple.com/us/app/frog-quest/id6761079354"
+                                target="_blank" rel="noopener noreferrer">App Store</a>
+                            <a class="map-pill" href="https://frog-quest-support.pages.dev/" target="_blank"
+                                rel="noopener noreferrer">Help &amp; privacy</a>
+                        </div>
+                    </li>
+                    <li class="map-item">
+                        <h3>Poof <span class="map-tag">iPhone &amp; Windows</span></h3>
+                        <p>Finds the screenshots you already sent to AI apps and clears them in one tap, without your
+                            photos leaving your device.</p>
+                        <div class="map-links">
+                            <a class="map-pill" href="https://muselabs.app/poof/" target="_blank"
+                                rel="noopener">Meet Poof</a>
+                            <a class="map-pill" href="https://muselabs.app/poof/privacy" target="_blank"
+                                rel="noopener">Privacy</a>
+                        </div>
+                    </li>
+                    <li class="map-item">
+                        <h3>Muse Penguin <span class="map-tag">Coming soon</span></h3>
+                        <p>Tiny pixel penguins that live on your desktop and your phone, hatching one egg at a time.</p>
+                        <div class="map-links">
+                            <a class="map-pill" href="https://muselabs.app/penguin/" target="_blank"
+                                rel="noopener">Meet the penguins</a>
+                        </div>
+                    </li>
+                    <li class="map-item">
+                        <h3>Florida Hurricane Landfall Tracker <span class="map-tag">Windows</span></h3>
+                        <p>Reads NOAA's storm tracks and finds every Florida hurricane landfall since 1900: 104 events
+                            across 2,004 storms. C#, ASP.NET Core, TypeScript and Electron.</p>
+                        <div class="map-links">
+                            <a class="map-pill" href="../#software-heading">Read about it</a>
+                        </div>
+                    </li>
+                </ul>
+            </section>
+
+            <section class="map-group" id="games" aria-labelledby="games-map-heading">
+                <h2 id="games-map-heading">Games</h2>
+                <ul class="map-list">
+                    <li class="map-item">
+                        <h3>All my games on itch.io</h3>
+                        <p>Every game I've released, from jam entries to full adventures, free to play.</p>
+                        <div class="map-links">
+                            <a class="map-pill map-pill--main" href="https://amused.itch.io/" target="_blank"
+                                rel="noopener noreferrer">itch.io</a>
+                        </div>
+                    </li>
+                    <li class="map-item">
+                        <h3>Countdown Island <span class="map-tag">GMTK Jam 2026</span></h3>
+                        <p>A 3D platformer: race across the island before the bomb's timer hits zero.</p>
+                        <div class="map-links">
+                            <a class="map-pill" href="https://amused.itch.io/countdown-island" target="_blank"
+                                rel="noopener noreferrer">Play</a>
+                        </div>
+                    </li>
+                    <li class="map-item">
+                        <h3>Frog Quest</h3>
+                        <p>The original climb-and-retry adventure that grew into Frog Quest+.</p>
+                        <div class="map-links">
+                            <a class="map-pill" href="https://amused.itch.io/frog-quest" target="_blank"
+                                rel="noopener noreferrer">Play</a>
+                        </div>
+                    </li>
+                    <li class="map-item">
+                        <h3>Boombox Swarm</h3>
+                        <p>A fast arcade game that gets harder the longer you last, scored with original music.</p>
+                        <div class="map-links">
+                            <a class="map-pill" href="https://amused.itch.io/boombox-swarm" target="_blank"
+                                rel="noopener noreferrer">Play</a>
+                        </div>
+                    </li>
+                    <li class="map-item">
+                        <h3>Upside-Down Pineapple Race</h3>
+                        <p>Where it all started: my first game, made solo in 48 hours.</p>
+                        <div class="map-links">
+                            <a class="map-pill" href="https://amused.itch.io/upside-down-pineapple-race" target="_blank"
+                                rel="noopener noreferrer">Play</a>
+                        </div>
+                    </li>
+                </ul>
+            </section>
+
+            <section class="map-group" id="music" aria-labelledby="music-map-heading">
+                <h2 id="music-map-heading">Music</h2>
+                <ul class="map-list">
+                    <li class="map-item">
+                        <h3>Muse Jukebox</h3>
+                        <p>An interactive jukebox for my original music, game soundtracks included. Browse by mood and
+                            year, flip sides and spin the cabinet.</p>
+                        <div class="map-links">
+                            <a class="map-pill map-pill--main" href="https://muse-jukebox.pages.dev/" target="_blank"
+                                rel="noopener noreferrer">Press play</a>
+                        </div>
+                    </li>
+                </ul>
+            </section>
+
+            <section class="map-group" id="web" aria-labelledby="web-map-heading">
+                <h2 id="web-map-heading">Web</h2>
+                <ul class="map-list">
+                    <li class="map-item">
+                        <h3>Muse Labs</h3>
+                        <p>My studio site for apps, games and music, all designed, built and scored by one person.</p>
+                        <div class="map-links">
+                            <a class="map-pill map-pill--main" href="https://muselabs.app/" target="_blank"
+                                rel="noopener">muselabs.app</a>
+                        </div>
+                    </li>
+                    <li class="map-item">
+                        <h3>Engineering AI-VR Museum</h3>
+                        <p>The FAMU-FSU College of Engineering senior design site I built as lead VR developer, designer
+                            and webmaster.</p>
+                        <div class="map-links">
+                            <a class="map-pill" href="https://web1.eng.famu.fsu.edu/ece/senior_design/2025/team314/"
+                                target="_blank" rel="noopener noreferrer">Visit the site</a>
+                        </div>
+                    </li>
+                </ul>
+            </section>
+
+            <section class="map-group" id="elsewhere" aria-labelledby="elsewhere-map-heading">
+                <h2 id="elsewhere-map-heading">Elsewhere</h2>
+                <ul class="map-list">
+                    <li class="map-item">
+                        <h3>Find me</h3>
+                        <div class="map-links">
+                            <a class="map-pill" href="https://github.com/jasonmuse/" target="_blank"
+                                rel="noopener noreferrer">GitHub</a>
+                            <a class="map-pill" href="https://www.linkedin.com/in/jasonwmuse/" target="_blank"
+                                rel="noopener noreferrer">LinkedIn</a>
+                            <a class="map-pill" href="https://apps.apple.com/us/developer/jason-muse/id1887675802"
+                                target="_blank" rel="noopener noreferrer">My apps on the App Store</a>
+                            <a class="map-pill" href="https://amused.itch.io/" target="_blank"
+                                rel="noopener noreferrer">itch.io</a>
+                            <a class="map-pill" href="https://ko-fi.com/jasonmuse" target="_blank"
+                                rel="noopener noreferrer">Ko-fi</a>
+                        </div>
+                    </li>
+                </ul>
+            </section>
+
+            <p class="map-footer"><a href="../">Back to the portfolio</a><br /><br />Copyright &copy; 2026 Jason Muse.
+                All rights reserved.</p>
+        </main>
+    </div>
+</body>
+
+</html>
