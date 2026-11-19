@@ -183,6 +183,42 @@ img{display:block}
 .pop{animation:pinIn .45s var(--pop) both}
 @keyframes pinIn{from{scale:0}}
 body.pins-wait .pop{animation-play-state:paused}
+/* the T */
+.lc{display:inline-flex;align-items:center;justify-content:center;height:22px;min-width:22px;padding:0 7px;border-radius:11px;font-size:11.5px;font-weight:800;color:#fff;background:var(--l);letter-spacing:.02em;flex:none}
+.lcs{display:inline-flex;gap:4px;vertical-align:middle}
+.tlive{margin:16px 16px 0;padding:14px 14px 6px;border-radius:22px;background:var(--surface);box-shadow:0 0 0 1px var(--line)}
+.tlive h3{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700}
+.tlive h3 .lv{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:.05em}
+.trow{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line);font-size:15px}
+.tlive h3+.trow{margin-top:8px}
+.trow .to{flex:1;min-width:0;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.trow .mn{font-family:var(--disp);font-weight:800;font-size:17px;white-space:nowrap}
+.trow .mn small{font-family:var(--font);font-size:12.5px;font-weight:600;color:var(--muted)}
+.tnote{font-size:12.5px;color:var(--muted);padding:8px 0 6px;line-height:1.45}
+.dest{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 16px}
+.dbtn{display:flex;align-items:center;gap:8px;min-height:48px;padding:8px 12px;border-radius:16px;background:var(--surface);box-shadow:0 0 0 1px var(--line);font-size:14px;font-weight:700;text-align:left;line-height:1.2}
+.dbtn.on{background:var(--ink);color:var(--bg);box-shadow:none}
+.dbtn .dd{width:10px;height:10px;border-radius:50%;background:var(--l);flex:none;box-shadow:0 0 0 2px var(--surface)}
+.route{margin:12px 16px 0;padding:16px;border-radius:22px;background:var(--surface);box-shadow:0 0 0 1px var(--line),0 10px 24px rgba(10,17,36,.08);scroll-margin-top:20px}
+.route h3{font-family:var(--disp);font-size:20px;font-weight:800;display:flex;align-items:baseline;gap:8px}
+.route h3 small{margin-left:auto;font-family:var(--font);font-size:13.5px;font-weight:700;color:var(--muted);white-space:nowrap}
+.steps{margin-top:12px;position:relative}
+.step{position:relative;display:flex;gap:12px;padding:0 0 14px}
+.step:last-child{padding-bottom:0}
+.step .rail{position:relative;flex:none;width:22px;display:flex;justify-content:center}
+.step .rail i{width:14px;height:14px;border-radius:50%;background:var(--l);box-shadow:0 0 0 3px var(--surface);z-index:1;margin-top:3px}
+.step .rail::after{content:'';position:absolute;top:10px;bottom:-14px;width:4px;border-radius:2px;background:var(--l2,var(--line))}
+.step:last-child .rail::after{display:none}
+.step .tx b{display:block;font-size:15px;font-weight:700}
+.step .tx>span{display:block;font-size:13.5px;color:var(--muted);margin-top:2px}
+.step .tx .lc{margin-right:4px;vertical-align:1px}
+.route .alt{margin-top:12px;padding-top:10px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+.tst{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#fff;color:#13224A;font-weight:900;font-size:14px;font-family:var(--logo);box-shadow:0 0 0 3px var(--l),0 3px 8px rgba(10,17,36,.3);position:absolute;margin:-13px 0 0 -13px;transform:scale(var(--ik,1));z-index:3}
+.tst.sel{transform:scale(calc(var(--ik,1) * 1.3));z-index:5}
+.tst .lb{position:absolute;top:calc(100% + 6px);left:50%;transform:translateX(-50%) scale(.77);transform-origin:top center;white-space:nowrap;padding:4px 9px;border-radius:10px;font-family:var(--font);font-size:13px;font-weight:700;color:var(--ink);background:var(--surface);box-shadow:0 2px 8px rgba(10,17,36,.25)}
+.mlpin .tst{position:relative;margin:0}
+.tthumb{width:64px;height:64px;border-radius:16px;flex:none;display:grid;place-items:center;background:var(--l);color:#fff;font-family:var(--logo);font-weight:900;font-size:28px}
+.tile .tb{position:absolute;right:10px;top:12px;font-size:11px;font-weight:800;color:#13224A;opacity:.7}
 .cmapw{position:relative;display:block;margin:14px 16px 0;height:210px;border-radius:24px;overflow:hidden;box-shadow:0 0 0 1px var(--line);transition:transform .2s var(--ease)}
 .cmapw:active{transform:scale(.985)}
 .cmapw .map{position:absolute;inset:0}
@@ -391,6 +427,7 @@ body.intro-on .tabbar{opacity:0;transform:translateY(40px)}
     gift: '<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C9.5 3 11 5 12 8c1-3 2.5-5 4.5-5a2.5 2.5 0 0 1 0 5"/>',
     clock: '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>', pin: '<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>',
     expand: '<path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/>',
+    train: '<path d="M8 3.1V7a4 4 0 0 0 8 0V3.1"/><path d="m9 15-1-1"/><path d="m15 15 1-1"/><path d="M9 19c-2.8 0-5-2.2-5-5v-4a8 8 0 0 1 16 0v4c0 2.8-2.2 5-5 5Z"/><path d="m8 19-2 3"/><path d="m16 19 2 3"/>',
     walk: '<circle cx="13" cy="4" r="2"/><path d="M15 22l-2-6-3-3 1-6"/><path d="M8 13l-2 9"/><path d="M11 7 7 9v4"/><path d="M11 7l3 4 4 1"/>',
   };
   const ic = (n, s = 22, w = 2.2) => `<svg class="ic" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round">${IC[n]}</svg>`;
@@ -403,7 +440,10 @@ body.intro-on .tabbar{opacity:0;transform:translateY(40px)}
     { k: 'see', label: 'See', icon: 'landmark', t: 'var(--mint)', p: 'var(--p-see)' },
     { k: 'services', label: 'Services', icon: 'wrench', t: 'var(--sky)', p: 'var(--p-services)' },
     { k: 'today', label: 'Today', icon: 'calendar', t: 'var(--pink)', p: 'var(--p-today)', live: '3 live' },
+    { k: 't', label: 'The T', icon: 'train', t: 'var(--pink)', p: '#fff' },
   ];
+  // the six buttons on the home page: Today lives in the tab bar, so its spot goes to the T
+  const TILES = ['eat', 'drink', 'shop', 'see', 'services', 't'];
   const CAT = Object.fromEntries(CATS.map((c) => [c.k, c]));
   const SIGN = [42.3555, -71.0603];
   // Sample listings (the real ones come from Dr Phil's list). walk = minutes from the sign.
@@ -429,14 +469,41 @@ body.intro-on .tabbar{opacity:0;transform:translateY(40px)}
     { id: 'vintage', name: 'Vintage rack', cat: 'today', kind: 'Secondhand clothes', walk: 3, open: 'Till 5 PM', live: true, src: 'v-vintage', about: 'Secondhand jackets and sweaters, on Winter St.', ll: [42.3558, -71.0612] },
     { id: 'musical', name: "Tonight's musical", cat: 'today', kind: 'Boston Opera House', walk: 2, open: 'Starts 7:30 PM', img: 'opera', n: 2, about: 'A touring Broadway musical at the Boston Opera House tonight.', ll: [42.3540, -71.0624] },
   ];
+  // the T near the sign (MBTA stations, walk minutes from DTC-001)
+  const LINE = { Red: '#DA291C', Orange: '#ED8B00', Green: '#00843D', Blue: '#003DA5', Silver: '#7C878E', CR: '#80276C' };
+  const LNAME = { Red: 'Red', Orange: 'Orange', Green: 'Green', Blue: 'Blue', Silver: 'Silver', CR: 'Rail' };
+  const STATIONS = [
+    { id: 'place-dwnxg', name: 'Downtown Crossing', lines: ['Red', 'Orange'], walk: 1, ll: [42.35566, -71.06062] },
+    { id: 'place-pktrm', name: 'Park Street', lines: ['Red', 'Green'], walk: 3, ll: [42.35640, -71.06242] },
+    { id: 'place-state', name: 'State', lines: ['Orange', 'Blue'], walk: 5, ll: [42.35894, -71.05775] },
+    { id: 'place-chncl', name: 'Chinatown', lines: ['Orange'], walk: 5, ll: [42.35252, -71.06264] },
+    { id: 'place-boyls', name: 'Boylston', lines: ['Green'], walk: 5, ll: [42.35302, -71.06459] },
+    { id: 'place-gover', name: 'Government Center', lines: ['Green', 'Blue'], walk: 6, ll: [42.35965, -71.05924] },
+    { id: 'place-sstat', name: 'South Station', lines: ['Red', 'Silver', 'CR'], walk: 8, ll: [42.35228, -71.05524] },
+  ].map((st) => ({ ...st, station: true, cat: 't', kind: st.lines.map((l) => LNAME[l]).join(' · ') + ' line' + (st.lines.length > 1 ? 's' : ''), open: st.walk === 1 ? 'Right at the sign' : st.walk + ' min walk' }));
+  // where people ask to go, and how (from the sign)
+  const GO = [
+    { k: 'airport', name: 'Logan Airport', l: 'Blue', mins: 30, steps: [['walk', 'Walk 5 min to State'], ['Blue', 'Blue Line toward Wonderland', '3 stops to Airport'], ['walk', 'Free shuttle bus to your terminal']], alt: 'Or the Red Line to South Station, then the Silver Line SL1 to the terminals.' },
+    { k: 'fenway', name: 'Fenway Park', l: 'Green', mins: 20, steps: [['walk', 'Walk 3 min to Park Street'], ['Green', 'Green Line B, C or D, going west', '5 stops to Kenmore'], ['walk', 'Walk 5 min to the ballpark']] },
+    { k: 'harvard', name: 'Harvard', l: 'Red', mins: 15, steps: [['here', 'Downtown Crossing is right at the sign'], ['Red', 'Red Line toward Alewife', '5 stops to Harvard']] },
+    { k: 'mit', name: 'MIT · Kendall', l: 'Red', mins: 10, steps: [['here', 'Downtown Crossing is right at the sign'], ['Red', 'Red Line toward Alewife', '3 stops to Kendall/MIT']] },
+    { k: 'copley', name: 'Back Bay · Newbury St', l: 'Green', mins: 12, steps: [['walk', 'Walk 3 min to Park Street'], ['Green', 'Any Green Line train going west', '3 stops to Copley']] },
+    { k: 'northend', name: 'North End', l: 'Orange', mins: 12, steps: [['here', 'Downtown Crossing is right at the sign'], ['Orange', 'Orange Line toward Oak Grove', '2 stops to Haymarket'], ['walk', 'Walk 5 min into the North End']] },
+    { k: 'garden', name: 'TD Garden', l: 'Orange', mins: 10, steps: [['here', 'Downtown Crossing is right at the sign'], ['Orange', 'Orange Line toward Oak Grove', '3 stops to North Station'], ['walk', 'The Garden is right upstairs']] },
+    { k: 'seaport', name: 'Seaport', l: 'Silver', mins: 15, steps: [['here', 'Downtown Crossing is right at the sign'], ['Red', 'Red Line toward Ashmont/Braintree', '1 stop to South Station'], ['Silver', 'Silver Line SL1, SL2 or SL3', '2 stops to World Trade Center']] },
+    { k: 'sstat', name: 'South Station · Amtrak', l: 'Red', mins: 5, steps: [['here', 'Downtown Crossing is right at the sign'], ['Red', 'Red Line toward Ashmont/Braintree', '1 stop to South Station']], alt: 'Or walk it in about 8 minutes.' },
+    { k: 'aquarium', name: 'New England Aquarium', l: 'Blue', mins: 12, steps: [['walk', 'Walk 5 min to State'], ['Blue', 'Blue Line toward Wonderland', '1 stop to Aquarium']], alt: 'Or walk it in about 12 minutes.' },
+    { k: 'mfa', name: 'Museum of Fine Arts', l: 'Green', mins: 20, steps: [['walk', 'Walk 3 min to Park Street'], ['Green', 'Green Line E toward Heath Street', '7 stops to Museum of Fine Arts']] },
+    { k: 'central', name: 'Central Square', l: 'Red', mins: 12, steps: [['here', 'Downtown Crossing is right at the sign'], ['Red', 'Red Line toward Alewife', '4 stops to Central']] },
+  ];
   const WEEK = [['Makers market', 'Sat 11 AM · near Faneuil Hall', 'faneuil', 1], ['Family skate', 'Sat 4 PM · Frog Pond', 'common', 2], ['Food truck afternoon', 'Sun 1 PM · City Hall Plaza', 'oldstate', 1]];
-  const byId = Object.fromEntries(P.map((p) => [p.id, p]));
+  const byId = Object.fromEntries(P.concat(STATIONS).map((p) => [p.id, p]));
   const places = P.filter((p) => p.cat !== 'today');
   const ph = (p, i = 0, t = false) => (p.src ? `${IMG}${p.src}${t ? '-t' : ''}.webp` : `${IMG}${p.img}-${i}${t ? '-t' : ''}.webp`);
   const walk = (m) => `<span class="walk"><b>${m}</b><span>min</span></span>`;
   const status = (p) => (p.live ? `<span class="livetxt">Live now</span> · ${p.open}` : `<span class="open">${p.open}</span>`);
   const row = (p) => `<a class="row" href="#/p/${p.id}"><img src="${ph(p, 0, true)}" alt="" loading="lazy"><span class="t"><b>${p.name}</b><span class="m">${p.kind} · ${status(p)}</span></span>${walk(p.walk)}</a>`;
-  const mapList = (filter) => (filter === 'today' ? P.filter((p) => p.cat === 'today') : places.concat(P.filter((p) => p.live)).filter((p) => !filter || p.cat === filter)).slice().sort((a, b) => a.walk - b.walk);
+  const mapList = (filter) => (filter === 't' ? STATIONS.slice() : filter === 'today' ? P.filter((p) => p.cat === 'today') : places.concat(P.filter((p) => p.live)).filter((p) => !filter || p.cat === filter)).slice().sort((a, b) => a.walk - b.walk);
 
   /* ---------- small maps: pictures drawn from OpenStreetMap data, colored by the theme ---------- */
   const SC = 0.72, OX = 19831.867 * 256 - 620, OY = 24240.75 * 256 - 660, RING = 328.4;
@@ -448,7 +515,8 @@ body.intro-on .tabbar{opacity:0;transform:translateY(40px)}
     const y = (0.5 - Math.log((1 + s) / (1 - s)) / (4 * Math.PI)) * 256 * 65536;
     return [(x - OX) * SC, (y - OY) * SC];
   }
-  const pinHTML = (p, o = {}) => { const c = CAT[p.cat]; const pos = o.ml ? '' : (() => { const [x, y] = toMap(p.ll); return `left:${x.toFixed(1)}px;top:${y.toFixed(1)}px;`; })(); return `<span class="mk${o.sm ? ' sm' : ''}${p.live ? ' live' : ''}${o.sel ? ' sel' : ''}${o.pop ? ' pop' : ''}" data-pin="${p.id}" style="${pos}--c:${c.p}${o.pop ? `;animation-delay:${o.pop}ms` : ''}">${ic(c.icon, o.sm ? 12 : 15, 2.4)}${o.label ? `<span class="lb">${p.name}</span>` : ''}</span>`; };
+  const stHTML = (st, o = {}) => { const pos = o.ml ? '' : (() => { const [x, y] = toMap(st.ll); return `left:${x.toFixed(1)}px;top:${y.toFixed(1)}px;`; })(); return `<span class="tst${o.sel ? ' sel' : ''}" data-pin="${st.id}" style="${pos}--l:${LINE[st.lines[0]]}">T${o.label ? `<span class="lb">${st.name}</span>` : ''}</span>`; };
+  const pinHTML = (p, o = {}) => { if (p.station) return stHTML(p, o); const c = CAT[p.cat]; const pos = o.ml ? '' : (() => { const [x, y] = toMap(p.ll); return `left:${x.toFixed(1)}px;top:${y.toFixed(1)}px;`; })(); return `<span class="mk${o.sm ? ' sm' : ''}${p.live ? ' live' : ''}${o.sel ? ' sel' : ''}${o.pop ? ' pop' : ''}" data-pin="${p.id}" style="${pos}--c:${c.p}${o.pop ? `;animation-delay:${o.pop}ms` : ''}">${ic(c.icon, o.sm ? 12 : 15, 2.4)}${o.label ? `<span class="lb">${p.name}</span>` : ''}</span>`; };
   const meHTML = () => { const [x, y] = toMap(SIGN); return `<span class="me" style="left:${x}px;top:${y}px">${HEART}</span>`; };
   function ringHTML() { const [x, y] = toMap(SIGN); return `<svg class="ringsvg" width="1" height="1"><circle cx="${x}" cy="${y}" r="${RING}" fill="var(--ring-fill)" stroke="var(--ring)" stroke-width="2" stroke-dasharray="7 7" vector-effect="non-scaling-stroke"/></svg>`; }
   // draw a still map, centered on a point or fitted around some places; remember the view so the big map can open from it
@@ -492,7 +560,7 @@ body.intro-on .tabbar{opacity:0;transform:translateY(40px)}
       </a>
       ${FEAT_TOP ? featRow(true) : ''}
       <h2 class="sec rise">What are you looking for?</h2>
-      <div class="tiles rise">${CATS.map((c) => `<a class="tile" href="${c.k === 'today' ? '#/today' : '#/c/' + c.k}" style="--t:${c.t}">${ic(c.icon, 26, 2.1)}<b>${c.label}</b>${c.live ? `<span class="live"><i></i>${c.live}</span>` : ''}</a>`).join('')}</div>
+      <div class="tiles rise">${TILES.map((k) => CAT[k]).map((c) => `<a class="tile" href="${c.k === 't' ? '#/t' : '#/c/' + c.k}" style="--t:${c.t}">${ic(c.icon, 26, 2.1)}<b>${c.label}</b>${c.k === 't' ? '<span class="tb">1 min</span>' : ''}</a>`).join('')}</div>
       ${FEAT_TOP ? '' : featRow(false)}
       <button type="button" class="bizline rise" data-toast="Opens the business sign-up (next mockup)"><span>Own a business near this sign?</span><b>Get featured ${ic('chev', 15, 2.8)}</b></button>
       <p class="foot rise">Sample listings for the demo · Photos from Wikimedia Commons · Map © OpenStreetMap · <button type="button" id="replay">Replay the intro</button></p>
@@ -521,6 +589,78 @@ body.intro-on .tabbar{opacity:0;transform:translateY(40px)}
       <div class="list" style="margin-top:14px">${items.map(row).join('')}</div>
       <p class="foot">Sample listings for the demo.</p>
       <div class="tabspace"></div>`;
+  }
+  /* ---------- the T: the nearest stop, live trains, and the right line for where you're going ---------- */
+  let trainT = 0;
+  const lineChip = (l) => `<span class="lc" style="--l:${LINE[l]}">${LNAME[l]}</span>`;
+  function routeCard(g) {
+    if (!g) return '';
+    const steps = g.steps.map(([kind, a, b], i) => {
+      const col = kind === 'walk' || kind === 'here' ? 'var(--muted)' : LINE[kind];
+      const next = g.steps[i + 1], ncol = next ? (next[0] === 'walk' || next[0] === 'here' ? 'var(--line)' : LINE[next[0]]) : '';
+      return `<div class="step"><span class="rail" style="--l:${col};--l2:${kind === 'walk' || kind === 'here' ? 'var(--line)' : col}"><i></i></span><span class="tx"><b>${kind !== 'walk' && kind !== 'here' ? lineChip(kind) + ' ' : ''}${a}</b>${b ? `<span>${b}</span>` : ''}</span></div>`;
+    }).join('');
+    return `<div class="route" id="route"><h3>${g.name}<small>about ${g.mins} min</small></h3><div class="steps">${steps}</div>${g.alt ? `<p class="alt">${g.alt}</p>` : ''}</div>`;
+  }
+  function tPage(dest) {
+    const g = GO.find((x) => x.k === dest);
+    return `<div class="ptop"><button type="button" class="back glass" data-back>${ic('left', 20, 2.6)}</button></div>
+      <div class="ptitle"><h1><span class="bub" style="--t:var(--pink)">${ic('train', 24, 2.2)}</span>The T</h1><p>Downtown Crossing station is right at the sign: ${lineChip('Red')} and ${lineChip('Orange')} lines.</p></div>
+      <div class="tlive" id="tlive"><h3>Next trains at Downtown Crossing<span class="lv"><span class="dot"></span>Live</span></h3><p class="tnote">Getting train times…</p></div>
+      <h2 class="sec">Where are you going?</h2>
+      <div class="dest">${GO.map((x) => `<a class="dbtn${x.k === dest ? ' on' : ''}" href="#/t/${x.k}" data-go="${x.k}"><span class="dd" style="--l:${LINE[x.l]}"></span>${x.name}</a>`).join('')}</div>
+      ${routeCard(g)}
+      <h2 class="sec">Stations nearby</h2>
+      <a class="cmapw" href="#/map/t" data-open>${mapDiv({ fit: true, pins: STATIONS.map((st) => st.id) })}<span class="go glass sm">${ic('expand', 14, 2.4)}Open map</span></a>
+      <div class="list" style="margin-top:14px">${STATIONS.map((st) => `<a class="row" href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(st.name + ' station, Boston')}&travelmode=walking" target="_blank" rel="noopener"><span class="tthumb" style="--l:${LINE[st.lines[0]]};width:46px;height:46px;font-size:21px;border-radius:13px">T</span><span class="t"><b>${st.name}</b><span class="m"><span class="lcs">${st.lines.map(lineChip).join('')}</span></span></span>${walk(st.walk)}</a>`).join('')}</div>
+      <p class="foot">Live times from the MBTA. Tap a contactless card or your phone at the gate. Tap a station for walking directions.</p>
+      <div class="tabspace"></div>`;
+  }
+  async function loadTrains() {
+    const box = document.getElementById('tlive');
+    if (!box) { clearInterval(trainT); return; }
+    try {
+      const r = await fetch('https://api-v3.mbta.com/predictions?filter%5Bstop%5D=place-dwnxg&filter%5Broute_type%5D=0,1&include=trip&sort=departure_time&page%5Blimit%5D=30');
+      if (!r.ok) throw new Error(r.status);
+      const d = await r.json();
+      const heads = Object.fromEntries((d.included || []).map((t) => [t.id, t.attributes.headsign]));
+      const groups = {};
+      for (const p of d.data || []) {
+        const t = p.attributes.departure_time || p.attributes.arrival_time; if (!t) continue;
+        const m = Math.floor((Date.parse(t) - Date.now()) / 60000); if (m < 0) continue;
+        const route = p.relationships.route.data.id, dir = p.attributes.direction_id, k = route + dir;
+        const g = groups[k] || (groups[k] = { route, dir, heads: [], mins: [] });
+        const hs = heads[p.relationships.trip.data && p.relationships.trip.data.id]; if (hs && !g.heads.includes(hs)) g.heads.push(hs);
+        if (g.mins.length < 3) g.mins.push(m);
+      }
+      const order = ['Red1', 'Red0', 'Orange1', 'Orange0'];
+      const rows = order.map((k) => groups[k]).filter(Boolean);
+      if (!rows.length) throw new Error('none');
+      const el = document.getElementById('tlive'); if (!el) return;
+      el.innerHTML = `<h3>Next trains at Downtown Crossing<span class="lv"><span class="dot"></span>Live</span></h3>` + rows.map((g) => `<div class="trow">${lineChip(g.route)}<span class="to">to ${g.heads.join(' / ') || (g.dir ? 'outbound' : 'inbound')}</span><span class="mn">${g.mins[0] === 0 ? 'Now' : g.mins[0] + '<small> min</small>'}${g.mins[1] != null ? `<small> · ${g.mins[1]} min</small>` : ''}</span></div>`).join('');
+    } catch (e) {
+      const el = document.getElementById('tlive'); if (!el) return;
+      el.innerHTML = `<h3>Downtown Crossing</h3><p class="tnote">Live times aren't loading right now. Red and Orange Line trains usually come every few minutes.</p>`;
+    }
+  }
+  function wireT() {
+    loadTrains(); trainT = setInterval(loadTrains, 30000);
+    const rc = document.getElementById('route');
+    if (rc) setTimeout(() => rc.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 80);
+    // picking a destination swaps the directions in place (no page jump)
+    const dest = document.querySelector('.dest');
+    dest && dest.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-go]'); if (!btn) return;
+      e.preventDefault();
+      const k = btn.dataset.go, g = GO.find((x) => x.k === k);
+      dest.querySelectorAll('.dbtn').forEach((x) => x.classList.toggle('on', x === btn));
+      const old = document.getElementById('route');
+      if (old) old.outerHTML = routeCard(g); else dest.insertAdjacentHTML('afterend', routeCard(g));
+      history.replaceState(null, '', '#/t/' + k); under = '#/t/' + k;
+      const nr = document.getElementById('route');
+      nr.animate([{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }], { duration: 320, easing: 'cubic-bezier(.2,.8,.2,1)' });
+      setTimeout(() => nr.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 30);
+    });
   }
   const maps = (p) => { const q = encodeURIComponent(p.name + ' near Downtown Crossing, Boston'); return /iPhone|iPad|Mac/.test(navigator.userAgent) ? `https://maps.apple.com/?q=${q}` : `https://www.google.com/maps/search/?api=1&query=${q}`; };
   function placePage(id) {
@@ -656,12 +796,12 @@ body.intro-on .tabbar{opacity:0;transform:translateY(40px)}
     const list = focus && byId[focus] ? [byId[focus]] : mapList(filter);
     markers = list.map((p) => {
       const el = document.createElement('div'); el.className = 'mlpin'; el.dataset.pin = p.id; el.innerHTML = pinHTML(p, { ml: true });
-      el.addEventListener('click', (e) => { e.stopPropagation(); if (cur === p.id) { location.hash = '#/p/' + p.id; return; } const i = list.indexOf(p); cardsEl.scrollTo({ left: i * 290, behavior: 'smooth' }); focusPin(p.id, true); });
+      el.addEventListener('click', (e) => { e.stopPropagation(); if (cur === p.id) { location.hash = p.station ? '#/t' : '#/p/' + p.id; return; } const i = list.indexOf(p); cardsEl.scrollTo({ left: i * 290, behavior: 'smooth' }); focusPin(p.id, true); });
       return new maplibregl.Marker({ element: el, anchor: 'center' }).setLngLat([p.ll[1], p.ll[0]]).addTo(map);
     });
-    cardsEl.innerHTML = list.map((p) => `<a class="mcard" href="#/p/${p.id}"><img src="${ph(p, 0, true)}" alt="" loading="lazy"><span class="t"><b>${p.name}</b><span class="m">${p.kind} · ${p.walk} min walk</span><span class="m">${status(p)}</span></span></a>`).join('');
+    cardsEl.innerHTML = list.map((p) => p.station ? `<a class="mcard" href="#/t"><span class="tthumb" style="--l:${LINE[p.lines[0]]}">T</span><span class="t"><b>${p.name}</b><span class="m"><span class="lcs">${p.lines.map((l) => `<span class="lc" style="--l:${LINE[l]}">${LNAME[l]}</span>`).join('')}</span></span><span class="m">${p.open}</span></span></a>` : `<a class="mcard" href="#/p/${p.id}"><img src="${ph(p, 0, true)}" alt="" loading="lazy"><span class="t"><b>${p.name}</b><span class="m">${p.kind} · ${p.walk} min walk</span><span class="m">${status(p)}</span></span></a>`).join('');
     cardsEl.scrollLeft = 0;
-    chipsEl.innerHTML = [['', 'All']].concat(CATS.filter((c) => c.k !== 'services').map((c) => [c.k, c.label])).map(([k, l]) => `<button type="button" class="chip glass${(filter || '') === k && !focus ? ' on' : ''}" data-chip="${k}">${k ? ic(CAT[k].icon, 15, 2.3) : ''}${l}</button>`).join('');
+    chipsEl.innerHTML = [['', 'All']].concat(CATS.filter((c) => c.k !== 'services' && c.k !== 'today').map((c) => [c.k, c.label])).map(([k, l]) => `<button type="button" class="chip glass${(filter || '') === k && !focus ? ' on' : ''}" data-chip="${k}">${k ? ic(CAT[k].icon, 15, 2.3) : ''}${l}</button>`).join('');
     cur = '';
     if (list[0]) markSel(list[0].id);
     setRoute(focus);
@@ -669,7 +809,7 @@ body.intro-on .tabbar{opacity:0;transform:translateY(40px)}
   }
   function markSel(id) {
     cur = id;
-    markers.forEach((m) => { const el = m.getElement(), mk = el.querySelector('.mk'), on = el.dataset.pin === id; mk.classList.toggle('sel', on); el.style.zIndex = on ? 5 : ''; const lb = mk.querySelector('.lb'); if (on && !lb) mk.insertAdjacentHTML('beforeend', `<span class="lb">${byId[id].name}</span>`); if (!on && lb) lb.remove(); });
+    markers.forEach((m) => { const el = m.getElement(), mk = el.querySelector('.mk,.tst'), on = el.dataset.pin === id; mk.classList.toggle('sel', on); el.style.zIndex = on ? 5 : ''; const lb = mk.querySelector('.lb'); if (on && !lb) mk.insertAdjacentHTML('beforeend', `<span class="lb">${byId[id].name}</span>`); if (!on && lb) lb.remove(); });
   }
   function focusPin(id, smooth) {
     markSel(id);
@@ -763,11 +903,13 @@ body.intro-on .tabbar{opacity:0;transform:translateY(40px)}
   function renderPage(hash) {
     const h = hash.replace(/^#\/?/, '').split('/');
     let tab = 0;
+    clearInterval(trainT);
     if (h[0] === 'c') app.innerHTML = listPage(h[1]);
+    else if (h[0] === 't') { app.innerHTML = tPage(h[1] || ''); wireT(); }
     else if (h[0] === 'p') app.innerHTML = placePage(h[1]);
     else if (h[0] === 'today') { app.innerHTML = todayTab(); tab = 2; }
     else app.innerHTML = home();
-    under = h[0] === 'c' || h[0] === 'p' || h[0] === 'today' ? '#/' + h.join('/') : '#/';
+    under = h[0] === 'c' || h[0] === 'p' || h[0] === 'today' || h[0] === 't' ? '#/' + h.join('/') : '#/';
     tabbar.classList.toggle('hide', h[0] === 'p');
     window.scrollTo(0, 0);
     hydrate();
