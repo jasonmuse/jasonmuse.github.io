@@ -5,6 +5,10 @@ same day (too close to Apple Maps, and the app was drifting from its point), so 
 The direction now is the simple version in `../s/DTC-001/` (scan intro, then a short home page).
 This folder stays for the map drawing code (`genmap.py`), in case a small map is ever wanted.
 
+**The guide's map (since Nov 19):** `genmap_brand.py` draws `../map-dtc.svg`, the map the simple version uses
+(half-mile bounds around the sign, no buildings, colors from the page's light and dark themes):
+`python3 genmap_brand.py 0.72 ../map-dtc.svg 1.3 10.5`, run from a folder with the `mvt/` tiles.
+
 - `index.html` draws one 390×844 phone screen: `?s=a` simple map, `b` right now, `c` just ask, `p` place page;
   `&t=apple` (Apple Maps-style dark), `night` or `light`.
 - `map.svg` (street level) and `map14.svg` (zoomed out) are downtown Boston drawn by `genmap.py` from

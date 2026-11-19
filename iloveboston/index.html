@@ -3,12 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#13224A">
+<meta name="color-scheme" content="light dark">
+<meta name="darkreader-lock">
+<meta name="theme-color" content="#FBF5EA" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0A1124" media="(prefers-color-scheme: dark)">
 <meta name="robots" content="noindex">
 <title>I ♥ Boston · Downtown Crossing</title>
 <!-- The simple version (Nov 19, 2026): what a visitor sees after scanning sign DTC-001. Sample listings only.
      The same file is at iloveboston/index.html (the main demo link) and iloveboston/s/DTC-001/index.html (the test sign's QR link): change both.
-     The older, bigger demo is iloveboston/full.html. -->
+     The older, bigger demo is iloveboston/full.html. Map: map-dtc.svg, drawn from OpenStreetMap data by mock/genmap.py (brand version). -->
 <meta name="description" content="Everything Boston. One scan away. The best of Downtown Crossing within a 10-minute walk of the sign (a demo).">
 <meta property="og:title" content="I ♥ Boston · Downtown Crossing">
 <meta property="og:description" content="Everything Boston. One scan away.">
@@ -21,158 +24,247 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Inter:wght@400;500;600;700&family=Montserrat:wght@800;900&display=swap">
+<link rel="preload" href="/iloveboston/map-dtc.svg" as="fetch" crossorigin>
 <style>
 :root{
-  --navy:#13224A;--navy2:#1B2F63;--red:#E63946;--cream:#FBF5EA;--paper:#fff;--ink:#13224A;--muted:#5C6884;--line:rgba(19,34,74,.12);
-  --peach:#FFD9C8;--lilac:#E6D8FF;--butter:#FFE8A3;--mint:#CDEEDC;--sky:#D4E5FF;--pink:#FFD3DA;--ok:#13804A;
+  color-scheme:light dark;
+  --bg:#FBF5EA;--glow:radial-gradient(90% 70% at 50% 0%,rgba(255,255,255,.75),rgba(255,255,255,0) 70%);
+  --surface:#fff;--ink:#13224A;--muted:#5C6884;--line:rgba(19,34,74,.11);
+  --accent:#E63946;--ok:#13804A;--deal-bg:#FFE1E5;--deal-ink:#A61E2B;
+  --glass:rgba(255,255,255,.55);--glass-bd:rgba(255,255,255,.85);--glass-shadow:0 14px 34px rgba(19,34,74,.16),0 2px 6px rgba(19,34,74,.07);--glass-hi:rgba(255,255,255,.75);
+  --lens:rgba(255,255,255,.95);--lens-shadow:0 3px 12px rgba(19,34,74,.16);--tab-ink:rgba(19,34,74,.58);--tab-on:#E63946;
+  --peach:#FFD9C8;--lilac:#E6D8FF;--butter:#FFE8A3;--mint:#CDEEDC;--sky:#D4E5FF;--pink:#FFD3DA;
+  --tile-bd:#13224A;--tile-sh:#13224A;
+  --p-eat:#FFB48F;--p-drink:#C9AEFF;--p-shop:#FFD35C;--p-see:#8FDAB0;--p-services:#A6C5FF;--p-today:#FF9AAA;--pin-bd:#13224A;
+  --m-land:#F1E9DA;--m-park:#D0E5BF;--m-wood:#C7DFB4;--m-water:#B6D8F0;--m-case:#E2D5BF;--m-minor:#fff;--m-major:#fff;--m-hw:#FFEDBD;--m-ped:#FFFAF2;
+  --m-lbl:#5A657F;--m-halo:#F1E9DA;--m-hood:#8C95AA;--m-water-lbl:#5689BE;--ring:rgba(19,34,74,.42);--ring-fill:rgba(230,57,70,.05);
   --disp:'Bricolage Grotesque',Inter,system-ui,sans-serif;--logo:Montserrat,Inter,system-ui,sans-serif;--font:Inter,system-ui,-apple-system,'Segoe UI',sans-serif;
-  --ease:cubic-bezier(.2,.8,.2,1);--pop:cubic-bezier(.34,1.56,.64,1)
+  --ease:cubic-bezier(.2,.8,.2,1);--pop:cubic-bezier(.34,1.56,.64,1);--spring:cubic-bezier(.3,1.3,.5,1)
 }
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0A1124;--glow:radial-gradient(90% 70% at 50% 0%,rgba(72,104,214,.28),rgba(72,104,214,0) 70%);
+  --surface:#131D3A;--ink:#F4EEE3;--muted:#9CA7C3;--line:rgba(255,255,255,.09);
+  --accent:#FF5E6B;--ok:#5DDB8E;--deal-bg:rgba(255,94,107,.15);--deal-ink:#FFA3AB;
+  --glass:rgba(32,44,82,.5);--glass-bd:rgba(255,255,255,.15);--glass-shadow:0 14px 34px rgba(0,0,0,.5);--glass-hi:rgba(255,255,255,.12);
+  --lens:rgba(255,255,255,.15);--lens-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 2px 10px rgba(0,0,0,.25);--tab-ink:rgba(244,238,227,.62);--tab-on:#FF7480;
+  --peach:#FFCBB6;--lilac:#DACAFF;--butter:#FFE08C;--mint:#BDE8D0;--sky:#C4DAFF;--pink:#FFC4CE;
+  --tile-bd:rgba(255,255,255,0);--tile-sh:rgba(0,0,0,.55);--pin-bd:#0A1124;
+  --m-land:#0E1830;--m-park:#123029;--m-wood:#112B25;--m-water:#0C2847;--m-case:#091022;--m-minor:#223050;--m-major:#2C3B61;--m-hw:#37466D;--m-ped:#1B2846;
+  --m-lbl:#94A0BE;--m-halo:#0E1830;--m-hood:#66728D;--m-water-lbl:#4C7CB6;--ring:rgba(244,238,227,.4);--ring-fill:rgba(255,94,107,.06);
+}}
 *{box-sizing:border-box;margin:0;padding:0}
-html{background:var(--cream)}
-body{font-family:var(--font);color:var(--ink);background:var(--cream);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;max-width:480px;margin:0 auto;min-height:100vh;overflow-x:hidden}
+html{background:var(--bg)}
+body{font-family:var(--font);color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;max-width:480px;margin:0 auto;min-height:100vh;overflow-x:hidden;position:relative}
+body::before{content:'';position:fixed;left:0;right:0;top:0;height:460px;background:var(--glow);pointer-events:none;z-index:0}
+#app{position:relative;z-index:1}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 a{color:inherit;text-decoration:none}
 img{display:block}
 .ic{flex:none}
 
-/* ---------- header ---------- */
-.top{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 10px}
-.logo{display:flex;align-items:center;gap:6px;font-family:var(--logo);font-weight:900;font-size:21px;letter-spacing:.03em;color:var(--navy)}
-.logo svg{width:22px;height:22px}
-.lang{display:flex;align-items:center;gap:6px;height:38px;padding:0 13px;border-radius:19px;background:var(--paper);border:1.5px solid var(--line);font-weight:700;font-size:14px}
+/* ---------- Liquid Glass ---------- */
+.glass{position:relative;background:var(--glass);-webkit-backdrop-filter:blur(20px) saturate(1.9);backdrop-filter:blur(20px) saturate(1.9);border:1px solid var(--glass-bd);box-shadow:var(--glass-shadow),inset 0 1px 0 var(--glass-hi)}
+.glass::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,0) 46%);mix-blend-mode:soft-light}
 
-/* ---------- hero: where you are ---------- */
-.hero{position:relative;margin:4px 16px 0;padding:20px 20px 18px;border-radius:26px;background:var(--navy);color:#fff;overflow:hidden}
-.hero .rings{position:absolute;right:-91px;top:-91px;width:250px;height:250px;pointer-events:none}
-.kick{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.72);white-space:nowrap}
-.kick .ok{width:18px;height:18px;border-radius:50%;background:var(--red);display:grid;place-items:center;color:#fff}
-.hero h1{font-family:var(--disp);font-weight:800;font-size:33px;line-height:1.05;letter-spacing:-.02em;margin-top:10px;white-space:nowrap}
-.hero .sub{font-size:15px;line-height:1.4;color:rgba(255,255,255,.8);margin-top:8px;max-width:250px}
-.search{width:100%;text-align:left;display:flex;align-items:center;gap:10px;height:48px;margin-top:16px;padding:0 16px;border-radius:24px;background:#fff;color:var(--muted);font-size:15.5px;font-weight:500}
-.search .ic{color:var(--navy)}
+/* ---------- header ---------- */
+.top{display:flex;align-items:center;justify-content:space-between;padding:max(14px,env(safe-area-inset-top)) 16px 10px}
+.logo{display:flex;align-items:center;gap:6px;font-family:var(--logo);font-weight:900;font-size:21px;letter-spacing:.03em}
+.logo svg{width:22px;height:22px}
+.lang{display:flex;align-items:center;gap:6px;height:38px;padding:0 13px;border-radius:19px;font-weight:700;font-size:14px}
+
+/* ---------- home: the map card is the "you're here" ---------- */
+.hero{position:relative;display:block;margin:2px 16px 0;height:300px;border-radius:30px;overflow:hidden;background:var(--m-land);box-shadow:0 0 0 1px var(--line),0 12px 30px rgba(19,34,74,.10)}
+.hero .map{position:absolute;inset:0}
+.hero .ttl{position:absolute;left:12px;top:12px;max-width:calc(100% - 24px);padding:11px 15px 13px;border-radius:22px;z-index:3}
+.hero .ttl .kick,.hero .ttl .h1{width:max-content;max-width:100%}
+.kick{display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.kick .ok{width:17px;height:17px;border-radius:50%;background:var(--accent);display:grid;place-items:center;color:#fff}
+.hero .h1{display:block;font-family:var(--disp);font-weight:800;font-size:27px;line-height:1.05;letter-spacing:-.02em;margin-top:6px;white-space:nowrap}
+.hero .go{position:absolute;right:12px;bottom:12px;z-index:3;display:flex;align-items:center;gap:7px;height:40px;padding:0 15px;border-radius:20px;font-weight:700;font-size:14px}
+.attr{position:absolute;left:12px;bottom:9px;z-index:3;font-size:9.5px;font-weight:600;color:var(--m-lbl);opacity:.85;-webkit-text-stroke:2.5px var(--m-halo);paint-order:stroke fill;white-space:nowrap}
 
 /* ---------- sections ---------- */
 .sec{font-family:var(--disp);font-weight:800;font-size:21px;letter-spacing:-.015em;padding:0 18px;margin:26px 0 12px}
 .sec-row{display:flex;align-items:baseline;justify-content:space-between;padding-right:18px}
-.sec-row .sec{margin-bottom:12px}
-.note{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
-
-/* category stickers */
+.note{font-size:11.5px;font-weight:700;color:var(--muted);letter-spacing:.05em;text-transform:uppercase}
 .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:0 16px}
-.tile{position:relative;height:96px;border-radius:20px;background:var(--bg);border:2px solid var(--navy);box-shadow:0 4px 0 var(--navy);padding:12px;display:flex;flex-direction:column;justify-content:space-between;transition:transform .15s var(--ease),box-shadow .15s var(--ease)}
-.tile:active{transform:translateY(3px);box-shadow:0 1px 0 var(--navy)}
-.tile b{font-size:16px;font-weight:700}
-.tile .live{position:absolute;right:11px;top:13px;display:flex;align-items:center;gap:5px;font-size:11px;font-weight:800;color:#B4232F}
-.tile .live i{width:8px;height:8px;border-radius:50%;background:var(--red);box-shadow:0 0 0 3px rgba(230,57,70,.25)}
-
-/* featured (paid) */
-.feat{display:flex;gap:12px;overflow-x:auto;padding:0 16px 6px;scrollbar-width:none}
-.feat::-webkit-scrollbar{display:none}
-.fcard{display:block;flex:none;width:286px;border-radius:22px;background:var(--paper);border:1.5px solid var(--line);overflow:hidden}
-.fcard .ph{display:block;position:relative;height:150px;background:#ddd}
+.tile{position:relative;height:86px;border-radius:20px;background:var(--t);border:2px solid var(--tile-bd);box-shadow:0 4px 0 var(--tile-sh);padding:11px 12px;display:flex;flex-direction:column;justify-content:space-between;color:#13224A;transition:transform .15s var(--ease),box-shadow .15s var(--ease)}
+.tile:active{transform:translateY(3px);box-shadow:0 1px 0 var(--tile-sh)}
+.tile b{font-size:15.5px;font-weight:700}
+.tile .live{position:absolute;right:10px;top:12px;display:flex;align-items:center;gap:5px;font-size:11px;font-weight:800;color:#B4232F}
+.live i,.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px rgba(230,57,70,.22);animation:blink 1.6s ease-in-out infinite}
+@keyframes blink{50%{box-shadow:0 0 0 5px rgba(230,57,70,.08)}}
+.feat{display:flex;gap:12px;overflow-x:auto;padding:0 16px 8px;scroll-snap-type:x mandatory;scrollbar-width:none}
+.feat::-webkit-scrollbar,.mcards::-webkit-scrollbar,.mapscroll::-webkit-scrollbar,.chips::-webkit-scrollbar{display:none}
+.fcard{display:block;flex:none;width:280px;border-radius:24px;background:var(--surface);box-shadow:0 0 0 1px var(--line);overflow:hidden;scroll-snap-align:start}
+.fcard .ph{display:block;position:relative;height:146px;background:#888}
 .fcard .ph img{width:100%;height:100%;object-fit:cover}
-.tag{position:absolute;left:10px;top:10px;padding:4px 9px;border-radius:9px;background:rgba(19,34,74,.82);color:#fff;font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+.tag{position:absolute;left:10px;top:10px;padding:4px 9px;border-radius:9px;background:rgba(10,17,36,.78);color:#fff;font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase}
 .fcard .ft{display:block;padding:12px 14px 14px}
 .fcard b{display:block;font-size:17px;font-weight:700}
 .fcard .m{display:block;font-size:14px;color:var(--muted);margin-top:2px}
-.deal{display:inline-flex;align-items:center;gap:6px;margin-top:9px;padding:5px 10px;border-radius:10px;background:var(--pink);color:#A61E2B;font-size:13px;font-weight:700}
+.deal{display:inline-flex;align-items:center;gap:6px;margin-top:9px;padding:5px 10px;border-radius:10px;background:var(--deal-bg);color:var(--deal-ink);font-size:13px;font-weight:700}
+.bizline{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:22px 16px 0;padding:15px 16px;border-radius:20px;background:var(--surface);box-shadow:0 0 0 1px var(--line);font-size:14.5px;font-weight:600}
+.bizline b{color:var(--accent)}
+.foot{padding:18px 18px 0;font-size:12px;color:var(--muted);line-height:1.6}
+.foot button{text-decoration:underline;font-weight:600;color:var(--ink)}
+.tabspace{height:calc(112px + env(safe-area-inset-bottom))}
 
-/* closest list */
-.list{margin:0 16px;border-radius:22px;background:var(--paper);border:1.5px solid var(--line);overflow:hidden}
+/* rows */
+.list{margin:0 16px;border-radius:22px;background:var(--surface);box-shadow:0 0 0 1px var(--line);overflow:hidden}
 .row{display:flex;align-items:center;gap:12px;padding:10px 12px;border-top:1px solid var(--line)}
 .row:first-child{border-top:0}
-.row img{width:58px;height:58px;border-radius:14px;object-fit:cover;background:#ddd}
+.row img{width:58px;height:58px;border-radius:15px;object-fit:cover;background:#888}
 .row .t{flex:1;min-width:0}
 .row b{display:block;font-size:16px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.row .m{display:block;font-size:13.5px;color:var(--muted);margin-top:2px}
-.row .open{color:var(--ok);font-weight:700}
-.walk{flex:none;text-align:center;min-width:46px}
+.row .m{display:block;font-size:13.5px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.open{color:var(--ok);font-weight:700}
+.livetxt{color:var(--accent);font-weight:700}
+.walk{flex:none;text-align:center;min-width:44px}
 .walk b{font-family:var(--disp);font-size:20px;font-weight:800;line-height:1}
-.walk span{display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
-.seeall{display:flex;align-items:center;justify-content:center;gap:6px;margin:12px 16px 0;height:50px;border-radius:25px;border:2px solid var(--navy);font-weight:700;font-size:15px}
+.walk span{display:block;font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
 
-/* business call to action */
-.biz{margin:26px 16px 0;padding:18px;border-radius:22px;background:var(--butter);border:2px solid var(--navy);box-shadow:0 4px 0 var(--navy)}
-.biz b{display:block;font-family:var(--disp);font-size:19px;font-weight:800}
-.biz span{display:block;font-size:14.5px;margin-top:4px;color:#3B4663}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:46px;padding:0 20px;border-radius:23px;background:var(--navy);color:#fff;font-weight:700;font-size:15px;margin-top:12px}
-.foot{padding:22px 18px 40px;font-size:12.5px;color:var(--muted);line-height:1.6}
-.foot button{text-decoration:underline;font-weight:600;color:var(--navy)}
-.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translate(-50%,20px);max-width:calc(100% - 32px);padding:12px 16px;border-radius:16px;background:var(--navy);color:#fff;font-size:14px;font-weight:600;opacity:0;transition:.25s var(--ease);z-index:90;pointer-events:none;text-align:center}
-.toast.on{opacity:1;transform:translate(-50%,0)}
+/* ---------- map pieces ---------- */
+.map{position:relative;overflow:hidden;background:var(--m-land)}
+.mapin{position:absolute;left:0;top:0;transform-origin:0 0}
+.rmap{display:block}
+.rmap .m-land{fill:var(--m-land)}
+.rmap .m-park,.rmap .m-park2{fill:var(--m-park)}
+.rmap .m-wood{fill:var(--m-wood)}
+.rmap .m-water{fill:var(--m-water)}
+.rmap .m-case{stroke:var(--m-case)}
+.rmap .m-ped{stroke:var(--m-ped)}
+.rmap .m-minor{stroke:var(--m-minor)}
+.rmap .m-major{stroke:var(--m-major)}
+.rmap .m-hw{stroke:var(--m-hw)}
+.rmap text{font-family:Inter,sans-serif;paint-order:stroke;stroke:var(--m-halo);stroke-width:3px;stroke-linejoin:round}
+.rmap .m-street-lbl{fill:var(--m-lbl)}
+.rmap .m-hood-lbl{fill:var(--m-hood);font-size:10.5px;letter-spacing:2.2px;font-weight:800}
+.rmap .m-water-lbl{fill:var(--m-water-lbl)}
+.ringsvg{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
+.mk{cursor:pointer;position:absolute;width:28px;height:28px;margin:-14px 0 0 -14px;border-radius:50%;background:var(--c);border:2px solid var(--pin-bd);display:grid;place-items:center;color:#13224A;box-shadow:0 3px 8px rgba(10,17,36,.28);transform:scale(var(--ik,1));transition:transform .25s var(--spring);z-index:2}
+.mk.sm{width:22px;height:22px;margin:-11px 0 0 -11px}
+.mk.sel{transform:scale(calc(var(--ik,1) * 1.35));z-index:5}
+.mk .lb{position:absolute;top:calc(100% + 5px);left:50%;transform:translateX(-50%) scale(.74);transform-origin:top center;white-space:nowrap;padding:4px 9px;border-radius:10px;font-size:13px;font-weight:700;color:var(--ink);background:var(--surface);box-shadow:0 2px 8px rgba(10,17,36,.2)}
+.mk.live::after{content:'';position:absolute;inset:-7px;border-radius:50%;border:2px solid var(--accent);animation:ping 1.8s ease-out infinite}
+.me{position:absolute;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 3px 12px rgba(10,17,36,.35);transform:scale(var(--ik,1));z-index:4}
+.me svg{width:20px;height:20px}
+.me::before{content:'';position:absolute;inset:-9px;border-radius:50%;background:rgba(230,57,70,.22);animation:ping 2.2s ease-out infinite}
+.ringlbl{position:absolute;transform:translate(-50%,-50%) scale(var(--ik,1));padding:4px 9px;border-radius:10px;font-size:11.5px;font-weight:700;white-space:nowrap;z-index:3;color:var(--ink)}
+@keyframes ping{0%{transform:scale(.7);opacity:.9}100%{transform:scale(1.9);opacity:0}}
+.pop{animation:pinIn .45s var(--pop) both}
+@keyframes pinIn{from{scale:0}}
+body.pins-wait .pop{animation-play-state:paused}
 
-/* ---------- list page ---------- */
-.ptop{display:flex;align-items:center;gap:10px;padding:14px 16px 4px}
-.back{width:42px;height:42px;border-radius:50%;background:var(--paper);border:1.5px solid var(--line);display:grid;place-items:center}
+/* ---------- map tab ---------- */
+.mapfull{position:fixed;inset:0;z-index:1;max-width:480px;margin:0 auto;background:var(--m-land)}
+.mapscroll{position:absolute;inset:0;overflow:scroll;scrollbar-width:none;overscroll-behavior:contain}
+.mapscroll .mapin{position:relative}
+.mtop{position:absolute;left:0;right:0;top:0;padding:max(12px,env(safe-area-inset-top)) 12px 0;z-index:6;pointer-events:none}
+.mtop>*{pointer-events:auto}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 8px;scrollbar-width:none}
+.chip{flex:none;height:38px;padding:0 14px;border-radius:19px;display:flex;align-items:center;gap:6px;font-size:14px;font-weight:700}
+.chip.on{background:var(--ink);color:var(--bg);border-color:transparent}
+.chip.on::after{display:none}
+.recenter{position:absolute;right:12px;bottom:calc(214px + env(safe-area-inset-bottom));z-index:6;width:46px;height:46px;border-radius:50%;display:grid;place-items:center}
+.mcards{position:absolute;left:0;right:0;bottom:calc(92px + env(safe-area-inset-bottom));z-index:6;display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:6px calc(50% - 140px) 10px;scrollbar-width:none}
+.mcard{flex:none;width:280px;display:flex;align-items:center;gap:12px;padding:10px;border-radius:24px;background:var(--surface);box-shadow:0 10px 26px rgba(10,17,36,.22),0 0 0 1px var(--line);scroll-snap-align:center}
+.mcard img{width:64px;height:64px;border-radius:16px;object-fit:cover;background:#888}
+.mcard .t{flex:1;min-width:0}
+.mcard b{display:block;font-size:16px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mcard .m{display:block;font-size:13px;color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mapfull .attr{left:auto;right:12px;bottom:calc(206px + env(safe-area-inset-bottom))}
+
+/* ---------- list / today / place ---------- */
+.ptop{display:flex;align-items:center;gap:10px;padding:max(14px,env(safe-area-inset-top)) 16px 4px}
+.back{width:42px;height:42px;border-radius:50%;display:grid;place-items:center}
 .ptitle{padding:6px 18px 0}
 .ptitle h1{font-family:var(--disp);font-weight:800;font-size:34px;letter-spacing:-.02em;display:flex;align-items:center;gap:10px}
-.ptitle h1 .bub{width:44px;height:44px;border-radius:14px;background:var(--bg);border:2px solid var(--navy);display:grid;place-items:center}
+.ptitle h1 .bub{width:44px;height:44px;border-radius:14px;background:var(--t);border:2px solid var(--tile-bd);display:grid;place-items:center;color:#13224A}
 .ptitle p{font-size:15px;color:var(--muted);margin-top:6px}
-.chips{display:flex;gap:8px;padding:14px 16px 6px}
-.chip{height:36px;padding:0 14px;border-radius:18px;border:1.5px solid var(--line);background:var(--paper);display:flex;align-items:center;gap:6px;font-size:14px;font-weight:600}
-.chip.on{background:var(--navy);border-color:var(--navy);color:#fff}
-.big{margin:10px 16px 0;border-radius:22px;background:var(--paper);border:1.5px solid var(--line);overflow:hidden}
-.big .ph{display:block;position:relative;height:168px}
-.big .ph img{width:100%;height:100%;object-fit:cover}
-.big .bt{display:flex;align-items:center;gap:12px;padding:12px 14px}
-.big .bt .t{flex:1;min-width:0}
-.big b{display:block;font-size:18px;font-weight:700}
-.big .m{display:block;font-size:14px;color:var(--muted);margin-top:2px}
-
-/* ---------- place page ---------- */
-.hero-ph{position:relative;height:300px;background:#ccc}
+.cmap{margin:14px 16px 0;height:190px;border-radius:24px;box-shadow:0 0 0 1px var(--line)}
+.wide{display:flex;gap:12px;align-items:center;margin:0 16px;padding:10px;border-radius:22px;background:var(--surface);box-shadow:0 0 0 1px var(--line)}
+.wide img{width:84px;height:84px;border-radius:16px;object-fit:cover}
+.wide b{display:block;font-size:17px;font-weight:700}
+.wide .m{display:block;font-size:13.5px;color:var(--muted);margin-top:3px;line-height:1.4}
+.hero-ph{position:relative;height:300px;background:#777}
 .hero-ph img{width:100%;height:100%;object-fit:cover}
-.hero-ph .back{position:absolute;left:16px;top:14px;border:0;box-shadow:0 2px 10px rgba(0,0,0,.2)}
-.hero-ph .tag{left:auto;right:16px;top:20px}
-.pl-body{position:relative;margin-top:-26px;background:var(--cream);border-radius:26px 26px 0 0;padding:22px 18px 30px}
+.hero-ph .back{position:absolute;left:16px;top:max(14px,env(safe-area-inset-top))}
+.hero-ph .tag{left:auto;right:16px;top:calc(max(14px,env(safe-area-inset-top)) + 8px)}
+.pl-body{position:relative;margin-top:-26px;background:var(--bg);border-radius:28px 28px 0 0;padding:22px 18px 30px}
 .pl-body h1{font-family:var(--disp);font-weight:800;font-size:31px;letter-spacing:-.02em;line-height:1.05}
-.pl-body .m{font-size:15px;color:var(--muted);margin-top:6px}
-.pl-body .m .open{color:var(--ok);font-weight:700}
-.dealbig{display:flex;align-items:center;gap:12px;margin-top:16px;padding:14px;border-radius:18px;background:var(--pink);border:2px solid var(--navy);box-shadow:0 4px 0 var(--navy)}
-.dealbig .gi{width:42px;height:42px;border-radius:12px;background:#fff;border:2px solid var(--navy);display:grid;place-items:center;color:var(--red);flex:none}
+.pl-body>.m{font-size:15px;color:var(--muted);margin-top:6px}
+.dealbig{display:flex;align-items:center;gap:12px;margin-top:16px;padding:14px;border-radius:18px;background:var(--pink);border:2px solid var(--tile-bd);box-shadow:0 4px 0 var(--tile-sh);color:#13224A}
+.dealbig .gi{width:42px;height:42px;border-radius:12px;background:#fff;border:2px solid #13224A;display:grid;place-items:center;color:#E63946;flex:none}
 .dealbig b{display:block;font-size:16px}
 .dealbig span{display:block;font-size:13.5px;color:#4A3440;margin-top:1px}
 .acts{display:grid;grid-template-columns:1.25fr .8fr 1.15fr;gap:10px;margin-top:16px}
-.act{height:54px;border-radius:16px;background:var(--paper);border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;gap:7px;font-weight:700;font-size:15px}
-.act.pri{background:var(--navy);border-color:var(--navy);color:#fff}
-.about{font-size:16px;line-height:1.5;margin-top:18px;color:#26324F}
+.act{height:54px;border-radius:17px;background:var(--surface);box-shadow:0 0 0 1px var(--line);display:flex;align-items:center;justify-content:center;gap:7px;font-weight:700;font-size:15px}
+.act.pri{background:var(--ink);color:var(--bg);box-shadow:none}
+.pmap{position:relative;margin-top:16px;height:170px;border-radius:22px;box-shadow:0 0 0 1px var(--line);overflow:hidden}
+.pmap .map{position:absolute;inset:0}
+.pmap .wk{position:absolute;right:10px;top:10px;z-index:6;display:flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:17px;font-weight:700;font-size:13.5px}
+.about{font-size:16px;line-height:1.5;margin-top:16px;opacity:.9}
 .strip{display:flex;gap:8px;margin:16px -18px 0;padding:0 18px;overflow-x:auto;scrollbar-width:none}
 .strip img{flex:none;width:150px;height:112px;border-radius:16px;object-fit:cover}
-.facts{margin-top:16px;border-radius:18px;background:var(--paper);border:1.5px solid var(--line)}
+.facts{margin-top:16px;border-radius:18px;background:var(--surface);box-shadow:0 0 0 1px var(--line)}
 .fact{display:flex;gap:12px;align-items:center;padding:13px 14px;border-top:1px solid var(--line);font-size:15px}
 .fact:first-child{border-top:0}
 .fact .ic{color:var(--muted)}
 .fact span{flex:1}
 .fact small{color:var(--muted);font-size:13.5px}
+.big{display:block;margin:14px 16px 0;border-radius:24px;background:var(--surface);box-shadow:0 0 0 1px var(--line);overflow:hidden}
 
-/* home content waits under the intro, then rises in */
+/* ---------- tab bar ---------- */
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;gap:10px;align-items:center;max-width:480px;margin:0 auto;padding:0 14px calc(12px + env(safe-area-inset-bottom));pointer-events:none;transition:transform .35s var(--ease),opacity .25s}
+.tabbar>*{pointer-events:auto}
+.tabbar.hide{transform:translateY(130%);opacity:0}
+.caps{flex:1;height:66px;border-radius:33px;display:grid;grid-template-columns:repeat(3,1fr);padding:5px}
+.lens{position:absolute;left:5px;top:5px;bottom:5px;width:calc((100% - 10px) / 3);border-radius:28px;background:var(--lens);box-shadow:var(--lens-shadow);z-index:0}
+.tab{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--tab-ink);font-size:11px;font-weight:700;letter-spacing:.01em;transition:color .25s}
+.tab.on{color:var(--tab-on)}
+.tab .badge{position:absolute;top:8px;left:calc(50% + 8px);width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 2px var(--surface)}
+.sbtn{flex:none;width:66px;height:66px;border-radius:50%;display:grid;place-items:center;color:var(--ink)}
+
+/* ---------- search ---------- */
+.ssheet{position:fixed;inset:0;z-index:80;max-width:480px;margin:0 auto;padding:max(14px,env(safe-area-inset-top)) 16px 20px;background:color-mix(in srgb,var(--bg) 82%,transparent);-webkit-backdrop-filter:blur(26px) saturate(1.6);backdrop-filter:blur(26px) saturate(1.6);opacity:0;transform:translateY(16px);pointer-events:none;transition:opacity .22s,transform .3s var(--ease);overflow-y:auto}
+.ssheet.on{opacity:1;transform:none;pointer-events:auto}
+.sfield{display:flex;gap:10px;align-items:center}
+.sfield label{flex:1;display:flex;align-items:center;gap:10px;height:50px;padding:0 16px;border-radius:25px;color:var(--muted)}
+.sfield input{flex:1;min-width:0;border:0;background:transparent;font:inherit;font-size:16.5px;color:var(--ink);outline:0}
+.sfield button{font-weight:700;font-size:15px;color:var(--accent);padding:0 4px}
+.sugs{display:flex;flex-wrap:wrap;gap:8px;margin:16px 2px 6px}
+.ssheet .list{margin:14px 0 0}
+.empty{padding:26px 6px;text-align:center;color:var(--muted);font-size:15px}
+
+/* home content waits under the intro */
 body.intro-on .rise{opacity:0;transform:translateY(18px)}
+body.intro-on .tabbar{opacity:0;transform:translateY(40px)}
 
-/* ---------- the intro: the sign you scanned comes alive ---------- */
-#intro{position:fixed;inset:0;z-index:100;background:var(--navy);color:#fff;overflow:hidden}
+/* ---------- the scan intro ---------- */
+#intro{position:fixed;inset:0;z-index:100;background:#13224A;color:#fff;overflow:hidden}
 #intro .stage{position:absolute;left:0;right:0;top:50%;transform:translateY(-62%);display:flex;flex-direction:column;align-items:center;text-align:center}
 #intro .glow{position:absolute;left:50%;top:50%;width:560px;height:560px;margin:-280px 0 0 -280px;border-radius:50%;background:radial-gradient(circle,rgba(230,57,70,.22),rgba(230,57,70,0) 62%);opacity:0;animation:fadeIn .8s .9s var(--ease) forwards}
 .qrwrap{position:relative;width:176px;height:176px;padding:14px;border-radius:30px;background:#fff;animation:qrIn .35s var(--ease) both,qrOut .3s .9s cubic-bezier(.5,0,.75,0) forwards}
 .qrsvg{width:100%;height:100%}
-.qrsvg .qm,.qrsvg .qc{fill:var(--navy)}
-.qrsvg .qf{stroke:var(--navy)}
-.scanline{position:absolute;left:8px;right:8px;top:12px;height:4px;border-radius:2px;background:var(--red);box-shadow:0 0 14px 3px rgba(230,57,70,.65);animation:scan .62s .2s ease-in-out both}
-.qrcheck{position:absolute;inset:0;border-radius:30px;display:grid;place-items:center;background:rgba(255,255,255,.0);animation:flash .3s .78s ease-out both}
+.qrsvg .qm,.qrsvg .qc{fill:#13224A}
+.qrsvg .qf{stroke:#13224A}
+.scanline{position:absolute;left:8px;right:8px;top:12px;height:4px;border-radius:2px;background:#E63946;box-shadow:0 0 14px 3px rgba(230,57,70,.65);animation:scan .62s .2s ease-in-out both}
+.qrcheck{position:absolute;inset:0;border-radius:30px;animation:flash .3s .78s ease-out both}
 .mark{position:relative;display:flex;align-items:center;gap:12px;font-family:var(--logo);font-weight:900;font-size:50px;letter-spacing:.03em;line-height:1;margin-top:-176px;height:176px}
 .mark .hI,.mark .hB{opacity:0;position:relative;z-index:1}
-.mark .hI{animation:fromHeartL .45s 1.34s var(--ease) forwards}
-.mark .hB{animation:fromHeartR .5s 1.38s var(--ease) forwards}
+.mark .hI{animation:fromL .45s 1.34s var(--ease) forwards}
+.mark .hB{animation:fromR .5s 1.38s var(--ease) forwards}
 .mark .heart{position:relative;z-index:2;width:54px;height:54px;transform:translateX(var(--hx,0)) scale(0);animation:heartPop .55s .95s var(--pop) forwards,heartSlide .48s 1.25s var(--ease) forwards,beat .5s 2.15s ease-in-out}
 .mark .heart svg{width:100%;height:100%;overflow:visible}
-.ping{position:absolute;left:50%;top:50%;width:60px;height:60px;margin:-30px 0 0 -30px;border-radius:50%;border:3px solid var(--red);opacity:0;transform:scale(.6);animation:ping 1s 1s ease-out}
+.iping{position:absolute;left:50%;top:50%;width:60px;height:60px;margin:-30px 0 0 -30px;border-radius:50%;border:3px solid #E63946;opacity:0;transform:scale(.6);animation:iping 1s 1s ease-out}
+#intro .kick{color:rgba(255,255,255,.72)}
 .ikick{margin-top:22px;opacity:0;animation:up .45s 1.62s var(--ease) forwards}
 .ititle{font-family:var(--disp);font-weight:800;font-size:40px;letter-spacing:-.02em;line-height:1.05;margin-top:10px;white-space:nowrap;opacity:0;animation:up .5s 1.76s var(--ease) forwards}
 .isub{font-size:16px;color:rgba(255,255,255,.75);margin-top:12px;opacity:0;animation:up .45s 1.95s var(--ease) forwards}
 .skip{position:absolute;right:16px;bottom:calc(22px + env(safe-area-inset-bottom));height:36px;padding:0 14px;border-radius:18px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.85);font-size:13.5px;font-weight:700;opacity:0;animation:fadeIn .4s .6s forwards}
 #intro.fast *{animation-duration:.01s!important;animation-delay:0s!important}
-#intro.fast .qrwrap,#intro.fast .scanline,#intro.fast .ping{display:none}
-
+#intro.fast .qrwrap,#intro.fast .scanline,#intro.fast .iping{display:none}
 @keyframes qrIn{from{opacity:0;transform:scale(.85)}}
 @keyframes qrOut{to{opacity:0;transform:scale(.15) rotate(-8deg)}}
 @keyframes scan{0%{top:12px;opacity:0}12%{opacity:1}88%{opacity:1}100%{top:calc(100% - 16px);opacity:0}}
@@ -180,27 +272,44 @@ body.intro-on .rise{opacity:0;transform:translateY(18px)}
 @keyframes heartPop{0%{transform:translateX(var(--hx,0)) scale(0)}60%{transform:translateX(var(--hx,0)) scale(1.3)}100%{transform:translateX(var(--hx,0)) scale(1)}}
 @keyframes heartSlide{from{transform:translateX(var(--hx,0)) scale(1)}to{transform:translateX(0) scale(1)}}
 @keyframes beat{0%,100%{transform:scale(1)}30%{transform:scale(1.18)}60%{transform:scale(.96)}}
-@keyframes ping{0%{opacity:.7;transform:scale(.6)}100%{opacity:0;transform:scale(4.2)}}
-@keyframes fromHeartL{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:none}}
-@keyframes fromHeartR{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:none}}
+@keyframes iping{0%{opacity:.7;transform:scale(.6)}100%{opacity:0;transform:scale(4.2)}}
+@keyframes fromL{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:none}}
+@keyframes fromR{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:none}}
 @keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 @keyframes fadeIn{to{opacity:1}}
-@media (prefers-reduced-motion:reduce){#intro{display:none}body.intro-on .rise{opacity:1;transform:none}}
+.toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom));transform:translate(-50%,16px);max-width:calc(100% - 32px);padding:12px 16px;border-radius:16px;background:var(--ink);color:var(--bg);font-size:14px;font-weight:600;opacity:0;transition:.25s var(--ease);z-index:90;pointer-events:none;text-align:center}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){#intro{display:none}body.intro-on .rise,body.intro-on .tabbar{opacity:1;transform:none}.mk.live::after,.me::before,.live i,.dot{animation:none}}
 </style>
 </head>
-<body class="intro-on">
+<body class="intro-on pins-wait">
 <div id="app"></div>
+
+<nav class="tabbar" id="tabbar" aria-label="Sections">
+  <div class="caps glass" role="tablist">
+    <span class="lens" id="lens"></span>
+    <a class="tab" href="#/" data-tab="0" role="tab"><svg class="ic" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21.2s-7.4-4.6-9.4-9C1.2 9 2.9 5 6.8 4.6c2.1-.2 3.7.8 5.2 2.7 1.5-1.9 3.1-2.9 5.2-2.7 3.9.4 5.6 4.4 4.2 7.6-2 4.4-9.4 9-9.4 9z"/></svg>Nearby</a>
+    <a class="tab" href="#/map" data-tab="1" role="tab"><svg class="ic" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M14.1 5.6a2 2 0 0 0 1.8 0l3.7-1.9A1 1 0 0 1 21 4.6v12.8a1 1 0 0 1-.6.9l-4.5 2.3a2 2 0 0 1-1.8 0l-4.2-2.1a2 2 0 0 0-1.8 0l-3.7 1.9A1 1 0 0 1 3 19.4V6.6a1 1 0 0 1 .6-.9l4.5-2.3a2 2 0 0 1 1.8 0z"/><path d="M15 5.8v15"/><path d="M9 3.2v15"/></svg>Map</a>
+    <a class="tab" href="#/today" data-tab="2" role="tab"><svg class="ic" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>Today<span class="badge"></span></a>
+  </div>
+  <button class="sbtn glass" type="button" id="openSearch" aria-label="Search"><svg class="ic" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7.5"/><path d="m20.5 20.5-4.2-4.2"/></svg></button>
+</nav>
+
+<div class="ssheet" id="ssheet" aria-hidden="true">
+  <div class="sfield"><label class="glass"><svg class="ic" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7.5"/><path d="m20.5 20.5-4.2-4.2"/></svg><input id="sq" type="search" placeholder="Search food, shops, sights…" autocomplete="off" enterkeyhint="search"></label><button type="button" id="closeSearch">Cancel</button></div>
+  <div id="sres"></div>
+</div>
 
 <div id="intro" aria-hidden="true">
   <div class="glow"></div>
   <div class="stage">
     <div class="qrwrap"><svg class="qrsvg" viewBox="-1 -1 31 31" aria-hidden="true"><g class="qm"><rect x="10.08" y="0.08" width=".84" height=".84" rx=".28"/><rect x="11.08" y="0.08" width=".84" height=".84" rx=".28"/><rect x="12.08" y="0.08" width=".84" height=".84" rx=".28"/><rect x="14.08" y="0.08" width=".84" height=".84" rx=".28"/><rect x="18.08" y="0.08" width=".84" height=".84" rx=".28"/><rect x="19.08" y="0.08" width=".84" height=".84" rx=".28"/><rect x="16.08" y="1.08" width=".84" height=".84" rx=".28"/><rect x="18.08" y="1.08" width=".84" height=".84" rx=".28"/><rect x="9.08" y="2.08" width=".84" height=".84" rx=".28"/><rect x="14.08" y="2.08" width=".84" height=".84" rx=".28"/><rect x="15.08" y="2.08" width=".84" height=".84" rx=".28"/><rect x="17.08" y="2.08" width=".84" height=".84" rx=".28"/><rect x="18.08" y="2.08" width=".84" height=".84" rx=".28"/><rect x="19.08" y="2.08" width=".84" height=".84" rx=".28"/><rect x="20.08" y="2.08" width=".84" height=".84" rx=".28"/><rect x="9.08" y="3.08" width=".84" height=".84" rx=".28"/><rect x="11.08" y="3.08" width=".84" height=".84" rx=".28"/><rect x="12.08" y="3.08" width=".84" height=".84" rx=".28"/><rect x="13.08" y="3.08" width=".84" height=".84" rx=".28"/><rect x="18.08" y="3.08" width=".84" height=".84" rx=".28"/><rect x="9.08" y="4.08" width=".84" height=".84" rx=".28"/><rect x="12.08" y="4.08" width=".84" height=".84" rx=".28"/><rect x="17.08" y="4.08" width=".84" height=".84" rx=".28"/><rect x="18.08" y="4.08" width=".84" height=".84" rx=".28"/><rect x="8.08" y="5.08" width=".84" height=".84" rx=".28"/><rect x="15.08" y="5.08" width=".84" height=".84" rx=".28"/><rect x="17.08" y="5.08" width=".84" height=".84" rx=".28"/><rect x="18.08" y="5.08" width=".84" height=".84" rx=".28"/><rect x="19.08" y="5.08" width=".84" height=".84" rx=".28"/><rect x="8.08" y="6.08" width=".84" height=".84" rx=".28"/><rect x="10.08" y="6.08" width=".84" height=".84" rx=".28"/><rect x="12.08" y="6.08" width=".84" height=".84" rx=".28"/><rect x="14.08" y="6.08" width=".84" height=".84" rx=".28"/><rect x="16.08" y="6.08" width=".84" height=".84" rx=".28"/><rect x="18.08" y="6.08" width=".84" height=".84" rx=".28"/><rect x="20.08" y="6.08" width=".84" height=".84" rx=".28"/><rect x="12.08" y="7.08" width=".84" height=".84" rx=".28"/><rect x="13.08" y="7.08" width=".84" height=".84" rx=".28"/><rect x="15.08" y="7.08" width=".84" height=".84" rx=".28"/><rect x="16.08" y="7.08" width=".84" height=".84" rx=".28"/><rect x="17.08" y="7.08" width=".84" height=".84" rx=".28"/><rect x="18.08" y="7.08" width=".84" height=".84" rx=".28"/><rect x="0.08" y="8.08" width=".84" height=".84" rx=".28"/><rect x="3.08" y="8.08" width=".84" height=".84" rx=".28"/><rect x="5.08" y="8.08" width=".84" height=".84" rx=".28"/><rect x="6.08" y="8.08" width=".84" height=".84" rx=".28"/><rect x="8.08" y="8.08" width=".84" height=".84" rx=".28"/><rect x="10.08" y="8.08" width=".84" height=".84" rx=".28"/><rect x="11.08" y="8.08" width=".84" height=".84" rx=".28"/><rect x="14.08" y="8.08" width=".84" height=".84" rx=".28"/><rect x="16.08" y="8.08" width=".84" height=".84" rx=".28"/><rect x="18.08" y="8.08" width=".84" height=".84" rx=".28"/><rect x="19.08" y="8.08" width=".84" height=".84" rx=".28"/><rect x="21.08" y="8.08" width=".84" height=".84" rx=".28"/><rect x="23.08" y="8.08" width=".84" height=".84" rx=".28"/><rect x="1.08" y="9.08" width=".84" height=".84" rx=".28"/><rect x="2.08" y="9.08" width=".84" height=".84" rx=".28"/><rect x="5.08" y="9.08" width=".84" height=".84" rx=".28"/><rect x="8.08" y="9.08" width=".84" height=".84" rx=".28"/><rect x="10.08" y="9.08" width=".84" height=".84" rx=".28"/><rect x="12.08" y="9.08" width=".84" height=".84" rx=".28"/><rect x="13.08" y="9.08" width=".84" height=".84" rx=".28"/><rect x="15.08" y="9.08" width=".84" height=".84" rx=".28"/><rect x="20.08" y="9.08" width=".84" height=".84" rx=".28"/><rect x="21.08" y="9.08" width=".84" height=".84" rx=".28"/><rect x="22.08" y="9.08" width=".84" height=".84" rx=".28"/><rect x="25.08" y="9.08" width=".84" height=".84" rx=".28"/><rect x="28.08" y="9.08" width=".84" height=".84" rx=".28"/><rect x="1.08" y="10.08" width=".84" height=".84" rx=".28"/><rect x="2.08" y="10.08" width=".84" height=".84" rx=".28"/><rect x="3.08" y="10.08" width=".84" height=".84" rx=".28"/><rect x="5.08" y="10.08" width=".84" height=".84" rx=".28"/><rect x="6.08" y="10.08" width=".84" height=".84" rx=".28"/><rect x="8.08" y="10.08" width=".84" height=".84" rx=".28"/><rect x="9.08" y="10.08" width=".84" height=".84" rx=".28"/><rect x="13.08" y="10.08" width=".84" height=".84" rx=".28"/><rect x="14.08" y="10.08" width=".84" height=".84" rx=".28"/><rect x="16.08" y="10.08" width=".84" height=".84" rx=".28"/><rect x="17.08" y="10.08" width=".84" height=".84" rx=".28"/><rect x="19.08" y="10.08" width=".84" height=".84" rx=".28"/><rect x="20.08" y="10.08" width=".84" height=".84" rx=".28"/><rect x="21.08" y="10.08" width=".84" height=".84" rx=".28"/><rect x="25.08" y="10.08" width=".84" height=".84" rx=".28"/><rect x="26.08" y="10.08" width=".84" height=".84" rx=".28"/><rect x="27.08" y="10.08" width=".84" height=".84" rx=".28"/><rect x="0.08" y="11.08" width=".84" height=".84" rx=".28"/><rect x="3.08" y="11.08" width=".84" height=".84" rx=".28"/><rect x="4.08" y="11.08" width=".84" height=".84" rx=".28"/><rect x="5.08" y="11.08" width=".84" height=".84" rx=".28"/><rect x="7.08" y="11.08" width=".84" height=".84" rx=".28"/><rect x="9.08" y="11.08" width=".84" height=".84" rx=".28"/><rect x="12.08" y="11.08" width=".84" height=".84" rx=".28"/><rect x="13.08" y="11.08" width=".84" height=".84" rx=".28"/><rect x="15.08" y="11.08" width=".84" height=".84" rx=".28"/><rect x="18.08" y="11.08" width=".84" height=".84" rx=".28"/><rect x="23.08" y="11.08" width=".84" height=".84" rx=".28"/><rect x="26.08" y="11.08" width=".84" height=".84" rx=".28"/><rect x="27.08" y="11.08" width=".84" height=".84" rx=".28"/><rect x="0.08" y="12.08" width=".84" height=".84" rx=".28"/><rect x="6.08" y="12.08" width=".84" height=".84" rx=".28"/><rect x="7.08" y="12.08" width=".84" height=".84" rx=".28"/><rect x="14.08" y="12.08" width=".84" height=".84" rx=".28"/><rect x="17.08" y="12.08" width=".84" height=".84" rx=".28"/><rect x="19.08" y="12.08" width=".84" height=".84" rx=".28"/><rect x="20.08" y="12.08" width=".84" height=".84" rx=".28"/><rect x="21.08" y="12.08" width=".84" height=".84" rx=".28"/><rect x="22.08" y="12.08" width=".84" height=".84" rx=".28"/><rect x="23.08" y="12.08" width=".84" height=".84" rx=".28"/><rect x="25.08" y="12.08" width=".84" height=".84" rx=".28"/><rect x="27.08" y="12.08" width=".84" height=".84" rx=".28"/><rect x="28.08" y="12.08" width=".84" height=".84" rx=".28"/><rect x="1.08" y="13.08" width=".84" height=".84" rx=".28"/><rect x="2.08" y="13.08" width=".84" height=".84" rx=".28"/><rect x="3.08" y="13.08" width=".84" height=".84" rx=".28"/><rect x="4.08" y="13.08" width=".84" height=".84" rx=".28"/><rect x="8.08" y="13.08" width=".84" height=".84" rx=".28"/><rect x="9.08" y="13.08" width=".84" height=".84" rx=".28"/><rect x="11.08" y="13.08" width=".84" height=".84" rx=".28"/><rect x="12.08" y="13.08" width=".84" height=".84" rx=".28"/><rect x="13.08" y="13.08" width=".84" height=".84" rx=".28"/><rect x="14.08" y="13.08" width=".84" height=".84" rx=".28"/><rect x="16.08" y="13.08" width=".84" height=".84" rx=".28"/><rect x="17.08" y="13.08" width=".84" height=".84" rx=".28"/><rect x="18.08" y="13.08" width=".84" height=".84" rx=".28"/><rect x="19.08" y="13.08" width=".84" height=".84" rx=".28"/><rect x="21.08" y="13.08" width=".84" height=".84" rx=".28"/><rect x="0.08" y="14.08" width=".84" height=".84" rx=".28"/><rect x="4.08" y="14.08" width=".84" height=".84" rx=".28"/><rect x="6.08" y="14.08" width=".84" height=".84" rx=".28"/><rect x="7.08" y="14.08" width=".84" height=".84" rx=".28"/><rect x="8.08" y="14.08" width=".84" height=".84" rx=".28"/><rect x="10.08" y="14.08" width=".84" height=".84" rx=".28"/><rect x="12.08" y="14.08" width=".84" height=".84" rx=".28"/><rect x="13.08" y="14.08" width=".84" height=".84" rx=".28"/><rect x="14.08" y="14.08" width=".84" height=".84" rx=".28"/><rect x="16.08" y="14.08" width=".84" height=".84" rx=".28"/><rect x="18.08" y="14.08" width=".84" height=".84" rx=".28"/><rect x="22.08" y="14.08" width=".84" height=".84" rx=".28"/><rect x="25.08" y="14.08" width=".84" height=".84" rx=".28"/><rect x="26.08" y="14.08" width=".84" height=".84" rx=".28"/><rect x="27.08" y="14.08" width=".84" height=".84" rx=".28"/><rect x="28.08" y="14.08" width=".84" height=".84" rx=".28"/><rect x="1.08" y="15.08" width=".84" height=".84" rx=".28"/><rect x="3.08" y="15.08" width=".84" height=".84" rx=".28"/><rect x="4.08" y="15.08" width=".84" height=".84" rx=".28"/><rect x="5.08" y="15.08" width=".84" height=".84" rx=".28"/><rect x="9.08" y="15.08" width=".84" height=".84" rx=".28"/><rect x="11.08" y="15.08" width=".84" height=".84" rx=".28"/><rect x="12.08" y="15.08" width=".84" height=".84" rx=".28"/><rect x="15.08" y="15.08" width=".84" height=".84" rx=".28"/><rect x="17.08" y="15.08" width=".84" height=".84" rx=".28"/><rect x="18.08" y="15.08" width=".84" height=".84" rx=".28"/><rect x="20.08" y="15.08" width=".84" height=".84" rx=".28"/><rect x="21.08" y="15.08" width=".84" height=".84" rx=".28"/><rect x="22.08" y="15.08" width=".84" height=".84" rx=".28"/><rect x="24.08" y="15.08" width=".84" height=".84" rx=".28"/><rect x="25.08" y="15.08" width=".84" height=".84" rx=".28"/><rect x="27.08" y="15.08" width=".84" height=".84" rx=".28"/><rect x="0.08" y="16.08" width=".84" height=".84" rx=".28"/><rect x="1.08" y="16.08" width=".84" height=".84" rx=".28"/><rect x="4.08" y="16.08" width=".84" height=".84" rx=".28"/><rect x="6.08" y="16.08" width=".84" height=".84" rx=".28"/><rect x="10.08" y="16.08" width=".84" height=".84" rx=".28"/><rect x="13.08" y="16.08" width=".84" height=".84" rx=".28"/><rect x="16.08" y="16.08" width=".84" height=".84" rx=".28"/><rect x="17.08" y="16.08" width=".84" height=".84" rx=".28"/><rect x="18.08" y="16.08" width=".84" height=".84" rx=".28"/><rect x="20.08" y="16.08" width=".84" height=".84" rx=".28"/><rect x="21.08" y="16.08" width=".84" height=".84" rx=".28"/><rect x="27.08" y="16.08" width=".84" height=".84" rx=".28"/><rect x="2.08" y="17.08" width=".84" height=".84" rx=".28"/><rect x="5.08" y="17.08" width=".84" height=".84" rx=".28"/><rect x="10.08" y="17.08" width=".84" height=".84" rx=".28"/><rect x="12.08" y="17.08" width=".84" height=".84" rx=".28"/><rect x="13.08" y="17.08" width=".84" height=".84" rx=".28"/><rect x="14.08" y="17.08" width=".84" height=".84" rx=".28"/><rect x="17.08" y="17.08" width=".84" height=".84" rx=".28"/><rect x="21.08" y="17.08" width=".84" height=".84" rx=".28"/><rect x="22.08" y="17.08" width=".84" height=".84" rx=".28"/><rect x="23.08" y="17.08" width=".84" height=".84" rx=".28"/><rect x="25.08" y="17.08" width=".84" height=".84" rx=".28"/><rect x="28.08" y="17.08" width=".84" height=".84" rx=".28"/><rect x="0.08" y="18.08" width=".84" height=".84" rx=".28"/><rect x="3.08" y="18.08" width=".84" height=".84" rx=".28"/><rect x="4.08" y="18.08" width=".84" height=".84" rx=".28"/><rect x="5.08" y="18.08" width=".84" height=".84" rx=".28"/><rect x="6.08" y="18.08" width=".84" height=".84" rx=".28"/><rect x="7.08" y="18.08" width=".84" height=".84" rx=".28"/><rect x="8.08" y="18.08" width=".84" height=".84" rx=".28"/><rect x="9.08" y="18.08" width=".84" height=".84" rx=".28"/><rect x="10.08" y="18.08" width=".84" height=".84" rx=".28"/><rect x="11.08" y="18.08" width=".84" height=".84" rx=".28"/><rect x="14.08" y="18.08" width=".84" height=".84" rx=".28"/><rect x="16.08" y="18.08" width=".84" height=".84" rx=".28"/><rect x="17.08" y="18.08" width=".84" height=".84" rx=".28"/><rect x="21.08" y="18.08" width=".84" height=".84" rx=".28"/><rect x="24.08" y="18.08" width=".84" height=".84" rx=".28"/><rect x="27.08" y="18.08" width=".84" height=".84" rx=".28"/><rect x="28.08" y="18.08" width=".84" height=".84" rx=".28"/><rect x="4.08" y="19.08" width=".84" height=".84" rx=".28"/><rect x="8.08" y="19.08" width=".84" height=".84" rx=".28"/><rect x="9.08" y="19.08" width=".84" height=".84" rx=".28"/><rect x="10.08" y="19.08" width=".84" height=".84" rx=".28"/><rect x="11.08" y="19.08" width=".84" height=".84" rx=".28"/><rect x="14.08" y="19.08" width=".84" height=".84" rx=".28"/><rect x="15.08" y="19.08" width=".84" height=".84" rx=".28"/><rect x="16.08" y="19.08" width=".84" height=".84" rx=".28"/><rect x="17.08" y="19.08" width=".84" height=".84" rx=".28"/><rect x="18.08" y="19.08" width=".84" height=".84" rx=".28"/><rect x="19.08" y="19.08" width=".84" height=".84" rx=".28"/><rect x="20.08" y="19.08" width=".84" height=".84" rx=".28"/><rect x="24.08" y="19.08" width=".84" height=".84" rx=".28"/><rect x="27.08" y="19.08" width=".84" height=".84" rx=".28"/><rect x="28.08" y="19.08" width=".84" height=".84" rx=".28"/><rect x="0.08" y="20.08" width=".84" height=".84" rx=".28"/><rect x="2.08" y="20.08" width=".84" height=".84" rx=".28"/><rect x="4.08" y="20.08" width=".84" height=".84" rx=".28"/><rect x="6.08" y="20.08" width=".84" height=".84" rx=".28"/><rect x="7.08" y="20.08" width=".84" height=".84" rx=".28"/><rect x="8.08" y="20.08" width=".84" height=".84" rx=".28"/><rect x="17.08" y="20.08" width=".84" height=".84" rx=".28"/><rect x="19.08" y="20.08" width=".84" height=".84" rx=".28"/><rect x="20.08" y="20.08" width=".84" height=".84" rx=".28"/><rect x="21.08" y="20.08" width=".84" height=".84" rx=".28"/><rect x="22.08" y="20.08" width=".84" height=".84" rx=".28"/><rect x="23.08" y="20.08" width=".84" height=".84" rx=".28"/><rect x="24.08" y="20.08" width=".84" height=".84" rx=".28"/><rect x="26.08" y="20.08" width=".84" height=".84" rx=".28"/><rect x="8.08" y="21.08" width=".84" height=".84" rx=".28"/><rect x="11.08" y="21.08" width=".84" height=".84" rx=".28"/><rect x="14.08" y="21.08" width=".84" height=".84" rx=".28"/><rect x="17.08" y="21.08" width=".84" height=".84" rx=".28"/><rect x="19.08" y="21.08" width=".84" height=".84" rx=".28"/><rect x="20.08" y="21.08" width=".84" height=".84" rx=".28"/><rect x="24.08" y="21.08" width=".84" height=".84" rx=".28"/><rect x="26.08" y="21.08" width=".84" height=".84" rx=".28"/><rect x="27.08" y="21.08" width=".84" height=".84" rx=".28"/><rect x="28.08" y="21.08" width=".84" height=".84" rx=".28"/><rect x="11.08" y="22.08" width=".84" height=".84" rx=".28"/><rect x="16.08" y="22.08" width=".84" height=".84" rx=".28"/><rect x="20.08" y="22.08" width=".84" height=".84" rx=".28"/><rect x="22.08" y="22.08" width=".84" height=".84" rx=".28"/><rect x="24.08" y="22.08" width=".84" height=".84" rx=".28"/><rect x="27.08" y="22.08" width=".84" height=".84" rx=".28"/><rect x="8.08" y="23.08" width=".84" height=".84" rx=".28"/><rect x="9.08" y="23.08" width=".84" height=".84" rx=".28"/><rect x="10.08" y="23.08" width=".84" height=".84" rx=".28"/><rect x="14.08" y="23.08" width=".84" height=".84" rx=".28"/><rect x="15.08" y="23.08" width=".84" height=".84" rx=".28"/><rect x="16.08" y="23.08" width=".84" height=".84" rx=".28"/><rect x="20.08" y="23.08" width=".84" height=".84" rx=".28"/><rect x="24.08" y="23.08" width=".84" height=".84" rx=".28"/><rect x="25.08" y="23.08" width=".84" height=".84" rx=".28"/><rect x="26.08" y="23.08" width=".84" height=".84" rx=".28"/><rect x="27.08" y="23.08" width=".84" height=".84" rx=".28"/><rect x="28.08" y="23.08" width=".84" height=".84" rx=".28"/><rect x="15.08" y="24.08" width=".84" height=".84" rx=".28"/><rect x="16.08" y="24.08" width=".84" height=".84" rx=".28"/><rect x="20.08" y="24.08" width=".84" height=".84" rx=".28"/><rect x="21.08" y="24.08" width=".84" height=".84" rx=".28"/><rect x="22.08" y="24.08" width=".84" height=".84" rx=".28"/><rect x="23.08" y="24.08" width=".84" height=".84" rx=".28"/><rect x="24.08" y="24.08" width=".84" height=".84" rx=".28"/><rect x="28.08" y="24.08" width=".84" height=".84" rx=".28"/><rect x="8.08" y="25.08" width=".84" height=".84" rx=".28"/><rect x="9.08" y="25.08" width=".84" height=".84" rx=".28"/><rect x="12.08" y="25.08" width=".84" height=".84" rx=".28"/><rect x="13.08" y="25.08" width=".84" height=".84" rx=".28"/><rect x="16.08" y="25.08" width=".84" height=".84" rx=".28"/><rect x="17.08" y="25.08" width=".84" height=".84" rx=".28"/><rect x="18.08" y="25.08" width=".84" height=".84" rx=".28"/><rect x="22.08" y="25.08" width=".84" height=".84" rx=".28"/><rect x="23.08" y="25.08" width=".84" height=".84" rx=".28"/><rect x="24.08" y="25.08" width=".84" height=".84" rx=".28"/><rect x="25.08" y="25.08" width=".84" height=".84" rx=".28"/><rect x="26.08" y="25.08" width=".84" height=".84" rx=".28"/><rect x="27.08" y="25.08" width=".84" height=".84" rx=".28"/><rect x="9.08" y="26.08" width=".84" height=".84" rx=".28"/><rect x="10.08" y="26.08" width=".84" height=".84" rx=".28"/><rect x="12.08" y="26.08" width=".84" height=".84" rx=".28"/><rect x="14.08" y="26.08" width=".84" height=".84" rx=".28"/><rect x="17.08" y="26.08" width=".84" height=".84" rx=".28"/><rect x="19.08" y="26.08" width=".84" height=".84" rx=".28"/><rect x="21.08" y="26.08" width=".84" height=".84" rx=".28"/><rect x="24.08" y="26.08" width=".84" height=".84" rx=".28"/><rect x="25.08" y="26.08" width=".84" height=".84" rx=".28"/><rect x="26.08" y="26.08" width=".84" height=".84" rx=".28"/><rect x="28.08" y="26.08" width=".84" height=".84" rx=".28"/><rect x="9.08" y="27.08" width=".84" height=".84" rx=".28"/><rect x="11.08" y="27.08" width=".84" height=".84" rx=".28"/><rect x="13.08" y="27.08" width=".84" height=".84" rx=".28"/><rect x="17.08" y="27.08" width=".84" height=".84" rx=".28"/><rect x="20.08" y="27.08" width=".84" height=".84" rx=".28"/><rect x="21.08" y="27.08" width=".84" height=".84" rx=".28"/><rect x="27.08" y="27.08" width=".84" height=".84" rx=".28"/><rect x="8.08" y="28.08" width=".84" height=".84" rx=".28"/><rect x="10.08" y="28.08" width=".84" height=".84" rx=".28"/><rect x="11.08" y="28.08" width=".84" height=".84" rx=".28"/><rect x="20.08" y="28.08" width=".84" height=".84" rx=".28"/><rect x="21.08" y="28.08" width=".84" height=".84" rx=".28"/><rect x="22.08" y="28.08" width=".84" height=".84" rx=".28"/><rect x="25.08" y="28.08" width=".84" height=".84" rx=".28"/><rect x="27.08" y="28.08" width=".84" height=".84" rx=".28"/></g><rect class="qf" x="0.5" y="0.5" width="6" height="6" rx="1.6" fill="none" stroke-width="1"/><rect class="qc" x="2" y="2" width="3" height="3" rx=".8"/><rect class="qf" x="22.5" y="0.5" width="6" height="6" rx="1.6" fill="none" stroke-width="1"/><rect class="qc" x="24" y="2" width="3" height="3" rx=".8"/><rect class="qf" x="0.5" y="22.5" width="6" height="6" rx="1.6" fill="none" stroke-width="1"/><rect class="qc" x="2" y="24" width="3" height="3" rx=".8"/></svg><i class="scanline"></i><i class="qrcheck"></i></div>
-    <div class="mark"><span class="hI">I</span><span class="heart" id="iHeart"><svg viewBox="0 0 24 24"><path fill="#E63946" d="M12 21.4s-7.7-4.8-9.8-9.4C.7 8.7 2.5 4.4 6.6 4c2.2-.2 3.9.9 5.4 2.9C13.5 4.9 15.2 3.8 17.4 4c4.1.4 5.9 4.7 4.4 8-2.1 4.6-9.8 9.4-9.8 9.4z"/></svg></span><span class="hB">BOSTON</span><i class="ping"></i></div>
-    <p class="kick ikick" id="iKick"><span class="ok"><svg class="ic" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span data-t="scanned">You scanned sign</span>&nbsp;DTC-001</p>
+    <div class="mark"><span class="hI">I</span><span class="heart" id="iHeart"><svg viewBox="0 0 24 24"><path fill="#E63946" d="M12 21.4s-7.7-4.8-9.8-9.4C.7 8.7 2.5 4.4 6.6 4c2.2-.2 3.9.9 5.4 2.9C13.5 4.9 15.2 3.8 17.4 4c4.1.4 5.9 4.7 4.4 8-2.1 4.6-9.8 9.4-9.8 9.4z"/></svg></span><span class="hB">BOSTON</span><i class="iping"></i></div>
+    <p class="kick ikick" id="iKick"><span class="ok"><svg class="ic" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>You scanned sign&nbsp;DTC-001</p>
     <h1 class="ititle" id="iTitle">Downtown Crossing</h1>
-    <p class="isub" data-t="tagline">Everything Boston. One scan away.</p>
+    <p class="isub">Everything Boston. One scan away.</p>
   </div>
-  <button class="skip" type="button" data-t="skip">Skip</button>
+  <button class="skip" type="button">Skip</button>
 </div>
 
 <script>
@@ -218,134 +327,271 @@ body.intro-on .rise{opacity:0;transform:translateY(18px)}
     landmark: '<path d="M3 22h18"/><path d="M6 18v-7"/><path d="M10 18v-7"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M12 2l8 5H4Z"/>',
     wrench: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
     calendar: '<rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/>',
+    sparkle: '<path d="M12 3l1.9 5.6L19.5 10l-5.6 1.9L12 17.5l-1.9-5.6L4.5 10l5.6-1.4Z"/>',
     search: '<circle cx="11" cy="11" r="7.5"/><path d="m20.5 20.5-4.2-4.2"/>',
     globe: '<circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>',
-    chev: '<path d="m9 18 6-6-6-6"/>', left: '<path d="m15 18-6-6 6-6"/>',
-    nav: '<path d="M3 11l19-9-9 19-2-8-8-2Z"/>', phone: '<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/>',
+    chev: '<path d="m9 18 6-6-6-6"/>', left: '<path d="m15 18-6-6 6-6"/>', check: '<path d="M20 6 9 17l-5-5"/>',
+    nav: '<path d="M3 11l19-9-9 19-2-8-8-2Z"/>',
+    phone: '<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/>',
     insta: '<rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/>',
     gift: '<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C9.5 3 11 5 12 8c1-3 2.5-5 4.5-5a2.5 2.5 0 0 1 0 5"/>',
     clock: '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>', pin: '<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>',
-    qr: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 17h4v4h-4z"/>',
-    check: '<path d="M20 6 9 17l-5-5"/>',
-    share: '<path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v13"/>',
+    expand: '<path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/>',
+    target: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/>',
+    walk: '<circle cx="13" cy="4" r="2"/><path d="M15 22l-2-6-3-3 1-6"/><path d="M8 13l-2 9"/><path d="M11 7 7 9v4"/><path d="M11 7l3 4 4 1"/>',
+    music: '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+    radio: '<path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"/><path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"/><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5"/><path d="M19.1 4.9C23 8.8 23 15.1 19.1 19"/>',
   };
   const ic = (n, s = 22, w = 2.2) => `<svg class="ic" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round">${IC[n]}</svg>`;
   const HEART = '<svg viewBox="0 0 24 24"><path fill="#E63946" d="M12 21.4s-7.7-4.8-9.8-9.4C.7 8.7 2.5 4.4 6.6 4c2.2-.2 3.9.9 5.4 2.9C13.5 4.9 15.2 3.8 17.4 4c4.1.4 5.9 4.7 4.4 8-2.1 4.6-9.8 9.4-9.8 9.4z"/></svg>';
 
   const CATS = [
-    { k: 'eat', label: 'Eat', icon: 'utensils', bg: 'var(--peach)' },
-    { k: 'drink', label: 'Drinks', icon: 'martini', bg: 'var(--lilac)' },
-    { k: 'shop', label: 'Shop', icon: 'bag', bg: 'var(--butter)' },
-    { k: 'see', label: 'See', icon: 'landmark', bg: 'var(--mint)' },
-    { k: 'services', label: 'Services', icon: 'wrench', bg: 'var(--sky)' },
-    { k: 'today', label: 'Today', icon: 'calendar', bg: 'var(--pink)', live: '3 live' },
+    { k: 'eat', label: 'Eat', icon: 'utensils', t: 'var(--peach)', p: 'var(--p-eat)' },
+    { k: 'drink', label: 'Drinks', icon: 'martini', t: 'var(--lilac)', p: 'var(--p-drink)' },
+    { k: 'shop', label: 'Shop', icon: 'bag', t: 'var(--butter)', p: 'var(--p-shop)' },
+    { k: 'see', label: 'See', icon: 'landmark', t: 'var(--mint)', p: 'var(--p-see)' },
+    { k: 'services', label: 'Services', icon: 'wrench', t: 'var(--sky)', p: 'var(--p-services)' },
+    { k: 'today', label: 'Today', icon: 'calendar', t: 'var(--pink)', p: 'var(--p-today)', live: '3 live' },
   ];
+  const CAT = Object.fromEntries(CATS.map((c) => [c.k, c]));
+  const SIGN = [42.3555, -71.0603];
   // Sample listings (the real ones come from Dr Phil's list). walk = minutes from the sign.
   const P = [
-    { id: 'florabella', name: 'Florabella Flowers', cat: 'shop', kind: 'Flowers', walk: 1, open: 'Open till 6 PM', img: 'florabella', n: 3, sp: true, deal: '10% off any bouquet', about: 'Fresh flowers in the heart of Downtown Crossing: sunflowers, roses and bouquets wrapped while you wait.', where: 'Washington St at Summer St', hours: 'Today 9 AM – 6 PM' },
-    { id: 'drphil', name: 'Dr Phil Repair Center', cat: 'services', kind: 'Phone repair', walk: 4, open: 'Open till 7 PM', img: 'drphil', n: 2, sp: true, deal: 'Free screen check', about: 'Cracked screen or a dying battery? Phone repair on Tremont St, most fixes while you wait.', where: 'Tremont St', hours: 'Today 10 AM – 7 PM' },
-    { id: 'brattle', name: 'Brattle Book Shop', cat: 'shop', kind: 'Books', walk: 2, open: 'Open till 5:30 PM', img: 'brattle', n: 2 },
-    { id: 'opera', name: 'Boston Opera House', cat: 'see', kind: 'Theater', walk: 2, open: 'Show at 7:30 PM', img: 'opera', n: 2 },
-    { id: 'yvonnes', name: "Yvonne's", cat: 'drink', kind: 'Cocktail bar', walk: 2, open: 'Open till 1 AM', img: 'yvonnes', n: 2 },
-    { id: 'silvertone', name: 'Silvertone Bar & Grill', cat: 'drink', kind: 'Bar & grill', walk: 3, open: 'Open till 2 AM', img: 'silvertone', n: 1 },
-    { id: 'paku', name: 'Paku Katsuya', cat: 'eat', kind: 'Japanese', walk: 4, open: 'Open till 9 PM', img: 'paku', n: 3 },
-    { id: 'common', name: 'Boston Common', cat: 'see', kind: 'Park', walk: 4, open: 'Open all day', img: 'common', n: 3 },
-    { id: 'tam', name: 'The Tam', cat: 'drink', kind: 'Dive bar', walk: 5, open: 'Open till 2 AM', img: 'tam', n: 1 },
-    { id: 'genki', name: 'Genki Ya', cat: 'eat', kind: 'Sushi', walk: 6, open: 'Open till 10 PM', img: 'genki', n: 2 },
-    { id: 'oldstate', name: 'Old State House', cat: 'see', kind: 'History', walk: 6, open: 'Open till 5 PM', img: 'oldstate', n: 2 },
-    { id: 'blackrose', name: 'The Black Rose', cat: 'drink', kind: 'Irish pub', walk: 8, open: 'Open till 2 AM', img: 'blackrose', n: 1 },
-    { id: 'faneuil', name: 'Faneuil Hall', cat: 'see', kind: 'Market', walk: 8, open: 'Open till 9 PM', img: 'faneuil', n: 2 },
-    { id: 'chinatown', name: 'Chinatown Gate', cat: 'see', kind: 'Landmark', walk: 8, open: 'Open all day', img: 'chinatown', n: 2 },
-    { id: 'bellinhand', name: 'Bell in Hand', cat: 'drink', kind: 'Tavern', walk: 9, open: 'Open till 2 AM', img: 'bellinhand', n: 2 },
-    { id: 'unionoyster', name: 'Union Oyster House', cat: 'eat', kind: 'Seafood', walk: 9, open: 'Open till 10 PM', img: 'unionoyster', n: 1 },
-    { id: 'market', name: 'Holiday market stalls', cat: 'today', kind: 'Live now · Summer St plaza', walk: 2, open: 'Till 7 PM', src: 'v-candles', about: 'Handmade candles, gifts and snacks from local makers, on the plaza by the sign.' },
-    { id: 'dumpling', name: 'Dumpling cart', cat: 'today', kind: 'Live now · Street food', walk: 2, open: 'Till 8 PM', src: 'v-dumpling', about: 'Steamed dumplings to go, on Washington St.' },
-    { id: 'musical', name: "Tonight's musical", cat: 'today', kind: 'Boston Opera House', walk: 2, open: 'Starts 7:30 PM', img: 'opera', n: 2, about: 'A touring Broadway musical at the Boston Opera House tonight.' },
-    { id: 'vintage', name: 'Vintage rack', cat: 'today', kind: 'Live now · Secondhand clothes', walk: 4, open: 'Till 5 PM', src: 'v-vintage', about: 'Secondhand jackets and sweaters, on Winter St.' },
+    { id: 'florabella', name: 'Florabella Flowers', cat: 'shop', kind: 'Flowers', walk: 1, open: 'Open till 6 PM', img: 'florabella', n: 3, sp: true, deal: '10% off any bouquet', about: 'Fresh flowers in the heart of Downtown Crossing: sunflowers, roses and bouquets wrapped while you wait.', where: 'Washington St at Summer St', hours: 'Today 9 AM – 6 PM', ll: [42.35548, -71.05985] },
+    { id: 'drphil', name: 'Dr Phil Repair Center', cat: 'services', kind: 'Phone repair', walk: 4, open: 'Open till 7 PM', img: 'drphil', n: 2, sp: true, deal: 'Free screen check', about: 'Cracked screen or a dying battery? Phone repair on Tremont St, most fixes while you wait.', where: 'Tremont St', hours: 'Today 10 AM – 7 PM', ll: [42.3545, -71.0633] },
+    { id: 'brattle', name: 'Brattle Book Shop', cat: 'shop', kind: 'Books', walk: 2, open: 'Open till 5:30 PM', img: 'brattle', n: 2, ll: [42.3547, -71.0619] },
+    { id: 'opera', name: 'Boston Opera House', cat: 'see', kind: 'Theater', walk: 2, open: 'Show at 7:30 PM', img: 'opera', n: 2, ll: [42.3540, -71.0624] },
+    { id: 'yvonnes', name: "Yvonne's", cat: 'drink', kind: 'Cocktail bar', walk: 2, open: 'Open till 1 AM', img: 'yvonnes', n: 2, ll: [42.3561, -71.0617] },
+    { id: 'silvertone', name: 'Silvertone Bar & Grill', cat: 'drink', kind: 'Bar & grill', walk: 3, open: 'Open till 2 AM', img: 'silvertone', n: 1, ll: [42.3567, -71.0611] },
+    { id: 'paku', name: 'Paku Katsuya', cat: 'eat', kind: 'Japanese', walk: 4, open: 'Open till 9 PM', img: 'paku', n: 3, ll: [42.3535, -71.0610] },
+    { id: 'common', name: 'Boston Common', cat: 'see', kind: 'Park', walk: 4, open: 'Open all day', img: 'common', n: 3, ll: [42.3553, -71.0648] },
+    { id: 'tam', name: 'The Tam', cat: 'drink', kind: 'Dive bar', walk: 5, open: 'Open till 2 AM', img: 'tam', n: 1, ll: [42.3518, -71.0645] },
+    { id: 'genki', name: 'Genki Ya', cat: 'eat', kind: 'Sushi', walk: 6, open: 'Open till 10 PM', img: 'genki', n: 2, ll: [42.3524, -71.0630] },
+    { id: 'oldstate', name: 'Old State House', cat: 'see', kind: 'History', walk: 6, open: 'Open till 5 PM', img: 'oldstate', n: 2, ll: [42.3587, -71.0575] },
+    { id: 'blackrose', name: 'The Black Rose', cat: 'drink', kind: 'Irish pub', walk: 8, open: 'Open till 2 AM', img: 'blackrose', n: 1, ll: [42.3596, -71.0539] },
+    { id: 'faneuil', name: 'Faneuil Hall', cat: 'see', kind: 'Market', walk: 8, open: 'Open till 9 PM', img: 'faneuil', n: 2, ll: [42.3600, -71.0560] },
+    { id: 'chinatown', name: 'Chinatown Gate', cat: 'see', kind: 'Landmark', walk: 8, open: 'Open all day', img: 'chinatown', n: 2, ll: [42.3510, -71.0605] },
+    { id: 'bellinhand', name: 'Bell in Hand', cat: 'drink', kind: 'Tavern', walk: 9, open: 'Open till 2 AM', img: 'bellinhand', n: 2, ll: [42.3612, -71.0572] },
+    { id: 'unionoyster', name: 'Union Oyster House', cat: 'eat', kind: 'Seafood', walk: 9, open: 'Open till 10 PM', img: 'unionoyster', n: 1, ll: [42.3612, -71.0566] },
+    { id: 'market', name: 'Holiday market stalls', cat: 'today', kind: 'Summer St plaza', walk: 2, open: 'Till 7 PM', live: true, src: 'v-candles', about: 'Handmade candles, gifts and snacks from local makers, on the plaza by the sign.', ll: [42.35505, -71.05915] },
+    { id: 'dumpling', name: 'Dumpling cart', cat: 'today', kind: 'Street food', walk: 2, open: 'Till 8 PM', live: true, src: 'v-dumpling', about: 'Steamed dumplings to go, on Washington St.', ll: [42.3546, -71.0607] },
+    { id: 'vintage', name: 'Vintage rack', cat: 'today', kind: 'Secondhand clothes', walk: 3, open: 'Till 5 PM', live: true, src: 'v-vintage', about: 'Secondhand jackets and sweaters, on Winter St.', ll: [42.3558, -71.0612] },
+    { id: 'musical', name: "Tonight's musical", cat: 'today', kind: 'Boston Opera House', walk: 2, open: 'Starts 7:30 PM', img: 'opera', n: 2, about: 'A touring Broadway musical at the Boston Opera House tonight.', ll: [42.3540, -71.0624] },
   ];
+  const WEEK = [['Makers market', 'Sat 11 AM · near Faneuil Hall', 'faneuil', 1], ['Family skate', 'Sat 4 PM · Frog Pond', 'common', 2], ['Food truck afternoon', 'Sun 1 PM · City Hall Plaza', 'oldstate', 1]];
   const byId = Object.fromEntries(P.map((p) => [p.id, p]));
+  const places = P.filter((p) => p.cat !== 'today');
   const ph = (p, i = 0, t = false) => (p.src ? `${IMG}${p.src}${t ? '-t' : ''}.webp` : `${IMG}${p.img}-${i}${t ? '-t' : ''}.webp`);
   const walk = (m) => `<span class="walk"><b>${m}</b><span>min</span></span>`;
+  const status = (p) => (p.live ? `<span class="livetxt">Live now</span> · ${p.open}` : `<span class="open">${p.open}</span>`);
+  const row = (p) => `<a class="row" href="#/p/${p.id}"><img src="${ph(p, 0, true)}" alt="" loading="lazy"><span class="t"><b>${p.name}</b><span class="m">${p.kind} · ${status(p)}</span></span>${walk(p.walk)}</a>`;
 
+  /* ---------- the map (drawn from OpenStreetMap data, colors from the theme) ---------- */
+  const SC = 0.72, OX = 19831.867 * 256 - 620, OY = 24240.75 * 256 - 660, RING = 328.4;
+  let MAPSVG = '';
+  const mapReady = fetch('/iloveboston/map-dtc.svg').then((r) => r.text()).then((t) => { MAPSVG = t; }).catch(() => {});
+  function toMap([lat, lon]) {
+    const x = (lon + 180) / 360 * 256 * 65536;
+    const s = Math.sin(lat * Math.PI / 180);
+    const y = (0.5 - Math.log((1 + s) / (1 - s)) / (4 * Math.PI)) * 256 * 65536;
+    return [(x - OX) * SC, (y - OY) * SC];
+  }
+  const pinHTML = (p, o = {}) => { const [x, y] = toMap(p.ll); const c = CAT[p.cat]; return `<span class="mk${o.sm ? ' sm' : ''}${p.live ? ' live' : ''}${o.sel ? ' sel' : ''}${o.pop ? ' pop' : ''}" data-pin="${p.id}" style="left:${x.toFixed(1)}px;top:${y.toFixed(1)}px;--c:${c.p}${o.pop ? `;animation-delay:${o.pop}ms` : ''}">${ic(c.icon, o.sm ? 12 : 15, 2.4)}${o.label ? `<span class="lb">${p.name}</span>` : ''}</span>`; };
+  const meHTML = () => { const [x, y] = toMap(SIGN); return `<span class="me" style="left:${x}px;top:${y}px">${HEART}</span>`; };
+  function ringHTML(withLabel) {
+    const [x, y] = toMap(SIGN);
+    return `<svg class="ringsvg" width="1" height="1"><circle cx="${x}" cy="${y}" r="${RING}" fill="var(--ring-fill)" stroke="var(--ring)" stroke-width="2" stroke-dasharray="7 7" vector-effect="non-scaling-stroke"/></svg>${withLabel ? `<span class="ringlbl glass" style="left:${x}px;top:${y - RING}px">10-min walk</span>` : ''}`;
+  }
+  // a still map, centered on a point (or fitted around some places)
+  function fillStatic(el) {
+    const o = JSON.parse(el.dataset.map);
+    const W = el.clientWidth, H = el.clientHeight;
+    const list = (o.pins || []).map((id) => byId[id]).filter(Boolean);
+    let z = o.z || 1, cx, cy;
+    if (o.fit) {
+      const pts = list.map((p) => toMap(p.ll)).concat([toMap(SIGN)]);
+      const xs = pts.map((p) => p[0]), ys = pts.map((p) => p[1]);
+      const bw = Math.max(...xs) - Math.min(...xs) + 90, bh = Math.max(...ys) - Math.min(...ys) + 90;
+      z = Math.max(0.62, Math.min(1.35, W / bw, H / bh));
+      cx = (Math.max(...xs) + Math.min(...xs)) / 2; cy = (Math.max(...ys) + Math.min(...ys)) / 2;
+    } else { [cx, cy] = toMap(o.at || SIGN); }
+    const ax = (o.ax ?? 0.5) * W, ay = (o.ay ?? 0.5) * H;
+    let line = '';
+    if (o.line) {
+      const a = toMap(SIGN), b = toMap(byId[o.line].ll);
+      line = `<svg class="ringsvg" width="1" height="1"><path d="M${a[0]} ${a[1]} L${b[0]} ${b[1]}" stroke="var(--accent)" stroke-width="4" stroke-linecap="round" stroke-dasharray="0.1 9" fill="none" vector-effect="non-scaling-stroke"/></svg>`;
+    }
+    el.innerHTML = `<div class="mapin" style="transform:translate(${(ax - cx * z).toFixed(1)}px,${(ay - cy * z).toFixed(1)}px) scale(${z});--ik:${(1 / z).toFixed(3)}">${MAPSVG}${o.ring ? ringHTML(o.ringLabel) : ''}${line}${list.map((p, i) => pinHTML(p, { sm: o.sm, label: o.labels, pop: o.popIn ? 120 + i * 45 : 0, sel: o.line === p.id })).join('')}${meHTML()}</div><span class="attr">© OpenStreetMap</span>`;
+  }
+  function hydrate() { if (!MAPSVG) { mapReady.then(hydrate); return; } document.querySelectorAll('.map[data-map]').forEach(fillStatic); }
+  const mapDiv = (o, cls = '') => `<div class="map ${cls}" data-map='${JSON.stringify(o)}'></div>`;
+
+  /* ---------- pages ---------- */
   function home() {
     const feat = P.filter((p) => p.sp);
-    const close = P.filter((p) => !p.sp && p.cat !== 'today').slice(0, 4);
-    return `<header class="top rise"><a class="logo" href="#/">I ${HEART} BOSTON</a><button class="lang" type="button" data-toast="Dr Phil's 10 languages come in the real build">${ic('globe', 17, 2.2)}EN</button></header>
-      <section class="hero" id="hero">
-        <svg class="rings" viewBox="0 0 250 250" aria-hidden="true"><g fill="none" stroke="rgba(255,255,255,.13)" stroke-width="1.5"><circle cx="125" cy="125" r="36"/><circle cx="125" cy="125" r="74"/><circle cx="125" cy="125" r="112" stroke-dasharray="4 6"/></g>
-          
-          <g transform="translate(111 111)"><path fill="#E63946" d="M14 25s-9-5.6-11.4-11C.8 10.2 2.9 5.1 7.7 4.7c2.6-.2 4.6 1 6.3 3.4 1.8-2.4 3.8-3.6 6.3-3.4 4.8.4 6.9 5.5 5.1 9.3C23 19.4 14 25 14 25z"/></g></svg>
-        <p class="kick" id="heroKick"><span class="ok">${ic('check', 11, 4)}</span><span data-t="scanned">You scanned sign</span>&nbsp;DTC-001</p>
-        <h1 id="heroTitle">Downtown Crossing</h1>
-        <p class="sub" id="heroSub">The best of Boston within a 10&#8209;minute walk of this sign.</p>
-        <button type="button" class="search" data-toast="Search comes in the real build">${ic('search', 19, 2.4)}<span>Search food, shops, sights…</span></button>
-      </section>
+    const near = places.slice().sort((a, b) => a.walk - b.walk).slice(0, 9).map((p) => p.id).concat(['market', 'dumpling']);
+    return `<header class="top rise"><a class="logo" href="#/">I ${HEART} BOSTON</a><button class="lang glass" type="button" data-toast="Dr Phil's 10 languages come in the real build">${ic('globe', 17, 2.2)}EN</button></header>
+      <a class="hero" id="hero" href="#/map">
+        ${mapDiv({ at: SIGN, z: 1.18, ax: 0.6, ay: 0.64, ring: true, pins: near, sm: true, popIn: true })}
+        <span class="ttl glass"><span class="kick" id="heroKick"><span class="ok">${ic('check', 11, 4)}</span>You scanned sign&nbsp;DTC-001</span><span class="h1" id="heroTitle">Downtown Crossing</span></span>
+        <span class="go glass">${ic('expand', 16, 2.4)}Open map</span>
+      </a>
       <h2 class="sec rise">What are you looking for?</h2>
-      <div class="tiles rise">${CATS.map((c) => `<a class="tile" href="#/c/${c.k}" style="--bg:${c.bg}">${ic(c.icon, 28, 2.1)}<b>${c.label}</b>${c.live ? `<span class="live"><i></i>${c.live}</span>` : ''}</a>`).join('')}</div>
+      <div class="tiles rise">${CATS.map((c) => `<a class="tile" href="${c.k === 'today' ? '#/today' : '#/c/' + c.k}" style="--t:${c.t}">${ic(c.icon, 26, 2.1)}<b>${c.label}</b>${c.live ? `<span class="live"><i></i>${c.live}</span>` : ''}</a>`).join('')}</div>
       <div class="sec-row rise"><h2 class="sec">Featured nearby</h2><span class="note">Sponsored</span></div>
       <div class="feat rise">${feat.map((p) => `<a class="fcard" href="#/p/${p.id}"><span class="ph"><img src="${ph(p)}" alt=""><span class="tag">Sponsored</span></span><span class="ft"><b>${p.name}</b><span class="m">${p.kind} · ${p.walk} min walk</span><span class="deal">${ic('gift', 15, 2.3)}${p.deal}</span></span></a>`).join('')}</div>
-      <h2 class="sec rise">Closest to this sign</h2>
-      <div class="list rise">${close.map((p) => `<a class="row" href="#/p/${p.id}"><img src="${ph(p, 0, true)}" alt=""><span class="t"><b>${p.name}</b><span class="m">${p.kind} · <span class="open">${p.open}</span></span></span>${walk(p.walk)}</a>`).join('')}</div>
-      <a class="seeall rise" href="#/c/all">See all ${P.filter((p) => p.cat !== 'today').length} places ${ic('chev', 18, 2.6)}</a>
-      <div class="biz rise"><b>Own a business near this sign?</b><span>Everyone who scans it can find you. Get featured from $50 a month.</span><button type="button" class="btn" data-toast="Opens the business sign-up (next mockup)">Get featured</button></div>
-      <p class="foot rise">Sample listings for the mockup · Photos from Wikimedia Commons · <button type="button" id="replay">Replay the intro</button></p>`;
+      <button type="button" class="bizline rise" data-toast="Opens the business sign-up (next mockup)"><span>Own a business near this sign?</span><b>Get featured ${ic('chev', 15, 2.8)}</b></button>
+      <p class="foot rise">Sample listings for the demo · Photos from Wikimedia Commons · Map © OpenStreetMap · <button type="button" id="replay">Replay the intro</button></p>
+      <div class="tabspace"></div>`;
+  }
+  function mapTab(filter) {
+    const list = places.concat(P.filter((p) => p.live)).filter((p) => !filter || p.cat === filter).sort((a, b) => a.walk - b.walk);
+    const chips = [['', 'All']].concat(CATS.filter((c) => c.k !== 'services').map((c) => [c.k, c.label]));
+    return `<div class="mapfull">
+        <div class="mapscroll" id="mscroll"><div class="mapin" id="min" style="width:892.8px;height:892.8px"></div></div>
+        <div class="mtop"><div class="chips">${chips.map(([k, l]) => `<a class="chip glass${(filter || '') === k ? ' on' : ''}" href="#/map${k ? '/' + k : ''}">${k ? ic(CAT[k].icon, 15, 2.3) : ''}${l}</a>`).join('')}</div></div>
+        <button type="button" class="recenter glass" id="recenter" aria-label="Back to the sign">${ic('target', 21, 2.2)}</button>
+        <span class="attr">© OpenStreetMap</span>
+        <div class="mcards" id="mcards">${list.map((p) => `<a class="mcard" href="#/p/${p.id}" data-card="${p.id}"><img src="${ph(p, 0, true)}" alt="" loading="lazy"><span class="t"><b>${p.name}</b><span class="m">${p.kind} · ${p.walk} min walk</span><span class="m">${status(p)}</span></span></a>`).join('')}</div>
+      </div>`;
+  }
+  function todayTab() {
+    const live = P.filter((p) => p.live), show = byId.musical;
+    return `<div class="ptop"><a class="logo" href="#/">I ${HEART} BOSTON</a></div>
+      <div class="ptitle"><h1>Today</h1><p>Thursday near sign DTC-001: who's out on the street right now, and what's on tonight.</p></div>
+      ${mapDiv({ fit: true, pins: live.map((p) => p.id).concat(['musical']), labels: false }, 'cmap')}
+      <div class="sec-row"><h2 class="sec"><span class="dot" style="margin-right:8px;vertical-align:middle"></span>Live now</h2><span class="note">${live.length} stands</span></div>
+      <div class="list">${live.map(row).join('')}</div>
+      <h2 class="sec">Tonight</h2>
+      <a class="wide" href="#/p/musical"><img src="${ph(show, 1)}" alt=""><span><b>${show.name}</b><span class="m">${show.kind} · 7:30 PM<br>2 min walk from the sign</span></span></a>
+      <h2 class="sec">This weekend</h2>
+      <div class="list">${WEEK.map(([n, w, img, i]) => `<div class="row"><img src="${IMG}${img}-${i}-t.webp" alt="" loading="lazy"><span class="t"><b>${n}</b><span class="m">${w}</span></span></div>`).join('')}</div>
+      <p class="foot">Sample events for the demo.</p>
+      <div class="tabspace"></div>`;
   }
   function listPage(k) {
-    const c = CATS.find((x) => x.k === k) || { label: 'All places', icon: 'pin', bg: 'var(--sky)' };
-    const items = P.filter((p) => (k === 'all' ? p.cat !== 'today' : p.cat === k)).sort((a, b) => a.walk - b.walk);
-    const first = items[0];
-    return `<div class="ptop"><a class="back" href="#/">${ic('left', 20, 2.6)}</a></div>
-      <div class="ptitle"><h1><span class="bub" style="--bg:${c.bg}">${ic(c.icon, 24, 2.2)}</span>${c.label}</h1><p>${k === 'today' ? 'Live now and later today, near' : items.length + ' places within a 10-minute walk of'} sign DTC-001</p></div>
-      <div class="chips"><span class="chip on">Closest</span><span class="chip">Open now</span></div>
-      ${first ? `<a class="big" href="#/p/${first.id}" style="display:block"><span class="ph" style="display:block"><img src="${ph(first)}" alt="">${first.sp ? '<span class="tag">Sponsored</span>' : ''}</span><span class="bt"><span class="t"><b>${first.name}</b><span class="m">${first.kind} · <span class="open" style="color:var(--ok);font-weight:700">${first.open}</span></span></span>${walk(first.walk)}</span></a>` : ''}
-      <div class="list" style="margin-top:12px">${items.slice(1).map((p) => `<a class="row" href="#/p/${p.id}"><img src="${ph(p, 0, true)}" alt=""><span class="t"><b>${p.name}</b><span class="m">${p.kind} · <span class="open">${p.open}</span></span></span>${walk(p.walk)}</a>`).join('')}</div>
-      <p class="foot">Sample listings for the mockup.</p>`;
+    const c = CAT[k] || { label: 'All places', icon: 'pin', t: 'var(--sky)' };
+    const items = (k === 'all' ? places : P.filter((p) => p.cat === k)).slice().sort((a, b) => a.walk - b.walk);
+    return `<div class="ptop"><button type="button" class="back glass" data-back>${ic('left', 20, 2.6)}</button></div>
+      <div class="ptitle"><h1><span class="bub" style="--t:${c.t}">${ic(c.icon, 24, 2.2)}</span>${c.label}</h1><p>${k === 'today' ? 'Live now and later today, near' : items.length + ' places within a 10-minute walk of'} sign DTC-001</p></div>
+      ${mapDiv({ fit: true, pins: items.map((p) => p.id) }, 'cmap')}
+      <div class="list" style="margin-top:14px">${items.map(row).join('')}</div>
+      <p class="foot">Sample listings for the demo.</p>
+      <div class="tabspace"></div>`;
   }
   const maps = (p) => { const q = encodeURIComponent(p.name + ' near Downtown Crossing, Boston'); return /iPhone|iPad|Mac/.test(navigator.userAgent) ? `https://maps.apple.com/?q=${q}` : `https://www.google.com/maps/search/?api=1&query=${q}`; };
   function placePage(id) {
     const p = byId[id] || P[0];
-    const imgs = Array.from({ length: p.n }, (_, i) => ph(p, i));
-    return `<div class="hero-ph"><img src="${imgs[0]}" alt=""><a class="back" href="#/">${ic('left', 20, 2.6)}</a>${p.sp ? '<span class="tag">Sponsored</span>' : ''}</div>
+    const imgs = p.src ? [ph(p)] : Array.from({ length: p.n }, (_, i) => ph(p, i));
+    return `<div class="hero-ph"><img src="${imgs[0]}" alt=""><button type="button" class="back glass" data-back>${ic('left', 20, 2.6)}</button>${p.sp ? '<span class="tag">Sponsored</span>' : ''}</div>
       <div class="pl-body">
         <h1>${p.name}</h1>
-        <p class="m">${p.kind} · ${p.walk} min walk · <span class="open">${p.open}</span></p>
+        <p class="m">${p.kind} · ${p.walk} min walk · ${status(p)}</p>
         ${p.deal ? `<div class="dealbig"><span class="gi">${ic('gift', 22, 2.3)}</span><span><b>${p.deal}</b><span>Show this screen. Only for people who scan the sign.</span></span></div>` : ''}
         <div class="acts"><a class="act pri" href="${maps(p)}" target="_blank" rel="noopener">${ic('nav', 18, 2.4)}Directions</a><button type="button" class="act" data-toast="Calls the business (sample listing)">${ic('phone', 18, 2.3)}Call</button><button type="button" class="act" data-toast="Opens their Instagram (sample listing)">${ic('insta', 18, 2.3)}Instagram</button></div>
-        <p class="about">${p.about || ''}</p>
-        ${imgs.length > 1 ? `<div class="strip">${imgs.slice(1).concat(imgs.slice(0, 1)).map((s) => `<img src="${s}" alt="">`).join('')}</div>` : ''}
+        <div class="pmap">${mapDiv({ fit: true, pins: [p.id], line: p.id }, '')}<span class="wk glass">${ic('walk', 15, 2.4)}${p.walk} min from the sign</span></div>
+        ${p.about ? `<p class="about">${p.about}</p>` : ''}
+        ${imgs.length > 1 ? `<div class="strip">${imgs.slice(1).concat(imgs.slice(0, 1)).map((s) => `<img src="${s}" alt="" loading="lazy">`).join('')}</div>` : ''}
         <div class="facts"><div class="fact">${ic('clock', 19, 2.2)}<span>${p.hours || p.open}</span></div><div class="fact">${ic('pin', 19, 2.2)}<span>${p.where || 'Downtown Crossing'}</span><small>${p.walk} min</small></div></div>
-        <p class="foot" style="padding:18px 0 0">Directions open in your phone's own maps app. Sample listing for the mockup.</p>
+        <p class="foot" style="padding:18px 0 0">Directions open your phone's own maps app. Sample listing for the demo.</p>
       </div>`;
   }
 
-  const app = document.getElementById('app');
+  /* ---------- the map tab: cards and pins move together ---------- */
+  function wireMap(filter) {
+    const sc = document.getElementById('mscroll'), inner = document.getElementById('min'), cards = document.getElementById('mcards');
+    const list = places.concat(P.filter((p) => p.live)).filter((p) => !filter || p.cat === filter).sort((a, b) => a.walk - b.walk);
+    const draw = () => {
+      inner.innerHTML = MAPSVG + ringHTML(true) + list.map((p, i) => pinHTML(p, { label: i === 0, sel: i === 0 })).join('') + meHTML();
+      const [x, y] = toMap(SIGN);
+      const fy = () => Math.min(innerHeight * 0.4, innerHeight - 330);
+      if (!sc.dataset.placed) { sc.scrollLeft = x - sc.clientWidth / 2; sc.scrollTop = y - fy(); sc.dataset.placed = '1'; }
+      let cur = list[0] && list[0].id;
+      const focus = (id, smooth) => {
+        cur = id;
+        inner.querySelectorAll('.mk').forEach((m) => { const on = m.dataset.pin === id; m.classList.toggle('sel', on); const lb = m.querySelector('.lb'); if (on && !lb) m.insertAdjacentHTML('beforeend', `<span class="lb">${byId[id].name}</span>`); if (!on && lb) lb.remove(); });
+        const [px, py] = toMap(byId[id].ll);
+        sc.scrollTo({ left: px - sc.clientWidth / 2, top: py - fy(), behavior: smooth ? 'smooth' : 'auto' });
+      };
+      let t;
+      cards.addEventListener('scroll', () => { clearTimeout(t); t = setTimeout(() => { const i = Math.round(cards.scrollLeft / 290); const p = list[Math.max(0, Math.min(list.length - 1, i))]; if (p && p.id !== cur) focus(p.id, true); }, 90); }, { passive: true });
+      inner.addEventListener('click', (e) => { const m = e.target.closest('.mk'); if (!m) return; e.preventDefault(); const i = list.findIndex((p) => p.id === m.dataset.pin); if (m.dataset.pin === cur) { location.hash = '#/p/' + cur; return; } cards.scrollTo({ left: i * 290, behavior: 'smooth' }); focus(m.dataset.pin, true); });
+      document.getElementById('recenter').onclick = () => sc.scrollTo({ left: x - sc.clientWidth / 2, top: y - fy(), behavior: 'smooth' });
+    };
+    if (MAPSVG) draw(); else mapReady.then(draw);
+  }
+
+  /* ---------- router + tabs ---------- */
+  const app = document.getElementById('app'), tabbar = document.getElementById('tabbar'), lens = document.getElementById('lens');
+  let tabNow = 0;
+  function moveLens(i, animate) {
+    const from = tabNow; tabNow = i;
+    document.querySelectorAll('.tab').forEach((t) => t.classList.toggle('on', +t.dataset.tab === i));
+    const end = `translateX(${i * 100}%)`;
+    if (animate && from !== i && lens.animate) {
+      const mid = ((from + i) / 2) * 100;
+      lens.animate([{ transform: `translateX(${from * 100}%)` }, { transform: `translateX(${mid}%) scale(1.14,.9)`, offset: 0.45 }, { transform: end }], { duration: 520, easing: 'cubic-bezier(.3,1.25,.5,1)' });
+    }
+    lens.style.transform = end;
+  }
   function render() {
     if (/^#\/(looks|place|live|credits|business|spots)\b/.test(location.hash)) { location.replace('/iloveboston/full.html' + location.hash); return; }
     const h = location.hash.replace(/^#\/?/, '').split('/');
+    let tab = 0;
     if (h[0] === 'c') app.innerHTML = listPage(h[1]);
     else if (h[0] === 'p') app.innerHTML = placePage(h[1]);
+    else if (h[0] === 'map') { app.innerHTML = mapTab(h[1] || ''); tab = 1; }
+    else if (h[0] === 'today') { app.innerHTML = todayTab(); tab = 2; }
     else app.innerHTML = home();
-    window.scrollTo(0, 0);
+    tabbar.classList.toggle('hide', h[0] === 'p');
+    const iv = document.getElementById('intro');
+    if (iv && h[0] && h[0] !== 'mockups') { iv.remove(); document.body.classList.remove('intro-on', 'pins-wait'); }
+    moveLens(tab, true);
+    document.body.style.overflow = h[0] === 'map' ? 'hidden' : '';
+    if (h[0] !== 'map') window.scrollTo(0, 0);
+    hydrate();
+    if (h[0] === 'map') wireMap(h[1] || '');
     const r = document.getElementById('replay');
     if (r) r.onclick = () => { sessionStorage.removeItem('ilb-intro'); location.reload(); };
   }
+  let navs = 0;
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('[data-back]')) { if (navs > 0) history.back(); else location.hash = '#/'; return; }
+    const pin = e.target.closest('.map .mk[data-pin]');
+    if (pin && !e.target.closest('#hero')) { location.hash = '#/p/' + pin.dataset.pin; }
+  });
   let tt;
   document.addEventListener('click', (e) => { const b = e.target.closest('[data-toast]'); if (!b) return; let t = document.querySelector('.toast'); if (!t) { t = document.createElement('div'); t.className = 'toast'; document.body.appendChild(t); } t.textContent = b.dataset.toast; t.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => t.classList.remove('on'), 2200); });
-  window.addEventListener('hashchange', render);
+  window.addEventListener('hashchange', () => { navs++; render(); });
   render();
+
+  /* ---------- search ---------- */
+  const sheet = document.getElementById('ssheet'), sq = document.getElementById('sq'), sres = document.getElementById('sres');
+  const SUGS = ['Bar', 'Sushi', 'Flowers', 'Books', 'Phone repair', 'History', 'Live now'];
+  function searchRender() {
+    const q = sq.value.trim().toLowerCase();
+    if (!q) { sres.innerHTML = `<div class="sugs">${SUGS.map((s) => `<button type="button" class="chip glass" data-s="${s}">${s}</button>`).join('')}</div>`; return; }
+    const hits = P.filter((p) => (p.name + ' ' + p.kind + ' ' + (CAT[p.cat] || {}).label + (p.live ? ' live now' : '')).toLowerCase().includes(q.replace(/s$/, '')));
+    sres.innerHTML = hits.length ? `<div class="list">${hits.map(row).join('')}</div>` : `<p class="empty">Nothing called “${sq.value.replace(/[<>&]/g, '')}” near this sign yet.</p>`;
+  }
+  const openSearch = () => { sheet.classList.add('on'); sheet.setAttribute('aria-hidden', 'false'); searchRender(); setTimeout(() => sq.focus(), 60); };
+  const closeSearch = () => { sheet.classList.remove('on'); sheet.setAttribute('aria-hidden', 'true'); sq.blur(); };
+  document.getElementById('openSearch').onclick = openSearch;
+  document.getElementById('closeSearch').onclick = () => { sq.value = ''; closeSearch(); };
+  sq.addEventListener('input', searchRender);
+  sres.addEventListener('click', (e) => { const s = e.target.closest('[data-s]'); if (s) { sq.value = s.dataset.s; searchRender(); return; } if (e.target.closest('a')) closeSearch(); });
+  window.__openSearch = openSearch;
 
   /* ----- the intro: plays when you arrive from a sign's QR code ----- */
   const intro = document.getElementById('intro');
   const onHome = !location.hash || location.hash === '#/';
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (!onHome || reduce || (!CAPTURE && !Q.has('intro') && !fromMockups && sessionStorage.getItem('ilb-intro'))) { intro.remove(); document.body.classList.remove('intro-on'); return; }
+  if (!onHome || reduce || (!CAPTURE && !Q.has('intro') && !fromMockups && sessionStorage.getItem('ilb-intro'))) { intro.remove(); document.body.classList.remove('intro-on', 'pins-wait'); return; }
   sessionStorage.setItem('ilb-intro', '1');
-  // the heart pops where the QR code was (the middle), then slides into its spot in I ♥ BOSTON
   const heart = document.getElementById('iHeart');
   const placeHeart = () => {
     const mk = heart.parentElement.getBoundingClientRect();
-    const dx = innerWidth / 2 - (mk.left + heart.offsetLeft + heart.offsetWidth / 2);
-    intro.style.setProperty('--hx', dx.toFixed(1) + 'px');
+    intro.style.setProperty('--hx', (innerWidth / 2 - (mk.left + heart.offsetLeft + heart.offsetWidth / 2)).toFixed(1) + 'px');
   };
   placeHeart();
   document.fonts && document.fonts.ready.then(placeHeart);
@@ -354,33 +600,38 @@ body.intro-on .rise{opacity:0;transform:translateY(18px)}
   function morph(paused) {
     if (morphing) return; morphing = true;
     const hero = document.getElementById('hero');
+    if (!hero) { const a = intro.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 250, fill: 'forwards' }); a.finished.then(() => { document.body.classList.remove('intro-on', 'pins-wait'); intro.remove(); }); return [a]; }
     const hr = hero.getBoundingClientRect();
-    const W = innerWidth, H = innerHeight, dur = 620, ease = 'cubic-bezier(.65,0,.35,1)';
+    const W = innerWidth, H = innerHeight, dur = 640, ease = 'cubic-bezier(.65,0,.35,1)';
     const anims = [];
-    // the navy screen folds down into the "you're here" card
-    anims.push(intro.animate([{ clipPath: 'inset(0px 0px 0px 0px round 0px)' }, { clipPath: `inset(${hr.top}px ${W - hr.right}px ${H - hr.bottom}px ${hr.left}px round 26px)` }], { duration: dur, easing: ease, fill: 'forwards' }));
-    // the sign's name and code fly to their places in the card
+    // the navy screen folds down into the map card...
+    anims.push(intro.animate([{ clipPath: 'inset(0px 0px 0px 0px round 0px)' }, { clipPath: `inset(${hr.top}px ${W - hr.right}px ${H - hr.bottom}px ${hr.left}px round 30px)` }], { duration: dur, easing: ease, fill: 'forwards' }));
+    // ...and then melts away to show your neighborhood on the map
+    anims.push(intro.animate([{ backgroundColor: 'rgba(19,34,74,1)' }, { backgroundColor: 'rgba(19,34,74,0)' }], { duration: 320, delay: dur - 60, easing: 'ease-out', fill: 'forwards' }));
+    // the sign's name and code fly into the glass label on the card
     [['iTitle', 'heroTitle'], ['iKick', 'heroKick']].forEach(([a, b]) => {
       const ea = document.getElementById(a), eb = document.getElementById(b);
       const ra = ea.getBoundingClientRect(), rb = eb.getBoundingClientRect();
-      const s = rb.width / ra.width;
+      const s = rb.width / ra.width, to = getComputedStyle(eb).color;
       ea.style.transformOrigin = '0 0';
-      anims.push(ea.animate([{ transform: 'none', opacity: 1 }, { transform: `translate(${rb.left - ra.left}px,${rb.top - ra.top}px) scale(${s})`, opacity: 1 }], { duration: dur, easing: ease, fill: 'forwards' }));
+      anims.push(ea.animate([{ transform: 'none', color: getComputedStyle(ea).color }, { transform: `translate(${rb.left - ra.left}px,${rb.top - ra.top}px) scale(${s})`, color: to }], { duration: dur, easing: ease, fill: 'forwards', composite: 'replace' }));
+      anims.push(ea.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 160, delay: dur - 20, fill: 'forwards' }));
     });
     intro.querySelectorAll('.mark,.isub,.skip,.glow').forEach((el) => anims.push(el.animate([{ opacity: getComputedStyle(el).opacity }, { opacity: 0 }], { duration: 260, easing: 'ease-out', fill: 'forwards' })));
-    // the rest of the page rises in behind it
-    document.querySelectorAll('.rise').forEach((el, i) => anims.push(el.animate([{ opacity: 0, transform: 'translateY(18px)' }, { opacity: 1, transform: 'none' }], { duration: 480, delay: 260 + Math.min(i, 6) * 55, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'forwards' })));
-    hero.querySelectorAll('.sub,.search,.rings').forEach((el, i) => anims.push(el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 360, delay: dur - 120 + i * 60, fill: 'backwards' })));
+    document.querySelectorAll('.rise,.tabbar').forEach((el, i) => anims.push(el.animate([{ opacity: 0, transform: 'translateY(18px)' }, { opacity: 1, transform: 'none' }], { duration: 480, delay: 300 + Math.min(i, 6) * 55, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'forwards' })));
+    hero.querySelectorAll('.ttl,.go').forEach((el) => anims.push(el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, delay: dur - 120, fill: 'backwards' })));
     const finish = () => { document.body.classList.remove('intro-on'); intro.remove(); };
-    anims.forEach((a) => { const t = a.effect && a.effect.target; if (t && t.classList.contains('rise')) a.finished.then(() => a.cancel()); });
-    anims[0].finished.then(finish);
+    anims.forEach((a) => { const t = a.effect && a.effect.target; if (t && (t.classList.contains('rise') || t.classList.contains('tabbar'))) a.finished.then(() => a.cancel()); });
+    Promise.all([anims[0].finished, anims[1].finished]).then(finish);
+    if (!paused) setTimeout(() => document.body.classList.remove('pins-wait'), dur - 60);
     if (paused) anims.forEach((a) => a.pause());
     window.__morphAnims = anims;
     return anims;
   }
   window.__morph = morph;
-  intro.addEventListener('click', () => { intro.classList.add('fast'); setTimeout(() => morph(), 40); });
   window.__finishIntro = () => { document.body.classList.remove('intro-on'); intro.remove(); };
+  window.__pinsGo = () => document.body.classList.remove('pins-wait');
+  intro.addEventListener('click', () => { intro.classList.add('fast'); setTimeout(() => morph(), 40); });
   if (!CAPTURE) setTimeout(() => morph(), 2500);
 })();
 </script>
