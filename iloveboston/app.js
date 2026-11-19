@@ -457,13 +457,6 @@
 
   /* ---------- demo: other looks and features on/off ---------- */
   const LOOKS = [
-    // Nov 19 mockups: a real map (OpenStreetMap), fewer controls, smarter picks, and a new dark mode
-    { k: 'n1', fresh: true, name: '1 · Simple map', desc: 'Like Apple Maps: a real map with named pins, one search bar and five big buttons. No tabs or sort row.' },
-    { k: 'n2', fresh: true, name: '2 · Right now', desc: 'A feed that changes with the time: drinks open now, tonight\'s show, dinner people love.' },
-    { k: 'n3', fresh: true, name: '3 · Just ask', desc: 'Type or tap what you\'re in the mood for and get three picks, each with a reason.' },
-    { k: 'n4', fresh: true, name: 'Place page', desc: 'Photos up top, one big Directions button, then the critic and your friends.' },
-    { k: 'n5', fresh: true, name: 'Dark: Night', desc: 'The same screen in a darker, higher-contrast dark mode. Look 1 is the Apple Maps-style one.' },
-    { k: 'n6', fresh: true, name: 'Light', desc: 'The same screen for daytime.' },
     { k: 'h', name: 'H · D, calmer', live: true, desc: "The map with a pull-up list and three tabs. It's the one you're using." },
     { k: 'a', name: 'A · Classic', desc: "Matches Dr Phil's sign: a clean list with categories, a radius and the 10 languages." },
     { k: 'b', name: 'B · Map first', desc: 'A big map up top with numbered pins, and the list underneath.' },
@@ -839,7 +832,7 @@
     S.route = parts[0] || 'h';
     S.arg = parts[1] || '';
     if (S.route === 'looks') { S.route = 'h'; S.demoOpen = true; S.demoTab = 'looks'; }
-    if (S.route === 'mockups') { S.route = 'h'; S.demoOpen = true; S.demoTab = 'looks'; S.view = Math.max(0, LOOKS.findIndex((l) => l.fresh)); }
+    if (S.route === 'mockups') { location.replace('s/DTC-001/?intro'); return; }
     if (S.route === 'live' && S.arg) {
       const ix = VENDORS.findIndex((v) => v.id === S.arg);
       if (ix >= 0) { S.liveOpen = ix; S.liveSlide = 0; }
@@ -1096,8 +1089,7 @@
     const lcard = (l, i) => `<button type="button" class="lcard" data-act="look" data-v="${i}" aria-label="${esc(l.name)}${l.live ? ", the one you're using" : ''}">
         <span class="limg"><img src="looks/${l.k}-thumb.webp" alt="" loading="lazy" width="390" height="844">${l.live ? '<span class="lbadge">You\'re using it</span>' : ''}</span>
         <span class="lname">${esc(l.name)}</span><span class="ldesc">${esc(l.desc)}</span></button>`;
-    const looks = LOOKS.map((l, i) => (l.fresh ? '' : lcard(l, i))).join('');
-    const fresh = LOOKS.map((l, i) => (l.fresh ? lcard(l, i) : '')).join('');
+    const looks = LOOKS.map((l, i) => lcard(l, i)).join('');
     const feats = FEATURES.map(([k, label, desc]) => `<button type="button" class="frow" role="switch" aria-checked="${!!S.f[k]}" data-act="flag" data-v="${k}">
         <span class="ftxt"><b>${esc(label)}</b><span>${esc(desc)}</span></span><span class="sw${S.f[k] ? ' on' : ''}" aria-hidden="true"><span></span></span></button>`).join('');
     const allOn = FEATURES.every(([k]) => S.f[k]);
@@ -1109,7 +1101,7 @@
         <p class="small muted demo-intro">Flip through the other looks, or turn features on and off to see the page with and without them.</p>
         <div class="tabs dtabs" role="tablist" aria-label="Demo"><button type="button" class="tab" role="tab" aria-selected="${S.demoTab === 'looks'}" data-act="demo-tab" data-v="looks">Other looks</button><button type="button" class="tab" role="tab" aria-selected="${S.demoTab === 'features'}" data-act="demo-tab" data-v="features">Features on/off</button></div>
         ${S.demoTab === 'looks'
-          ? `<h3 class="demo-sec">New mockups <span class="newtag">Nov 19</span></h3><p class="small muted demo-intro">Simpler and smarter, on a real map, with a new dark mode. Not built yet: tap one to see it big.</p><div class="lgrid">${fresh}</div>
+          ? `<h3 class="demo-sec">The simple version <span class="newtag">Nov 19</span></h3><p class="small muted demo-intro">Back to the idea: scan a sign, see what's within a 10-minute walk. It opens with the scan intro.</p><a class="btn wide" href="s/DTC-001/?intro">Open the simple version</a>
              <h3 class="demo-sec">The Nearby list</h3><p class="small muted demo-intro">Four ways to show what's around the sign. Tap one to use it.</p><div class="sgrid">${styles}</div>
              <h3 class="demo-sec">Whole-page looks</h3><div class="lgrid">${looks}</div><p class="small muted demo-intro">Tap a look to see it big; swipe or use the arrows to flip through.</p>`
           : `<div class="appear acct"><span>Account<small>${S.user ? esc(S.user.name) + ' · ' + esc(S.user.provider) + ' (demo)' : 'Signed out: no points or reviews'}</small></span><button type="button" class="btn small2" data-act="demo-sign">${S.user ? 'Sign out' : 'Sign in'}</button></div><div class="appear"><span>Appearance</span><div class="seg3">${[['auto', 'Auto'], ['light', 'Light'], ['dark', 'Dark']].map(([v, l]) => `<button type="button" data-act="theme" data-v="${v}" aria-pressed="${S.theme === v}">${l}</button>`).join('')}</div></div><div class="flist">${feats}</div>${allOn ? '' : '<button type="button" class="btn wide" data-act="flags-reset">Turn everything back on</button>'}<p class="small muted demo-intro">Your phone remembers these until you change them.</p>`}

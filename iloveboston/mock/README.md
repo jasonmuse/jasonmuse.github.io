@@ -1,8 +1,9 @@
 # I Love Boston mockups (Nov 19, 2026)
 
-Mockups for a simpler, smarter page and a new dark mode, made after Jason said the current page felt
-overwhelming. They're pictures to pick from, not the live page: the screenshots are in the demo under
-Demo → Other looks → New mockups (direct link: `#/mockups`).
+Mockups for a simpler page and a new dark mode, made the morning of Nov 19. Jason turned them down the
+same day (too close to Apple Maps, and the app was drifting from its point), so they're off the demo.
+The direction now is the simple version in `../s/DTC-001/` (scan intro, then a short home page).
+This folder stays for the map drawing code (`genmap.py`), in case a small map is ever wanted.
 
 - `index.html` draws one 390×844 phone screen: `?s=a` simple map, `b` right now, `c` just ask, `p` place page;
   `&t=apple` (Apple Maps-style dark), `night` or `light`.
