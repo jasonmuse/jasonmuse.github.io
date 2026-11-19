@@ -256,6 +256,20 @@ margin: auto;
 margin-top: 2%;
 }
 
+/* The site map link in the footer */
+.footer-link {
+	color: #ffffff;
+	font-size: 17px;
+	font-weight: 700;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+.footer-link:focus-visible {
+	outline: 3px solid #ffffff;
+	outline-offset: 2px;
+}
+
 .text-2 {
 width: 95%;
 font-size: 15px;
