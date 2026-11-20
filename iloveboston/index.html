@@ -24,7 +24,7 @@
 <link rel="apple-touch-icon" href="/iloveboston/icon.png">
 <link rel="icon" type="image/png" href="/iloveboston/icon.png">
 <link rel="manifest" href="/iloveboston/manifest.webmanifest">
-<script>/* if the intro is going to play, keep the screen plain navy until the page knows its real size */(function(){try{var h=location.hash,q=location.search,seen=false;try{seen=!!sessionStorage.getItem("ilb-intro")}catch(e){}var tl=(q.match(/[?&]tiles=(navy|cream|color|white)\b/)||[])[1];if(tl)document.documentElement.setAttribute("data-tiles",tl);if((!h||h==="#/"||h==="#/mockups")&&!matchMedia("(prefers-reduced-motion: reduce)").matches&&(!seen||/[?&](intro|capture)\b/.test(q)||h==="#/mockups"))document.documentElement.classList.add("intro-pending")}catch(e){}})();</script>
+<script>/* if the intro is going to play, keep the screen plain navy until the page knows its real size */(function(){try{var h=location.hash,q=location.search,seen=false;try{seen=!!sessionStorage.getItem("ilb-intro")}catch(e){}if((!h||h==="#/"||h==="#/mockups")&&!matchMedia("(prefers-reduced-motion: reduce)").matches&&(!seen||/[?&](intro|capture)\b/.test(q)||h==="#/mockups"))document.documentElement.classList.add("intro-pending")}catch(e){}})();</script>
 <!-- everything the first screen needs starts downloading right away; the intro waits for it, so nothing pops in mid-animation -->
 <link rel="preload" href="/iloveboston/fonts/montserrat-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/iloveboston/fonts/bricolage-latin.woff2" as="font" type="font/woff2" crossorigin>
@@ -53,7 +53,7 @@
   --disp:'Bricolage Grotesque',Inter,system-ui,sans-serif;--logo:Montserrat,Inter,system-ui,sans-serif;--font:Inter,system-ui,-apple-system,'Segoe UI',sans-serif;
   --ease:cubic-bezier(.2,.8,.2,1);--pop:cubic-bezier(.34,1.56,.64,1);--spring:cubic-bezier(.3,1.3,.5,1);--ios:cubic-bezier(.32,.72,0,1)
 }
-/* dark modes: dark grey is the one in use; navy, warm and black are there to compare (?dk=navy|warm|black) */
+/* dark mode: dark grey (Moo's pick, Nov 20) */
 @media (prefers-color-scheme:dark){
 :root{
   --bg:#121214;--glow:radial-gradient(90% 70% at 50% 0%,rgba(255,255,255,.07),rgba(255,255,255,0) 70%);
@@ -62,36 +62,16 @@
   --glass:rgba(46,46,50,.55);--glass-bd:rgba(255,255,255,.13);--glass-shadow:0 14px 34px rgba(0,0,0,.55);--glass-hi:rgba(255,255,255,.1);
   --lens:rgba(255,255,255,.14);--lens-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 2px 10px rgba(0,0,0,.3);--tab-ink:rgba(242,242,244,.6);--tab-on:#FF7480;
   --peach:#FFCBB6;--lilac:#DACAFF;--butter:#FFE08C;--mint:#BDE8D0;--sky:#C4DAFF;--pink:#FFC4CE;
-  --tile-bd:rgba(255,255,255,0);--tile-sh:rgba(0,0,0,.6);--pin-bd:#121214;
+  --pin-bd:#121214;
   --m-land:#1C1C1F;--m-park:#1D2B22;--m-wood:#1B2820;--m-water:#18242F;--m-case:#141416;--m-minor:#303035;--m-major:#3D3D43;--m-hw:#4B4B52;--m-ped:#29292D;--m-bld:#252529;
   --m-lbl:#A4A4AD;--m-halo:#1C1C1F;--m-hood:#77777F;--m-water-lbl:#6B88A8;--ring:rgba(242,242,244,.42);--ring-fill:rgba(255,255,255,.025);
 }
 #bmChips .chip{box-shadow:0 4px 12px rgba(0,0,0,.38),inset 0 1px 0 var(--glass-hi)}
-:root[data-tiles=navy]{--tile-bd:#13224A;--tile-sh:#13224A}
-:root[data-tiles=cream]{--tile-bd:#F4F1EA;--tile-sh:#F4F1EA}
-:root[data-tiles=white]{--tile-bd:#F4F1EA;--tile-sh:rgba(244,241,234,.3)}
-:root[data-tiles=white] .tile,:root[data-tiles=white] .dealbig{box-shadow:0 5px 0 var(--tile-sh),0 14px 26px rgba(0,0,0,.55)}
-:root[data-tiles=color] .tile,:root[data-tiles=color] .dealbig{border-color:var(--td,var(--pink-d));box-shadow:0 5px 0 var(--td,var(--pink-d)),0 14px 24px rgba(0,0,0,.45)}
-:root[data-tiles=color] .tile:active{box-shadow:0 2px 0 var(--td),0 6px 12px rgba(0,0,0,.4)}
-:root[data-tiles=color] .ptitle h1 .bub{border-color:var(--td,var(--pink-d))}
-:root[data-dk=navy]{
-  --bg:#0A1124;--glow:radial-gradient(90% 70% at 50% 0%,rgba(72,104,214,.28),rgba(72,104,214,0) 70%);--surface:#131D3A;--ink:#F4EEE3;--muted:#9CA7C3;--line:rgba(255,255,255,.09);
-  --glass:rgba(32,44,82,.5);--glass-bd:rgba(255,255,255,.15);--pin-bd:#0A1124;
-  --m-land:#0E1830;--m-park:#123029;--m-wood:#112B25;--m-water:#0C2847;--m-case:#091022;--m-minor:#223050;--m-major:#2C3B61;--m-hw:#37466D;--m-ped:#1B2846;--m-bld:#16213D;
-  --m-lbl:#94A0BE;--m-halo:#0E1830;--m-hood:#66728D;--m-water-lbl:#4C7CB6;--ring:rgba(244,238,227,.4);--ring-fill:rgba(130,160,255,.04);
+/* the buttons keep light mode's sticker look: an outline and ledge in each button's own deeper color (Moo's pick, Nov 20) */
+:root .tile,:root .dealbig{border-color:var(--td,var(--pink-d));box-shadow:0 5px 0 var(--td,var(--pink-d)),0 14px 24px rgba(0,0,0,.45)}
+:root .tile:active{box-shadow:0 2px 0 var(--td),0 6px 12px rgba(0,0,0,.4)}
+:root .ptitle h1 .bub{border-color:var(--td,var(--pink-d))}
 }
-:root[data-dk=warm]{
-  --bg:#15130F;--glow:radial-gradient(90% 70% at 50% 0%,rgba(255,200,140,.08),rgba(255,200,140,0) 70%);--surface:#221F1A;--ink:#F5EFE4;--muted:#A9A196;--line:rgba(255,240,220,.09);
-  --glass:rgba(50,45,38,.55);--glass-bd:rgba(255,240,220,.13);--pin-bd:#15130F;
-  --m-land:#1D1A16;--m-park:#1E2A1D;--m-wood:#1C271B;--m-water:#17242C;--m-case:#12100D;--m-minor:#322D27;--m-major:#3E3830;--m-hw:#4B4339;--m-ped:#2A2620;--m-bld:#26221D;
-  --m-lbl:#AEA698;--m-halo:#1D1A16;--m-hood:#7E776C;--m-water-lbl:#6E8FA3;--ring:rgba(245,239,228,.4);--ring-fill:rgba(255,225,190,.03);
-}
-:root[data-dk=black]{
-  --bg:#000;--glow:none;--surface:#141415;--ink:#F5F5F6;--muted:#9A9AA0;--line:rgba(255,255,255,.09);
-  --glass:rgba(30,30,32,.62);--glass-bd:rgba(255,255,255,.12);--pin-bd:#000;
-  --m-land:#0C0C0D;--m-park:#0F1D14;--m-wood:#0E1B13;--m-water:#0A1622;--m-case:#000;--m-minor:#232326;--m-major:#2E2E32;--m-hw:#39393E;--m-ped:#1B1B1D;--m-bld:#161618;
-  --m-lbl:#9D9DA4;--m-halo:#0C0C0D;--m-hood:#67676E;--m-water-lbl:#5878A0;--ring:rgba(245,245,246,.38);--ring-fill:rgba(255,255,255,.02);
-}}
 *{box-sizing:border-box;margin:0;padding:0}
 html{background:var(--bg)}
 body{font-family:var(--font);color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;max-width:480px;margin:0 auto;min-height:100vh;overflow-x:hidden;position:relative}
@@ -142,8 +122,6 @@ img{display:block}
 .fcard{display:block;flex:none;width:280px;border-radius:24px;background:var(--surface);box-shadow:0 0 0 1px var(--line);overflow:hidden;scroll-snap-align:start}
 .fcard .ph{display:block;position:relative;height:146px;background:#888}
 .fcard .ph img{width:100%;height:100%;object-fit:cover}
-.feat.top .fcard{width:248px}
-.feat.top .fcard .ph{height:112px}
 .tag{position:absolute;left:10px;top:10px;padding:4px 9px;border-radius:9px;background:rgba(10,17,36,.78);color:#fff;font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase}
 .fcard .ft{display:block;padding:12px 14px 14px}
 .fcard b{display:block;font-size:17px;font-weight:700}
@@ -460,8 +438,6 @@ html.intro-pending #app,html.intro-pending .tabbar{visibility:hidden}
   if (fromMockups) history.replaceState(null, '', location.pathname + location.search);
   const Q = new URLSearchParams(location.search);
   const CAPTURE = Q.has('capture');            // used to record the mockup GIF frame by frame
-  if (/^(navy|warm|black)$/.test(Q.get('dk') || '')) document.documentElement.dataset.dk = Q.get('dk');
-  const FEAT_TOP = Q.get('feat') === 'top';    // mockup: the Featured row above the buttons
   const IMG = '/iloveboston/p/';
   const IC = {
     utensils: '<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/>',
@@ -604,8 +580,8 @@ html.intro-pending #app,html.intro-pending .tabbar{visibility:hidden}
   const mapDiv = (o) => `<div class="map" data-map='${JSON.stringify(o)}'></div>`;
 
   /* ---------- pages ---------- */
-  const featRow = (top) => `<div class="sec-row rise"><h2 class="sec">Featured nearby</h2><span class="note">Sponsored</span></div>
-      <div class="feat rise${top ? ' top' : ''}">${P.filter((p) => p.sp).map((p) => `<a class="fcard" href="#/p/${p.id}"><span class="ph"><img src="${ph(p)}" alt=""><span class="tag">Sponsored</span></span><span class="ft"><b>${p.name}</b><span class="m">${p.kind} · ${p.walk} min walk</span><span class="deal">${ic('gift', 15, 2.3)}${p.deal}</span></span></a>`).join('')}</div>`;
+  const featRow = () => `<div class="sec-row rise"><h2 class="sec">Featured nearby</h2><span class="note">Sponsored</span></div>
+      <div class="feat rise">${P.filter((p) => p.sp).map((p) => `<a class="fcard" href="#/p/${p.id}"><span class="ph"><img src="${ph(p)}" alt=""><span class="tag">Sponsored</span></span><span class="ft"><b>${p.name}</b><span class="m">${p.kind} · ${p.walk} min walk</span><span class="deal">${ic('gift', 15, 2.3)}${p.deal}</span></span></a>`).join('')}</div>`;
   function home() {
     const near = places.slice().sort((a, b) => a.walk - b.walk).slice(0, 9).map((p) => p.id).concat(['market', 'dumpling']);
     return `<header class="top rise"><a class="logo" href="#/">I ${HEART} BOSTON</a><button class="lang glass" type="button" data-toast="Dr Phil's 10 languages come in the real build">${ic('globe', 17, 2.2)}EN</button></header>
@@ -614,10 +590,9 @@ html.intro-pending #app,html.intro-pending .tabbar{visibility:hidden}
         <span class="ttl glass"><span class="kick" id="heroKick"><span class="ok">${ic('check', 11, 4)}</span>You scanned sign&nbsp;DTC-001</span><span class="h1" id="heroTitle">Downtown Crossing</span></span>
         <span class="go glass">${ic('expand', 16, 2.4)}Open map</span>
       </a>
-      ${FEAT_TOP ? featRow(true) : ''}
       <h2 class="sec rise">What are you looking for?</h2>
       <div class="tiles rise">${TILES.map((k) => CAT[k]).map((c) => `<a class="tile" href="${c.k === 't' ? '#/t' : '#/c/' + c.k}" style="--t:${c.t};--td:${c.d}">${ic(c.icon, 26, 2.1)}<b>${c.label}</b>${c.k === 't' ? '<span class="tb">1 min</span>' : ''}</a>`).join('')}</div>
-      ${FEAT_TOP ? '' : featRow(false)}
+      ${featRow()}
       <button type="button" class="bizline rise" data-toast="Opens the business sign-up (next mockup)"><span>Own a business near this sign?</span><b>Get featured ${ic('chev', 15, 2.8)}</b></button>
       <p class="foot rise">Sample listings for the demo · Photos from Wikimedia Commons · Map © OpenStreetMap · <button type="button" id="replay">Replay the intro</button></p>
       <div class="tabspace"></div>`;
