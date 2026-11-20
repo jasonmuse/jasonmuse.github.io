@@ -24,7 +24,7 @@
 <link rel="apple-touch-icon" href="/iloveboston/icon.png">
 <link rel="icon" type="image/png" href="/iloveboston/icon.png">
 <link rel="manifest" href="/iloveboston/manifest.webmanifest">
-<script>/* if the intro is going to play, keep the screen plain navy until the page knows its real size */(function(){try{var h=location.hash,q=location.search,seen=false;try{seen=!!sessionStorage.getItem("ilb-intro")}catch(e){}if((!h||h==="#/"||h==="#/mockups")&&!matchMedia("(prefers-reduced-motion: reduce)").matches&&(!seen||/[?&](intro|capture)\b/.test(q)||h==="#/mockups"))document.documentElement.classList.add("intro-pending")}catch(e){}})();</script>
+<script>/* if the intro is going to play, keep the screen plain navy until the page knows its real size */(function(){try{var h=location.hash,q=location.search,seen=false;try{seen=!!sessionStorage.getItem("ilb-intro")}catch(e){}var tl=(q.match(/[?&]tiles=(navy|cream|color|white)\b/)||[])[1];if(tl)document.documentElement.setAttribute("data-tiles",tl);if((!h||h==="#/"||h==="#/mockups")&&!matchMedia("(prefers-reduced-motion: reduce)").matches&&(!seen||/[?&](intro|capture)\b/.test(q)||h==="#/mockups"))document.documentElement.classList.add("intro-pending")}catch(e){}})();</script>
 <!-- everything the first screen needs starts downloading right away; the intro waits for it, so nothing pops in mid-animation -->
 <link rel="preload" href="/iloveboston/fonts/montserrat-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/iloveboston/fonts/bricolage-latin.woff2" as="font" type="font/woff2" crossorigin>
@@ -45,6 +45,7 @@
   --glass:rgba(255,255,255,.55);--glass-bd:rgba(255,255,255,.85);--glass-shadow:0 14px 34px rgba(19,34,74,.16),0 2px 6px rgba(19,34,74,.07);--glass-hi:rgba(255,255,255,.75);
   --lens:rgba(255,255,255,.95);--lens-shadow:0 3px 12px rgba(19,34,74,.16);--tab-ink:rgba(19,34,74,.58);--tab-on:#E63946;
   --peach:#FFD9C8;--lilac:#E6D8FF;--butter:#FFE8A3;--mint:#CDEEDC;--sky:#D4E5FF;--pink:#FFD3DA;
+  --peach-d:#E07B55;--lilac-d:#8E6BE0;--butter-d:#D2A22E;--mint-d:#4FAE80;--sky-d:#6B94DE;--pink-d:#DE7088;
   --tile-bd:#13224A;--tile-sh:#13224A;
   --p-eat:#FFB48F;--p-drink:#C9AEFF;--p-shop:#FFD35C;--p-see:#8FDAB0;--p-services:#A6C5FF;--p-today:#FF9AAA;--pin-bd:#13224A;
   --m-land:#F1E9DA;--m-park:#D0E5BF;--m-wood:#C7DFB4;--m-water:#B6D8F0;--m-case:#E2D5BF;--m-minor:#fff;--m-major:#fff;--m-hw:#FFEDBD;--m-ped:#FFFAF2;--m-bld:#E7DDCB;
@@ -65,6 +66,14 @@
   --m-land:#1C1C1F;--m-park:#1D2B22;--m-wood:#1B2820;--m-water:#18242F;--m-case:#141416;--m-minor:#303035;--m-major:#3D3D43;--m-hw:#4B4B52;--m-ped:#29292D;--m-bld:#252529;
   --m-lbl:#A4A4AD;--m-halo:#1C1C1F;--m-hood:#77777F;--m-water-lbl:#6B88A8;--ring:rgba(242,242,244,.42);--ring-fill:rgba(255,255,255,.025);
 }
+#bmChips .chip{box-shadow:0 4px 12px rgba(0,0,0,.38),inset 0 1px 0 var(--glass-hi)}
+:root[data-tiles=navy]{--tile-bd:#13224A;--tile-sh:#13224A}
+:root[data-tiles=cream]{--tile-bd:#F4F1EA;--tile-sh:#F4F1EA}
+:root[data-tiles=white]{--tile-bd:#F4F1EA;--tile-sh:rgba(244,241,234,.3)}
+:root[data-tiles=white] .tile,:root[data-tiles=white] .dealbig{box-shadow:0 5px 0 var(--tile-sh),0 14px 26px rgba(0,0,0,.55)}
+:root[data-tiles=color] .tile,:root[data-tiles=color] .dealbig{border-color:var(--td,var(--pink-d));box-shadow:0 5px 0 var(--td,var(--pink-d)),0 14px 24px rgba(0,0,0,.45)}
+:root[data-tiles=color] .tile:active{box-shadow:0 2px 0 var(--td),0 6px 12px rgba(0,0,0,.4)}
+:root[data-tiles=color] .ptitle h1 .bub{border-color:var(--td,var(--pink-d))}
 :root[data-dk=navy]{
   --bg:#0A1124;--glow:radial-gradient(90% 70% at 50% 0%,rgba(72,104,214,.28),rgba(72,104,214,0) 70%);--surface:#131D3A;--ink:#F4EEE3;--muted:#9CA7C3;--line:rgba(255,255,255,.09);
   --glass:rgba(32,44,82,.5);--glass-bd:rgba(255,255,255,.15);--pin-bd:#0A1124;
@@ -141,7 +150,7 @@ img{display:block}
 .fcard .m{display:block;font-size:14px;color:var(--muted);margin-top:2px}
 .deal{display:inline-flex;align-items:center;gap:6px;margin-top:9px;padding:5px 10px;border-radius:10px;background:var(--deal-bg);color:var(--deal-ink);font-size:13px;font-weight:700}
 .bizline{display:flex;width:calc(100% - 32px);align-items:center;justify-content:space-between;gap:10px;margin:22px 16px 0;padding:15px 16px;border-radius:20px;background:var(--surface);box-shadow:0 0 0 1px var(--line);font-size:14.5px;font-weight:600;text-align:left}
-.bizline b{display:flex;align-items:center;gap:2px;color:var(--accent)}
+.bizline b{display:flex;align-items:center;gap:2px;color:var(--accent);flex:none;white-space:nowrap}
 .foot{padding:18px 18px 0;font-size:12px;color:var(--muted);line-height:1.6}
 .foot button{text-decoration:underline;font-weight:600;color:var(--ink)}
 .tabspace{height:calc(112px + env(safe-area-inset-bottom))}
@@ -239,9 +248,14 @@ body.pins-wait .pop{animation-play-state:paused}
 #bigmap .maplibregl-canvas{outline:none}
 .bm-ui{opacity:0;transition:opacity .25s,transform .35s var(--ios);pointer-events:none}
 #bigmap.ui .bm-ui{opacity:1;pointer-events:auto;transform:none}
-.bm-top{position:absolute;left:0;right:0;top:0;padding:max(12px,env(safe-area-inset-top)) calc(12px + env(safe-area-inset-right)) 0 calc(12px + env(safe-area-inset-left));z-index:6;display:flex;gap:8px;align-items:flex-start;transform:translateY(-12px)}
+.bm-top{position:absolute;left:0;right:0;top:0;padding:max(12px,env(safe-area-inset-top)) 0 0 calc(12px + env(safe-area-inset-left));z-index:6;display:flex;gap:8px;align-items:flex-start;transform:translateY(-12px)}
 .bm-close{flex:none;width:42px;height:42px;border-radius:50%;display:grid;place-items:center}
 .chips{flex:1;display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;scrollbar-width:none}
+#bmChips::after{content:'';flex:0 0 calc(4px + env(safe-area-inset-right))}
+/* the filter buttons get a small shadow of their own: the big glass shadow, cut off by the scrolling row, made a dark strip with a hard edge */
+#bmChips{margin-left:-12px;padding:4px 2px 18px 12px}
+#bmChips .chip{box-shadow:0 4px 12px rgba(10,17,36,.16),inset 0 1px 0 var(--glass-hi)}
+.bm-close{position:relative;z-index:2}
 .chip{flex:none;height:42px;padding:0 15px;border-radius:21px;display:flex;align-items:center;gap:6px;font-size:14px;font-weight:700}
 .chip.on{background:var(--ink);color:var(--bg);border-color:transparent}
 .chip.on::after{display:none}
@@ -422,7 +436,7 @@ html.intro-pending #app,html.intro-pending .tabbar{visibility:hidden}
 </nav>
 
 <div class="ssheet" id="ssheet" aria-hidden="true">
-  <div class="sfield"><button type="button" class="sclose glass" id="closeSearch" aria-label="Close search"><svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button><label class="glass"><svg class="ic" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7.5"/><path d="m20.5 20.5-4.2-4.2"/></svg><input id="sq" type="search" placeholder="Search food, shops, sights…" autocomplete="off" enterkeyhint="search"></label></div>
+  <div class="sfield"><label class="glass"><svg class="ic" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7.5"/><path d="m20.5 20.5-4.2-4.2"/></svg><input id="sq" type="search" placeholder="Search food, shops, sights…" autocomplete="off" enterkeyhint="search"></label><button type="button" class="sclose glass" id="closeSearch" aria-label="Close search"><svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div>
   <div id="sres"></div>
 </div>
 
@@ -470,13 +484,13 @@ html.intro-pending #app,html.intro-pending .tabbar{visibility:hidden}
   const HEART = '<svg viewBox="0 0 24 24"><path fill="#E63946" d="M12 21.4s-7.7-4.8-9.8-9.4C.7 8.7 2.5 4.4 6.6 4c2.2-.2 3.9.9 5.4 2.9C13.5 4.9 15.2 3.8 17.4 4c4.1.4 5.9 4.7 4.4 8-2.1 4.6-9.8 9.4-9.8 9.4z"/></svg>';
 
   const CATS = [
-    { k: 'eat', label: 'Eat', icon: 'utensils', t: 'var(--peach)', p: 'var(--p-eat)' },
-    { k: 'drink', label: 'Drinks', icon: 'martini', t: 'var(--lilac)', p: 'var(--p-drink)' },
-    { k: 'shop', label: 'Shop', icon: 'bag', t: 'var(--butter)', p: 'var(--p-shop)' },
-    { k: 'see', label: 'See', icon: 'landmark', t: 'var(--mint)', p: 'var(--p-see)' },
-    { k: 'services', label: 'Services', icon: 'wrench', t: 'var(--sky)', p: 'var(--p-services)' },
-    { k: 'today', label: 'Today', icon: 'calendar', t: 'var(--pink)', p: 'var(--p-today)', live: '3 live' },
-    { k: 't', label: 'The T', icon: 'train', t: 'var(--pink)', p: '#fff' },
+    { k: 'eat', label: 'Eat', icon: 'utensils', t: 'var(--peach)', d: 'var(--peach-d)', p: 'var(--p-eat)' },
+    { k: 'drink', label: 'Drinks', icon: 'martini', t: 'var(--lilac)', d: 'var(--lilac-d)', p: 'var(--p-drink)' },
+    { k: 'shop', label: 'Shop', icon: 'bag', t: 'var(--butter)', d: 'var(--butter-d)', p: 'var(--p-shop)' },
+    { k: 'see', label: 'See', icon: 'landmark', t: 'var(--mint)', d: 'var(--mint-d)', p: 'var(--p-see)' },
+    { k: 'services', label: 'Services', icon: 'wrench', t: 'var(--sky)', d: 'var(--sky-d)', p: 'var(--p-services)' },
+    { k: 'today', label: 'Today', icon: 'calendar', t: 'var(--pink)', d: 'var(--pink-d)', p: 'var(--p-today)', live: '3 live' },
+    { k: 't', label: 'The T', icon: 'train', t: 'var(--pink)', d: 'var(--pink-d)', p: '#fff' },
   ];
   // the six buttons on the home page: Today lives in the tab bar, so its spot goes to the T
   const TILES = ['eat', 'drink', 'shop', 'see', 'services', 't'];
@@ -600,7 +614,7 @@ html.intro-pending #app,html.intro-pending .tabbar{visibility:hidden}
       </a>
       ${FEAT_TOP ? featRow(true) : ''}
       <h2 class="sec rise">What are you looking for?</h2>
-      <div class="tiles rise">${TILES.map((k) => CAT[k]).map((c) => `<a class="tile" href="${c.k === 't' ? '#/t' : '#/c/' + c.k}" style="--t:${c.t}">${ic(c.icon, 26, 2.1)}<b>${c.label}</b>${c.k === 't' ? '<span class="tb">1 min</span>' : ''}</a>`).join('')}</div>
+      <div class="tiles rise">${TILES.map((k) => CAT[k]).map((c) => `<a class="tile" href="${c.k === 't' ? '#/t' : '#/c/' + c.k}" style="--t:${c.t};--td:${c.d}">${ic(c.icon, 26, 2.1)}<b>${c.label}</b>${c.k === 't' ? '<span class="tb">1 min</span>' : ''}</a>`).join('')}</div>
       ${FEAT_TOP ? '' : featRow(false)}
       <button type="button" class="bizline rise" data-toast="Opens the business sign-up (next mockup)"><span>Own a business near this sign?</span><b>Get featured ${ic('chev', 15, 2.8)}</b></button>
       <p class="foot rise">Sample listings for the demo · Photos from Wikimedia Commons · Map © OpenStreetMap · <button type="button" id="replay">Replay the intro</button></p>
@@ -624,7 +638,7 @@ html.intro-pending #app,html.intro-pending .tabbar{visibility:hidden}
     const c = CAT[k] || { label: 'All places', icon: 'pin', t: 'var(--sky)' };
     const items = (k === 'all' ? places : P.filter((p) => p.cat === k)).slice().sort((a, b) => a.walk - b.walk);
     return `<div class="ptop"><button type="button" class="back glass" data-back>${ic('left', 20, 2.6)}</button></div>
-      <div class="ptitle"><h1><span class="bub" style="--t:${c.t}">${ic(c.icon, 24, 2.2)}</span>${c.label}</h1><p>${k === 'today' ? 'Live now and later today, near' : items.length + ' places within a 10-minute walk of'} sign DTC-001</p></div>
+      <div class="ptitle"><h1><span class="bub" style="--t:${c.t};--td:${c.d || 'var(--pink-d)'}">${ic(c.icon, 24, 2.2)}</span>${c.label}</h1><p>${k === 'today' ? 'Live now and later today, near' : items.length + ' places within a 10-minute walk of'} sign DTC-001</p></div>
       <a class="cmapw" href="#/map/${k === 'all' ? '' : k}" data-open>${mapDiv({ fit: true, pins: items.map((p) => p.id) })}<span class="go glass sm">${ic('expand', 14, 2.4)}Open map</span></a>
       <div class="list" style="margin-top:14px">${items.map(row).join('')}</div>
       <p class="foot">Sample listings for the demo.</p>
