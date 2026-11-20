@@ -23,6 +23,8 @@
 <meta name="apple-mobile-web-app-title" content="I Love Boston">
 <link rel="apple-touch-icon" href="/iloveboston/icon.png">
 <link rel="icon" type="image/png" href="/iloveboston/icon.png">
+<link rel="manifest" href="/iloveboston/manifest.webmanifest">
+<script>/* if the intro is going to play, keep the screen plain navy until the page knows its real size */(function(){try{var h=location.hash,q=location.search,seen=false;try{seen=!!sessionStorage.getItem("ilb-intro")}catch(e){}if((!h||h==="#/"||h==="#/mockups")&&!matchMedia("(prefers-reduced-motion: reduce)").matches&&(!seen||/[?&](intro|capture)\b/.test(q)||h==="#/mockups"))document.documentElement.classList.add("intro-pending")}catch(e){}})();</script>
 <!-- everything the first screen needs starts downloading right away; the intro waits for it, so nothing pops in mid-animation -->
 <link rel="preload" href="/iloveboston/fonts/montserrat-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/iloveboston/fonts/bricolage-latin.woff2" as="font" type="font/woff2" crossorigin>
@@ -83,7 +85,7 @@
 }}
 *{box-sizing:border-box;margin:0;padding:0}
 html{background:var(--bg)}
-body{font-family:var(--font);color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;max-width:calc(480px + env(safe-area-inset-left) + env(safe-area-inset-right));margin:0 auto;padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right);min-height:100vh;overflow-x:hidden;position:relative}
+body{font-family:var(--font);color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;max-width:480px;margin:0 auto;min-height:100vh;overflow-x:hidden;position:relative}
 body.intro-on{overflow:hidden}
 body::before{content:'';position:fixed;left:0;right:0;top:0;height:460px;background:var(--glow);pointer-events:none;z-index:0}
 #app{position:relative;z-index:1}
@@ -97,7 +99,7 @@ img{display:block}
 .glass::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,0) 46%);mix-blend-mode:soft-light}
 
 /* ---------- header ---------- */
-.top{display:flex;align-items:center;justify-content:space-between;padding:max(14px,env(safe-area-inset-top)) 16px 10px}
+.top{display:flex;align-items:center;justify-content:space-between;padding:max(14px,env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) 10px calc(16px + env(safe-area-inset-left))}
 .logo{display:flex;align-items:center;gap:6px;font-family:var(--logo);font-weight:900;font-size:21px;letter-spacing:.03em}
 .logo svg{width:22px;height:22px}
 .lang{display:flex;align-items:center;gap:6px;height:38px;padding:0 13px;border-radius:19px;font-weight:700;font-size:14px}
@@ -188,7 +190,7 @@ img{display:block}
 .ringlbl{position:absolute;transform:translate(-50%,-50%) scale(var(--ik,1));padding:4px 9px;border-radius:10px;font-size:11.5px;font-weight:700;white-space:nowrap;z-index:3;color:var(--ink)}
 @keyframes ping{0%{transform:scale(.7);opacity:.9}100%{transform:scale(1.9);opacity:0}}
 .pop{animation:pinIn .45s var(--pop) both}
-@keyframes pinIn{from{scale:0}}
+@keyframes pinIn{from{scale:.01}}
 body.pins-wait .pop{animation-play-state:paused}
 /* the T */
 .lc{display:inline-flex;align-items:center;justify-content:center;height:22px;min-width:22px;padding:0 7px;border-radius:11px;font-size:11.5px;font-weight:800;color:#fff;background:var(--l);letter-spacing:.02em;flex:none}
@@ -243,16 +245,15 @@ body.pins-wait .pop{animation-play-state:paused}
 .chip{flex:none;height:42px;padding:0 15px;border-radius:21px;display:flex;align-items:center;gap:6px;font-size:14px;font-weight:700}
 .chip.on{background:var(--ink);color:var(--bg);border-color:transparent}
 .chip.on::after{display:none}
-.recenter{position:absolute;right:calc(12px + env(safe-area-inset-right));bottom:calc(214px + env(safe-area-inset-bottom));z-index:6;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;transform:translateY(10px)}
+.recenter{position:absolute;right:12px;bottom:calc(214px + env(safe-area-inset-bottom));z-index:6;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;transform:translateY(10px)}
 .mcards{position:absolute;left:0;right:0;bottom:calc(92px + env(safe-area-inset-bottom));z-index:6;display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:6px calc(50% - 140px) 10px;scrollbar-width:none;transform:translateY(24px)}
 .mcard{flex:none;width:280px;display:flex;align-items:center;gap:12px;padding:10px;border-radius:24px;background:var(--surface);box-shadow:0 10px 26px rgba(10,17,36,.22),0 0 0 1px var(--line);scroll-snap-align:center}
 .mcard img{width:64px;height:64px;border-radius:16px;object-fit:cover;background:#888}
 .mcard .t{flex:1;min-width:0}
 .mcard b{display:block;font-size:16px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mcard .m{display:block;font-size:13px;color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.bm-attr{position:absolute;right:calc(12px + env(safe-area-inset-right));bottom:calc(200px + env(safe-area-inset-bottom));z-index:5;font-size:9px;font-weight:600;color:var(--m-lbl);-webkit-text-stroke:2.4px var(--m-halo);paint-order:stroke fill;pointer-events:none}
+.bm-attr{position:absolute;right:12px;bottom:calc(200px + env(safe-area-inset-bottom));z-index:5;font-size:9px;font-weight:600;color:var(--m-lbl);-webkit-text-stroke:2.4px var(--m-halo);paint-order:stroke fill;pointer-events:none}
 .mlpin{width:28px;height:28px;cursor:pointer;transition:opacity .28s ease}
-#bigmap.mk-hide .mlpin:not(.me-w){opacity:0}
 .mlpin .mk,.mlpin .me{position:relative;left:auto;top:auto;margin:0}
 .mlpin.me-w{width:34px;height:34px;pointer-events:none}
 .mlpin.rl-w{width:auto;height:auto;pointer-events:none}
@@ -264,9 +265,9 @@ body.pins-wait .pop{animation-play-state:paused}
 @keyframes sp{to{transform:rotate(1turn)}}
 
 /* ---------- list / today / place ---------- */
-.ptop{display:flex;align-items:center;gap:10px;padding:max(14px,env(safe-area-inset-top)) 16px 4px}
+.ptop{display:flex;align-items:center;gap:10px;padding:max(14px,env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) 4px calc(16px + env(safe-area-inset-left))}
 .back{width:42px;height:42px;border-radius:50%;display:grid;place-items:center}
-.ptitle{padding:6px 18px 0}
+.ptitle{padding:6px calc(18px + env(safe-area-inset-right)) 0 calc(18px + env(safe-area-inset-left))}
 .ptitle h1{font-family:var(--disp);font-weight:800;font-size:34px;letter-spacing:-.02em;display:flex;align-items:center;gap:10px}
 .ptitle h1 .bub{width:44px;height:44px;border-radius:14px;background:var(--t);border:2px solid var(--tile-bd);display:grid;place-items:center;color:#13224A}
 .ptitle p{font-size:15px;color:var(--muted);margin-top:6px}
@@ -276,8 +277,8 @@ body.pins-wait .pop{animation-play-state:paused}
 .wide .m{display:block;font-size:13.5px;color:var(--muted);margin-top:3px;line-height:1.4}
 .hero-ph{position:relative;height:300px;background:#777}
 .hero-ph img{width:100%;height:100%;object-fit:cover}
-.hero-ph .back{position:absolute;left:16px;top:max(14px,env(safe-area-inset-top))}
-.hero-ph .tag{left:auto;right:16px;top:calc(max(14px,env(safe-area-inset-top)) + 8px)}
+.hero-ph .back{position:absolute;left:calc(16px + env(safe-area-inset-left));top:max(14px,env(safe-area-inset-top))}
+.hero-ph .tag{left:auto;right:calc(16px + env(safe-area-inset-right));top:calc(max(14px,env(safe-area-inset-top)) + 8px)}
 .pl-body{position:relative;margin-top:-26px;background:var(--bg);border-radius:28px 28px 0 0;padding:22px 18px 30px}
 .pl-body h1{font-family:var(--disp);font-weight:800;font-size:31px;letter-spacing:-.02em;line-height:1.05}
 .pl-body>.m{font-size:15px;color:var(--muted);margin-top:6px}
@@ -302,7 +303,7 @@ body.pins-wait .pop{animation-play-state:paused}
 .fact small{color:var(--muted);font-size:13.5px}
 
 /* ---------- tab bar ---------- */
-.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;gap:10px;align-items:center;max-width:calc(480px + env(safe-area-inset-left) + env(safe-area-inset-right));margin:0 auto;padding:0 calc(14px + env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) calc(14px + env(safe-area-inset-left));pointer-events:none;transition:transform .35s var(--ease),opacity .25s}
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;gap:10px;align-items:center;max-width:480px;margin:0 auto;padding:0 14px calc(12px + env(safe-area-inset-bottom));pointer-events:none;transition:transform .35s var(--ease),opacity .25s}
 .tabbar>*{pointer-events:auto}
 .tabbar.hide{transform:translateY(130%);opacity:0}
 .caps{flex:1;height:66px;border-radius:33px;display:grid;grid-template-columns:repeat(3,1fr);padding:5px}
@@ -329,8 +330,13 @@ body.intro-on .rise{opacity:0;transform:translateY(18px)}
 body.intro-on .tabbar{opacity:0;transform:translateY(40px)}
 
 /* ---------- the scan intro: it shows the code you scanned at once, waits until the page is ready, then plays ---------- */
+html.intro-pending{background:#13224A}
+html.intro-pending body{background:transparent}
+html.intro-pending body::before{display:none}
+html.intro-pending #app,html.intro-pending .tabbar{visibility:hidden}
 #intro{position:fixed;inset:0;z-index:100;background:#13224A;color:#fff;overflow:hidden;touch-action:none;-webkit-user-select:none;user-select:none;cursor:pointer}
-#intro .stage{position:absolute;left:env(safe-area-inset-left);right:env(safe-area-inset-right);top:50%;transform:translateY(-58%);padding:0 24px;display:flex;flex-direction:column;align-items:center;text-align:center}
+#intro .stage{position:absolute;left:env(safe-area-inset-left);right:env(safe-area-inset-right);top:50%;transform:translateY(-58%);padding:0 24px;display:flex;flex-direction:column;align-items:center;text-align:center;transition:opacity .28s ease}
+#intro:not(.shown) .stage,#intro:not(.shown) .tapgo{opacity:0!important;transition:none}
 #intro .glow{position:absolute;left:calc(50% + (env(safe-area-inset-left) - env(safe-area-inset-right)) / 2);top:46%;width:560px;height:560px;margin:-280px 0 0 -280px;border-radius:50%;background:radial-gradient(circle,rgba(230,57,70,.22),rgba(230,57,70,0) 62%);opacity:0;animation:fadeIn .8s .9s var(--ease) forwards}
 .mark{position:relative;width:100%;height:76px;display:flex;align-items:center;justify-content:center;gap:.24em;font-family:var(--logo);font-weight:900;font-size:clamp(34px,calc((100vw - env(safe-area-inset-left) - env(safe-area-inset-right) - 64px) / 6.7),52px);letter-spacing:.03em;line-height:1}
 .qrwrap{position:absolute;left:50%;top:50%;width:176px;height:176px;margin:-88px 0 0 -88px;padding:14px;border-radius:30px;background:#fff;box-shadow:0 18px 50px rgba(0,0,0,.32);animation:qrIn .45s var(--ease) both,qrOut .3s .9s cubic-bezier(.5,0,.75,0) forwards}
@@ -342,7 +348,7 @@ body.intro-on .tabbar{opacity:0;transform:translateY(40px)}
 .mark .hI,.mark .hB{opacity:0;position:relative;z-index:1}
 .mark .hI{animation:fromL .45s 1.34s var(--ease) forwards}
 .mark .hB{animation:fromR .5s 1.38s var(--ease) forwards}
-.mark .heart{position:relative;z-index:2;width:1.08em;height:1.08em;transform:translateX(var(--hx,0)) scale(0);animation:heartPop .55s .95s var(--pop) forwards,heartSlide .48s 1.25s var(--ease) forwards,beat .5s 2.15s ease-in-out}
+.mark .heart{position:relative;z-index:2;width:1.08em;height:1.08em;opacity:0;transform:scale(.01)}
 .mark .heart svg{width:100%;height:100%;overflow:visible}
 .iping{position:absolute;left:50%;top:50%;width:60px;height:60px;margin:-30px 0 0 -30px;border-radius:50%;border:3px solid #E63946;opacity:0;transform:scale(.6);animation:iping 1s 1s ease-out}
 #intro .kick{color:rgba(255,255,255,.72)}
@@ -352,6 +358,7 @@ body.intro-on .tabbar{opacity:0;transform:translateY(40px)}
 /* nothing moves until the page behind is ready (only the QR code fades in) */
 #intro:not(.play) *{animation-play-state:paused!important}
 #intro:not(.play) .qrwrap{animation-play-state:running,paused!important}
+#intro:not(.shown) .qrwrap{animation-play-state:paused,paused!important}
 /* "Tap to explore": Liquid Glass, with a ring that fills while it waits, then it moves on by itself */
 .tapgo{position:absolute;left:calc(50% + (env(safe-area-inset-left) - env(safe-area-inset-right)) / 2);bottom:calc(36px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:14px;height:58px;padding:0 9px 0 24px;border-radius:29px;border:1px solid transparent;color:#fff;font:600 16.5px/1 var(--font);letter-spacing:-.005em;white-space:nowrap;
   background:linear-gradient(180deg,rgba(255,255,255,.2),rgba(255,255,255,.06) 55%,rgba(255,255,255,.1)) padding-box,linear-gradient(145deg,rgba(255,255,255,.78),rgba(255,255,255,.14) 34%,rgba(255,255,255,.05) 62%,rgba(255,255,255,.42)) border-box;
@@ -553,6 +560,8 @@ body.intro-on .tabbar{opacity:0;transform:translateY(40px)}
     const o = JSON.parse(el.dataset.map);
     const W = el.clientWidth, H = el.clientHeight;
     if (!W || !H) return;
+    const popNow = o.popIn && !el._popped;
+    el._popped = true; el._w = W; el._h = H;
     const list = (o.pins || []).map((id) => byId[id]).filter(Boolean);
     let z = o.z || 1, cx, cy;
     if (o.fit) {
@@ -571,9 +580,11 @@ body.intro-on .tabbar{opacity:0;transform:translateY(40px)}
       const a = toMap(SIGN), b = toMap(byId[o.line].ll);
       line = `<svg class="ringsvg" width="1" height="1"><path d="M${a[0]} ${a[1]} L${b[0]} ${b[1]}" stroke="var(--accent)" stroke-width="4" stroke-linecap="round" stroke-dasharray="0.1 9" fill="none" vector-effect="non-scaling-stroke"/></svg>`;
     }
-    el.innerHTML = `<div class="mapin${z < 0.8 ? ' lo' : ''}" style="transform:translate(${tx.toFixed(1)}px,${ty.toFixed(1)}px) scale(${z});--ik:${(1 / z).toFixed(3)}">${MAPSVG}${o.ring ? ringHTML() : ''}${line}${list.map((p, i) => pinHTML(p, { sm: o.sm, pop: o.popIn ? 120 + i * 45 : 0, sel: o.line === p.id })).join('')}${meHTML()}</div><span class="attr">© OpenStreetMap</span>`;
+    el.innerHTML = `<div class="mapin${z < 0.8 ? ' lo' : ''}" style="transform:translate(${tx.toFixed(1)}px,${ty.toFixed(1)}px) scale(${z});--ik:${(1 / z).toFixed(3)}">${MAPSVG}${o.ring ? ringHTML() : ''}${line}${list.map((p, i) => pinHTML(p, { sm: o.sm, pop: popNow ? 120 + i * 45 : 0, sel: o.line === p.id })).join('')}${meHTML()}</div><span class="attr">© OpenStreetMap</span>`;
   }
   function hydrate() { if (!MAPSVG) { mapReady.then(hydrate); return; } document.querySelectorAll('.map[data-map]').forEach(fillStatic); }
+  let rzT = 0;
+  addEventListener('resize', () => { clearTimeout(rzT); rzT = setTimeout(() => { if (!MAPSVG) return; document.querySelectorAll('.map[data-map]').forEach((el) => { if (el.clientWidth !== el._w || el.clientHeight !== el._h) fillStatic(el); }); if (typeof prepCam === 'function') prepCam(); }, 160); });
   const mapDiv = (o) => `<div class="map" data-map='${JSON.stringify(o)}'></div>`;
 
   /* ---------- pages ---------- */
@@ -853,13 +864,57 @@ body.intro-on .tabbar{opacity:0;transform:translateY(40px)}
   document.getElementById('bmClose').onclick = () => { if (navs > 0) history.back(); else location.hash = '#/'; };
 
   const SLOW = Math.max(1, Math.min(8, +(Q.get('slow') || 1)));   // ?slow=4 slows the map moves down, only for recording the demo GIF
-  const D_OPEN = 620 * SLOW, D_CLOSE = 520 * SLOW;
+  const D_OPEN = 620 * SLOW, D_CLOSE = 560 * SLOW;
+  const EASE_CSS = 'cubic-bezier(.3,.8,.2,1)';
+  let pinAnims = [], appAnim = null;
+  // the size and look a big-map pin has in the small map it opened from (or closes into): 0 = not on that map
+  const pinGoal = (o) => { const keep = new Set(o.pins || []); return (id) => (keep.has(id) ? (o.line === id ? 1.35 : 1) * (o.sm ? 22 / 28 : 1) : 0); };
+  function morphPins(o, dur, dir) {
+    const goal = pinGoal(o);
+    markers.forEach((m) => {
+      const el = m.getElement(), mk = el.querySelector('.mk,.tst'); if (!mk) return;
+      const small = goal(el.dataset.pin), big = mk.classList.contains('sel') ? 1.35 : 1;
+      const a = small ? { transform: `scale(${small})`, opacity: 1 } : { transform: `scale(${(big * .5).toFixed(2)})`, opacity: 0 }, b = { transform: `scale(${big})`, opacity: 1 };
+      pinAnims.push(mk.animate(dir === 'out' ? [b, a] : [a, b], { duration: dur, delay: dir === 'in' && !small ? dur * .25 : 0, easing: EASE_CSS, fill: dir === 'out' ? 'forwards' : 'backwards' }));
+      const lb = mk.querySelector('.lb');
+      if (lb) pinAnims.push(lb.animate(dir === 'out' ? [{ opacity: 1 }, { opacity: 0 }] : [{ opacity: 0 }, { opacity: 1 }], { duration: dur * .4, delay: dir === 'out' ? 0 : dur * .55, fill: dir === 'out' ? 'forwards' : 'backwards' }));
+    });
+    if (ringMarker) pinAnims.push(ringMarker.getElement().animate(dir === 'out' ? [{ opacity: 1 }, { opacity: 0 }] : [{ opacity: 0 }, { opacity: 1 }], { duration: dur * .4, delay: dir === 'out' ? 0 : dur * .5, fill: dir === 'out' ? 'forwards' : 'backwards' }));
+  }
+  // the walk ring and the route line fade if the small map doesn't have them
+  function fadeLayers(o, dir, dur) {
+    if (!map || !map.getLayer('ring-line')) return;
+    const set = (layer, prop, v, d) => { try { map.setPaintProperty(layer, prop + '-transition', { duration: d, delay: 0 }); map.setPaintProperty(layer, prop, v); } catch (e) {} };
+    const parts = [];
+    if (!o.ring) parts.push(['ring-line', 'line-opacity'], ['ring-fill', 'fill-opacity']);
+    if (!o.line) parts.push(['route', 'line-opacity']);
+    if (dir === 'out') parts.forEach(([l, p]) => set(l, p, 0, dur * .5));
+    else { parts.forEach(([l, p]) => set(l, p, 0, 0)); requestAnimationFrame(() => parts.forEach(([l, p]) => set(l, p, 1, dur * .6))); }
+  }
+  function resetPins() {
+    pinAnims.forEach((a) => a.cancel()); pinAnims = [];
+    if (map && map.getLayer('ring-line')) [['ring-line', 'line-opacity'], ['ring-fill', 'fill-opacity'], ['route', 'line-opacity']].forEach(([l, p]) => { try { map.setPaintProperty(l, p + '-transition', { duration: 0, delay: 0 }); map.setPaintProperty(l, p, 1); } catch (e) {} });
+  }
+  // the page eases back a little while the map is open, and comes forward again as it closes
+  function pageDepth(card, dur, dir) {
+    if (appAnim) { appAnim.cancel(); appAnim = null; }
+    const app = document.getElementById('app');
+    const r = card && card.isConnected ? card.getBoundingClientRect() : null, ar = app.getBoundingClientRect();
+    app.style.transformOrigin = r ? `${(r.left + r.width / 2 - ar.left).toFixed(1)}px ${(r.top + r.height / 2 - ar.top).toFixed(1)}px` : '50% 30%';
+    const back = { transform: 'scale(.95)', opacity: .6 }, front = { transform: 'none', opacity: 1 };
+    const a = app.animate(dir === 'back' ? [front, back] : [back, front], { duration: dur, easing: EASE_CSS, fill: dir === 'back' ? 'forwards' : 'none' });
+    if (dir === 'back') appAnim = a; else a.finished.then(() => { if (!appAnim) app.style.transformOrigin = ''; }).catch(() => {});
+  }
+  // the card's own label and buttons come back as the big map melts into it
+  function overlaysIn(card, dur) {
+    if (!card) return;
+    card.querySelectorAll('.ttl,.go,.wk').forEach((el, i) => el.animate([{ opacity: 0, transform: 'translateY(6px) scale(.96)' }, { opacity: 1, transform: 'none' }], { duration: Math.round(dur * .5), delay: Math.round(dur * .56 + i * 40), easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'backwards' }));
+  }
   const insetOf = (r) => `inset(${r.top.toFixed(1)}px ${(bigEl.clientWidth - r.right).toFixed(1)}px ${(bigEl.clientHeight - r.bottom).toFixed(1)}px ${r.left.toFixed(1)}px round 28px)`;
   async function openBig(filter, focus, from) {
     bigFilter = filter || ''; bigFocus = focus || '';
     if (bigOpen) { setPins(bigFilter, bigFocus); map.easeTo({ ...goalCam(bigFilter, bigFocus), duration: 650, easing: IOS }); return; }
     bigOpen = true; origin = from || null;
-    bigEl.classList.remove('mk-hide');
     const card = from && from.closest('[data-open]');
     const waitT = setTimeout(() => card && card.classList.add('wait'), 120);
     await ensureMap();
@@ -875,19 +930,24 @@ body.intro-on .tabbar{opacity:0;transform:translateY(40px)}
       map.jumpTo(sc.cam);
       await idle(400);
       if (!bigOpen) return;
+      const o = JSON.parse(from.dataset.map || '{}');
+      resetPins();
       bigEl.style.clipPath = insetOf(sc.rect);
-      bigEl.classList.add('mk-hide');
+      morphPins(o, D_OPEN, 'in');
+      fadeLayers(o, 'in', D_OPEN);
       bigEl.classList.add('on');
-      setTimeout(() => bigEl.classList.remove('mk-hide'), 160);
-      bigEl.animate([{ clipPath: insetOf(sc.rect) }, { clipPath: 'inset(0px 0px 0px 0px round 0px)' }], { duration: D_OPEN, easing: 'cubic-bezier(.3,.8,.2,1)', fill: 'forwards' });
+      pageDepth(card, D_OPEN, 'back');
+      bigEl.animate([{ clipPath: insetOf(sc.rect) }, { clipPath: 'inset(0px 0px 0px 0px round 0px)' }], { duration: D_OPEN, easing: EASE_CSS, fill: 'forwards' });
       map.easeTo({ ...goal, duration: D_OPEN, easing: OPEN });
       setTimeout(() => { if (bigOpen) bigEl.classList.add('ui'); }, D_OPEN * 0.45);
     } else {
       map.jumpTo(goal);
       await idle(400);
       if (!bigOpen) return;
+      resetPins();
       bigEl.style.clipPath = '';
       bigEl.classList.add('on');
+      pageDepth(null, 320, 'back');
       bigEl.animate([{ opacity: 0, transform: 'scale(1.03)' }, { opacity: 1, transform: 'none' }], { duration: 320, easing: 'cubic-bezier(.2,.8,.2,1)' });
       bigEl.classList.add('ui');
     }
@@ -896,22 +956,32 @@ body.intro-on .tabbar{opacity:0;transform:translateY(40px)}
     if (!bigOpen) return;
     bigOpen = false;
     bigEl.classList.remove('ui');
-    bigEl.classList.add('mk-hide');
     bigEl.setAttribute('aria-hidden', 'true');
+    if (appAnim) { appAnim.cancel(); appAnim = null; }   // measure the page at its real size before it eases back in
     const sc = to && to.isConnected && to._v ? staticCam(to) : null;
     const visible = sc && sc.rect.bottom > 0 && sc.rect.top < bigEl.clientHeight;
+    const card = to && to.closest('[data-open]');
     bigEl.getAnimations().forEach((a) => a.cancel());
     if (visible) {
+      // the map shrinks back into its card while the camera glides back to the card's view; the pins shrink to their small size
+      // (the ones that aren't on the card fade), and the big map melts into the card in the last part so its label and pins take over
+      const o = JSON.parse(to.dataset.map || '{}');
+      morphPins(o, D_CLOSE, 'out');
+      fadeLayers(o, 'out', D_CLOSE);
+      pageDepth(card, D_CLOSE, 'front');
+      overlaysIn(card, D_CLOSE);
       map.easeTo({ ...sc.cam, duration: D_CLOSE, easing: OPEN });
-      await bigEl.animate([{ clipPath: 'inset(0px 0px 0px 0px round 0px)' }, { clipPath: insetOf(sc.rect) }], { duration: D_CLOSE, easing: 'cubic-bezier(.3,.8,.2,1)', fill: 'forwards' }).finished;
-      if (bigOpen) return;
-      await bigEl.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 170, easing: 'ease-out', fill: 'forwards' }).finished;
+      const clip = bigEl.animate([{ clipPath: 'inset(0px 0px 0px 0px round 0px)' }, { clipPath: insetOf(sc.rect) }], { duration: D_CLOSE, easing: EASE_CSS, fill: 'forwards' });
+      const melt = bigEl.animate([{ opacity: 1 }, { opacity: 0 }], { duration: Math.round(D_CLOSE * .42), delay: Math.round(D_CLOSE * .62), easing: 'ease-in-out', fill: 'forwards' });
+      await Promise.all([clip.finished, melt.finished]).catch(() => {});
     } else {
-      await bigEl.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'scale(.97)' }], { duration: 240, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' }).finished;
+      pageDepth(card, 320, 'front');
+      await bigEl.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'scale(.97)' }], { duration: 260, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' }).finished.catch(() => {});
     }
     if (bigOpen) return;
-    bigEl.classList.remove('on', 'mk-hide');
+    bigEl.classList.remove('on');
     bigEl.getAnimations().forEach((a) => a.cancel());
+    resetPins();
     bigEl.style.clipPath = '';
   }
 
@@ -952,7 +1022,7 @@ body.intro-on .tabbar{opacity:0;transform:translateY(40px)}
     const hash = location.hash || '#/';
     const h = hash.replace(/^#\/?/, '').split('/');
     const iv = document.getElementById('intro');
-    if (iv && h[0] && h[0] !== 'mockups') { iv.remove(); document.body.classList.remove('intro-on', 'pins-wait'); }
+    if (iv && h[0] && h[0] !== 'mockups') { iv.remove(); document.body.classList.remove('intro-on', 'pins-wait'); document.documentElement.classList.remove('intro-pending'); }
     if (h[0] === 'map') {
       if (under === null) renderPage('#/');
       const from = pendingFrom || pageMap(); pendingFrom = null;
@@ -991,7 +1061,7 @@ body.intro-on .tabbar{opacity:0;transform:translateY(40px)}
   if (document.readyState === 'complete') setTimeout(warmAfterLoad, 0); else addEventListener('load', warmAfterLoad);
   window.__map = () => map;
   window.__openBig = openBig;
-  window.__bm = { staticCam, goalCam, insetOf, setPins, pageMap, el: bigEl, ease: OPEN };
+  window.__bm = { staticCam, goalCam, insetOf, setPins, pageMap, el: bigEl, ease: OPEN, closeBig, dClose: D_CLOSE, dOpen: D_OPEN };
 
   /* ---------- search ---------- */
   const sheet = document.getElementById('ssheet'), sq = document.getElementById('sq'), sres = document.getElementById('sres');
@@ -1013,16 +1083,49 @@ body.intro-on .tabbar{opacity:0;transform:translateY(40px)}
   const intro = document.getElementById('intro');
   const onHome = !location.hash || location.hash === '#/';
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (!intro || !onHome || reduce || (!CAPTURE && !Q.has('intro') && !fromMockups && sessionStorage.getItem('ilb-intro'))) { if (intro) intro.remove(); document.body.classList.remove('intro-on', 'pins-wait'); return; }
+  if (!intro || !onHome || reduce || (!CAPTURE && !Q.has('intro') && !fromMockups && sessionStorage.getItem('ilb-intro'))) { if (intro) intro.remove(); document.body.classList.remove('intro-on', 'pins-wait'); document.documentElement.classList.remove('intro-pending'); return; }
   sessionStorage.setItem('ilb-intro', '1');
   const AUTO = Q.get('auto') !== '0';   // ?auto=0 waits for a tap instead of moving on by itself
   const BUILD = 2350;                   // when "Tap to explore" shows, counted from when the show starts (ms)
   const HOLD = 2000;                    // how long the finished screen stays up to be read before it moves on (ms)
   intro.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });   // no scrolling the page underneath
   const heart = document.getElementById('iHeart');
-  // the heart pops where the QR code is (the middle of the wordmark row), then slides into its spot in I ♥ BOSTON
-  const placeHeart = () => { const mk = heart.parentElement; intro.style.setProperty('--hx', (mk.clientWidth / 2 - (heart.offsetLeft + heart.offsetWidth / 2)).toFixed(1) + 'px'); };
-  placeHeart();
+  // the heart pops where the QR code is (the middle of the wordmark row), then slides into its spot in I ♥ BOSTON.
+  // It's animated from script with real pixel values measured once the screen has settled (sturdier on iPhone than CSS keyframes with variables)
+  let heartAnims = [];
+  function heartGo(fast) {
+    heartAnims.forEach((a) => a.cancel());
+    const mk = heart.parentElement, hx = mk.clientWidth / 2 - (heart.offsetLeft + heart.offsetWidth / 2);
+    const at = (x, k) => `translateX(${x.toFixed(1)}px) scale(${k})`;
+    heartAnims = [
+      heart.animate([
+        { opacity: 0, transform: at(hx, .01), easing: 'cubic-bezier(.2,.9,.3,1)' },
+        { opacity: 1, transform: at(hx, 1.3), offset: .33, easing: 'ease-in-out' },
+        { opacity: 1, transform: at(hx, 1), offset: .5, easing: 'cubic-bezier(.2,.8,.2,1)' },
+        { opacity: 1, transform: at(0, 1) },
+      ], { delay: fast ? 0 : 950, duration: fast ? 1 : 930, fill: 'both' }),
+      heart.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.18)', offset: .3 }, { transform: 'scale(.96)', offset: .6 }, { transform: 'scale(1)' }], { delay: fast ? 0 : 2150, duration: fast ? 1 : 500, easing: 'ease-in-out' }),
+    ];
+  }
+  // a home-screen launch can start at the wrong size for a moment and then jump: show nothing but navy until the screen size settles
+  const probe = document.createElement('div');
+  probe.style.cssText = 'position:fixed;top:env(safe-area-inset-top);right:env(safe-area-inset-right);bottom:env(safe-area-inset-bottom);left:env(safe-area-inset-left);visibility:hidden;pointer-events:none;z-index:-1';
+  document.body.appendChild(probe);
+  const sizeKey = () => { const r = probe.getBoundingClientRect(); return [innerWidth, innerHeight, r.left, r.top, r.right, r.bottom].map(Math.round).join(','); };
+  const standalone = navigator.standalone === true || matchMedia('(display-mode: standalone)').matches;
+  const looksFull = () => { if (!standalone) return true; const a = Math.max(innerWidth, innerHeight), b = Math.min(innerWidth, innerHeight), A = Math.max(screen.width, screen.height), B = Math.min(screen.width, screen.height); return a >= 0.8 * A && b >= 0.8 * B && a <= 1.2 * A && b <= 1.2 * B; };
+  const settled = new Promise((res) => {
+    const t0 = performance.now(); let key = '', since = t0;
+    const tick = (now) => {
+      const k = sizeKey();
+      if (k !== key) { key = k; since = now; }
+      if ((now - since >= (standalone ? 320 : 160) && now - t0 >= 120 && looksFull()) || now - t0 > 2200) { probe.remove(); res(); return; }
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  });
+  let shown = false;
+  function show() { shown = true; document.documentElement.classList.remove('intro-pending'); intro.classList.add('shown'); }
   let morphing = false;
   function morph(paused) {
     if (morphing) return; morphing = true;
@@ -1044,7 +1147,7 @@ body.intro-on .tabbar{opacity:0;transform:translateY(40px)}
     intro.querySelectorAll('.mark,.isub,.tapgo,.glow').forEach((el) => anims.push(el.animate([{ opacity: getComputedStyle(el).opacity }, { opacity: 0 }], { duration: 260, easing: 'ease-out', fill: 'forwards' })));
     document.querySelectorAll('.rise,.tabbar').forEach((el, i) => anims.push(el.animate([{ opacity: 0, transform: 'translateY(18px)' }, { opacity: 1, transform: 'none' }], { duration: 480, delay: 300 + Math.min(i, 6) * 55, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'forwards' })));
     hero.querySelectorAll('.ttl,.go').forEach((el) => anims.push(el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, delay: dur - 120, fill: 'backwards' })));
-    const finish = () => { document.body.classList.remove('intro-on'); intro.remove(); warm(1500); };
+    const finish = () => { document.body.classList.remove('intro-on'); document.documentElement.classList.remove('intro-pending'); intro.remove(); warm(1500); };
     anims.forEach((a) => { const t = a.effect && a.effect.target; if (t && (t.classList.contains('rise') || t.classList.contains('tabbar'))) a.finished.then(() => a.cancel()); });
     Promise.all([anims[0].finished, anims[1].finished]).then(finish);
     if (!paused) setTimeout(() => document.body.classList.remove('pins-wait'), dur - 60);
@@ -1066,7 +1169,7 @@ body.intro-on .tabbar{opacity:0;transform:translateY(40px)}
   }
   function start() {
     if (started) return; started = true;
-    placeHeart();
+    heartGo(false);
     intro.classList.add('play');
     if (!CAPTURE) readyT = setTimeout(showReady, BUILD);
   }
@@ -1075,18 +1178,26 @@ body.intro-on .tabbar{opacity:0;transform:translateY(40px)}
   const fontsReady = Promise.all(['900 50px Montserrat', '800 40px "Bricolage Grotesque"', '400 16px Inter', '600 16px Inter', '700 16px Inter'].map((f) => document.fonts.load(f))).catch(() => {});
   const heroReady = mapReady.then(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
   const picsReady = () => Promise.all([...document.querySelectorAll('#app img')].slice(0, 4).map((im) => (im.decode ? im.decode().catch(() => {}) : 0)));
-  if (CAPTURE) start();
-  else Promise.race([Promise.all([fontsReady, heroReady, wait(450)]).then(picsReady), wait(1800)]).then(start);
+  const assets = Promise.all([fontsReady, heroReady]).then(picsReady);
+  if (CAPTURE) { show(); start(); }
+  else settled.then(() => { show(); return Promise.race([Promise.all([assets, wait(450)]), wait(1600)]); }).then(start);
+  // if the screen changes size while the intro is up, hide its words for a moment and bring them back in place, instead of a jump
+  let rsT = 0;
+  addEventListener('resize', () => {
+    if (!shown || leaving || !intro.isConnected) return;
+    document.documentElement.classList.add('intro-pending'); intro.classList.remove('shown');
+    clearTimeout(rsT); rsT = setTimeout(() => { if (intro.isConnected && !leaving) show(); }, 260);
+  });
   // a tap goes in: right away once everything is shown, or after a quick beat if the words are still coming in
   intro.addEventListener('click', () => {
     if (leaving) return;
     if (ready) { go(); return; }
-    clearTimeout(readyT); started = true; placeHeart(); intro.classList.add('play', 'fast');
+    clearTimeout(readyT); if (!shown) show(); started = true; heartGo(true); intro.classList.add('play', 'fast');
     setTimeout(go, 450);
   });
   window.__introReady = showReady;
   window.__introStart = start;
-  window.__placeHeart = placeHeart;
+  window.__placeHeart = () => heartGo(false);
 })();
 </script>
 </body>

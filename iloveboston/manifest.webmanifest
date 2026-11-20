@@ -1,0 +1,22 @@
+{
+ "name": "I Love Boston",
+ "short_name": "I ♥ Boston",
+ "description": "Everything Boston. One scan away.",
+ "start_url": "/iloveboston/",
+ "scope": "/iloveboston/",
+ "display": "standalone",
+ "background_color": "#13224A",
+ "theme_color": "#13224A",
+ "icons": [
+  {
+   "src": "/iloveboston/icon.png",
+   "sizes": "180x180",
+   "type": "image/png"
+  },
+  {
+   "src": "/iloveboston/icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png"
+  }
+ ]
+}
