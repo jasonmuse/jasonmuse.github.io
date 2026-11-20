@@ -342,8 +342,13 @@ body.intro-on .tabbar{opacity:0;transform:translateY(40px)}
 .ikick{margin-top:22px;opacity:0;animation:up .45s 1.62s var(--ease) forwards}
 .ititle{font-family:var(--disp);font-weight:800;font-size:40px;letter-spacing:-.02em;line-height:1.05;margin-top:10px;white-space:nowrap;opacity:0;animation:up .5s 1.76s var(--ease) forwards}
 .isub{font-size:16px;color:rgba(255,255,255,.75);margin-top:12px;opacity:0;animation:up .45s 1.95s var(--ease) forwards}
-.skip{position:absolute;right:16px;bottom:calc(22px + env(safe-area-inset-bottom));height:36px;padding:0 14px;border-radius:18px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.85);font-size:13.5px;font-weight:700;opacity:0;animation:fadeIn .4s .6s forwards}
-#intro.fast *{animation-duration:.01s!important;animation-delay:0s!important}
+/* the intro waits for a tap, so there's time to read which sign you scanned */
+.tapgo{position:absolute;left:50%;bottom:calc(40px + env(safe-area-inset-bottom));transform:translate(-50%,10px);display:flex;align-items:center;gap:8px;height:50px;padding:0 22px 0 24px;border-radius:25px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.24);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);color:#fff;font-weight:700;font-size:16px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .45s ease,transform .45s cubic-bezier(.2,.8,.2,1)}
+#intro.ready .tapgo{opacity:1;transform:translate(-50%,0);pointer-events:auto;animation:breathe 2.4s ease-in-out .5s infinite}
+.tapgo svg{animation:nudge 2.4s ease-in-out .5s infinite}
+@keyframes breathe{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.18)}50%{box-shadow:0 0 0 9px rgba(255,255,255,0)}}
+@keyframes nudge{0%,100%{transform:none}50%{transform:translateX(3px)}}
+#intro.fast .stage *,#intro.fast .glow{animation-duration:.01s!important;animation-delay:0s!important}
 #intro.fast .qrwrap,#intro.fast .scanline,#intro.fast .iping{display:none}
 @keyframes qrIn{from{opacity:0;transform:scale(.85)}}
 @keyframes qrOut{to{opacity:0;transform:scale(.15) rotate(-8deg)}}
@@ -398,7 +403,7 @@ body.intro-on .tabbar{opacity:0;transform:translateY(40px)}
     <h1 class="ititle" id="iTitle">Downtown Crossing</h1>
     <p class="isub">Everything Boston. One scan away.</p>
   </div>
-  <button class="skip" type="button">Skip</button>
+  <button class="tapgo" type="button">Tap to explore<svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
 </div>
 
 <script>
@@ -1008,7 +1013,7 @@ body.intro-on .tabbar{opacity:0;transform:translateY(40px)}
       anims.push(ea.animate([{ transform: 'none', color: getComputedStyle(ea).color }, { transform: `translate(${rb.left - ra.left}px,${rb.top - ra.top}px) scale(${s})`, color: to }], { duration: dur, easing: ease, fill: 'forwards' }));
       anims.push(ea.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 160, delay: dur - 20, fill: 'forwards' }));
     });
-    intro.querySelectorAll('.mark,.isub,.skip,.glow').forEach((el) => anims.push(el.animate([{ opacity: getComputedStyle(el).opacity }, { opacity: 0 }], { duration: 260, easing: 'ease-out', fill: 'forwards' })));
+    intro.querySelectorAll('.mark,.isub,.tapgo,.glow').forEach((el) => anims.push(el.animate([{ opacity: getComputedStyle(el).opacity }, { opacity: 0 }], { duration: 260, easing: 'ease-out', fill: 'forwards' })));
     document.querySelectorAll('.rise,.tabbar').forEach((el, i) => anims.push(el.animate([{ opacity: 0, transform: 'translateY(18px)' }, { opacity: 1, transform: 'none' }], { duration: 480, delay: 300 + Math.min(i, 6) * 55, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'forwards' })));
     hero.querySelectorAll('.ttl,.go').forEach((el) => anims.push(el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, delay: dur - 120, fill: 'backwards' })));
     const finish = () => { document.body.classList.remove('intro-on'); intro.remove(); };
@@ -1022,8 +1027,12 @@ body.intro-on .tabbar{opacity:0;transform:translateY(40px)}
   window.__morph = morph;
   window.__finishIntro = () => { document.body.classList.remove('intro-on'); intro.remove(); };
   window.__pinsGo = () => document.body.classList.remove('pins-wait');
-  intro.addEventListener('click', () => { intro.classList.add('fast'); setTimeout(() => morph(), 40); });
-  if (!CAPTURE) setTimeout(() => morph(), 2500);
+  // a tap while it's still animating finishes it; once everything is in, a tap goes to the page
+  let ready = false;
+  const showTap = () => { ready = true; intro.classList.add('ready'); };
+  const readyT = CAPTURE ? 0 : setTimeout(showTap, 2350);
+  intro.addEventListener('click', () => { if (!ready) { clearTimeout(readyT); intro.classList.add('fast'); showTap(); return; } morph(); });
+  window.__introReady = showTap;
 })();
 </script>
 </body>
