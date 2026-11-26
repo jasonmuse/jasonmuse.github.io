@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<!-- Only this page's own script runs (its hash: run tools/web-csp.py after editing the script), and it only talks to the MBTA, OpenStreetMap's search and this site: an injected handler or script never runs. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-95ptzSgNCsxA7OU/cc1OvhsELcFdIGFCcT1Ofp1nGY4='; style-src 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://api-v3.mbta.com https://nominatim.openstreetmap.org; manifest-src 'self'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Muse Commute</title>
 <meta name="description" content="Live Orange Line trains, timed from your walk.">
@@ -47,7 +49,7 @@ button{cursor:pointer}
 .search input::-webkit-search-cancel-button{-webkit-appearance:none}
 .loc{flex:none;width:38px;height:38px;border-radius:50%;border:0;background:var(--card-2);color:var(--accent);display:grid;place-items:center}
 .loc:active{background:var(--line)}
-.loc.busy svg{animation:spin 1s linear infinite}
+@media (prefers-reduced-motion:no-preference){.loc.busy svg{animation:spin 1s linear infinite}}
 @keyframes spin{to{transform:rotate(360deg)}}
 .cancel{flex:none;border:0;background:none;color:var(--accent);font-size:15px;font-weight:600;padding:0 12px;height:38px}
 .sugg{position:absolute;left:0;right:0;top:56px;z-index:30;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:6px;max-height:min(58vh,460px);overflow:auto;-webkit-overflow-scrolling:touch;box-shadow:0 18px 44px rgba(0,0,0,.55);transform-origin:50% 0;view-transition-name:sugg}
@@ -422,7 +424,7 @@ button.lnk{border:0;background:none;padding:0;margin:0;color:var(--accent);font:
 <script>
 (function () {
   'use strict';
-  var VERSION = '2026-11-17-12';
+  var VERSION = '2026-11-25-1';
   var API = 'https://api-v3.mbta.com';
   var POLL_MS = 15000, ALERT_MS = 120000;
   var CUSHION = 45000;   // aim to be on the platform this long before the train pulls in
@@ -451,7 +453,10 @@ button.lnk{border:0;background:none;padding:0;margin:0;color:var(--accent);font:
     ['mlmnl', 'Malden Center', 'Malden Center', ['70034', '70035']],
     ['ogmnl', 'Oak Grove', 'Oak Grove', ['70036', 'Oak Grove-01', 'Oak Grove-02']]
   ];
-  var PLATFORM = {};
+  // Tables keyed by the MBTA's own strings have no prototype, so an id like "__proto__" or
+  // "constructor" is just a missing key, never a way into every object on the page.
+  function dict(o) { return Object.assign(Object.create(null), o || {}); }
+  var PLATFORM = dict();
   STATIONS.forEach(function (s, i) { s[3].forEach(function (p) { PLATFORM[p] = i; }); PLATFORM['place-' + s[0]] = i; });
   function keyIndex(k) { for (var i = 0; i < STATIONS.length; i++) if (STATIONS[i][0] === k) return i; return -1; }
 
@@ -498,13 +503,13 @@ button.lnk{border:0;background:none;padding:0;margin:0;color:var(--accent);font:
     from: keyIndex('north'), to: keyIndex('forhl'), walk: 5, sound: false, awake: false,
     trains: [], alerts: [], fetchedAt: 0, error: '', backoffUntil: 0,
     here: null, place: null, fromSource: 'auto', walkSource: 'manual', locMsg: '',
-    startFix: null, placedOnce: false, riding: null, boardCandidate: null, destArr: {}, locDenied: false,
+    startFix: null, placedOnce: false, riding: null, boardCandidate: null, destArr: dict(), locDenied: false,
     planAt: null, planDay: null, manualWalk: 6, sched: [], schedKey: '', schedAt: 0,
     bigShows: 'train',  // the big number: 'train' (when your train comes in) or 'leave' (when to leave)
     pick: null,         // a train you picked to look at (its trip), instead of the one it picked for you
     manualAt: null      // "I'm here": { i: station, at: time } when this device can't tell you're at the station
   };
-  var chimed = {};
+  var chimed = dict();
   var $ = function (id) { return document.getElementById(id); };
 
   // ---------- motion ----------
@@ -521,6 +526,44 @@ button.lnk{border:0;background:none;padding:0;margin:0;color:var(--accent);font:
     if (!el.hidden) return;
     el.hidden = false;
     if (!inVT) anim(el, [{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }], { duration: 380, easing: EASE });
+  }
+  // Lists keep their items by trip: when a train leaves or joins, the rest glide to their new spots
+  // and a new one rises in, instead of the whole list jumping
+  var POP = [{ opacity: 0, transform: 'scale(.9)' }, { opacity: 1, transform: 'none' }];
+  function swapKeyed(box, html, rise) {
+    var before = dict(), had = false;
+    if (!reduced() && !inVT) Array.prototype.forEach.call(box.querySelectorAll('[data-trip]'), function (b) {
+      var r = b.getBoundingClientRect(); before[b.getAttribute('data-trip')] = { x: r.left, y: r.top }; had = true;
+    });
+    box.innerHTML = html;
+    if (!had) return;
+    Array.prototype.forEach.call(box.querySelectorAll('[data-trip]'), function (b) {
+      var was = before[b.getAttribute('data-trip')], el = b.closest('li') || b, r = b.getBoundingClientRect();
+      if (was) {
+        var dx = was.x - r.left, dy = was.y - r.top;
+        if (Math.abs(dx) > 1 || Math.abs(dy) > 1) anim(el, [{ transform: 'translate(' + dx + 'px,' + dy + 'px)' }, { transform: 'none' }], { duration: 320, easing: EASE });
+      } else if (rise) anim(el, rise, { duration: 300, easing: EASE, fill: 'backwards' });
+    });
+  }
+  // The delay banner is only rewritten when what it says changes, and it eases in and out (its
+  // height too, so the card under it glides instead of jumping)
+  var alertsHtml = '';
+  function setAlerts(html) {
+    var box = $('alerts');
+    if (html === alertsHtml) return;
+    var had = alertsHtml !== '';
+    alertsHtml = html;
+    if (reduced() || inVT || !box.animate) { box.innerHTML = html; return; }
+    var from = box.offsetHeight;
+    box.style.overflow = 'hidden';
+    if (!html) {
+      var out = box.animate([{ opacity: 1, height: from + 'px' }, { opacity: 0, height: '0px' }], { duration: 260, easing: EASE, fill: 'forwards' });
+      out.onfinish = function () { if (alertsHtml === '') box.innerHTML = ''; out.cancel(); box.style.overflow = ''; };
+      return;
+    }
+    box.innerHTML = html;
+    var grow = box.animate([{ opacity: had ? 1 : 0, height: from + 'px' }, { opacity: 1, height: box.offsetHeight + 'px' }], { duration: 300, easing: EASE });
+    grow.onfinish = function () { box.style.overflow = ''; };
   }
   // A change you make (swap, a new stop, a new time) paints as one smooth transition: the station
   // names glide to their new spots and the rest crossfades. Until it paints, other repaints wait.
@@ -617,7 +660,7 @@ button.lnk{border:0;background:none;padding:0;margin:0;color:var(--accent);font:
       'filter[route]': 'Orange',
       'include': 'vehicle'
     }).then(function (j) {
-      var vehicles = {}, byDir = [{}, {}];
+      var vehicles = dict(), byDir = [dict(), dict()];
       (j.included || []).forEach(function (v) { if (v.type === 'vehicle') vehicles[v.id] = v; });
       (j.data || []).forEach(function (p) {
         var a = p.attributes || {}, r = p.relationships || {}, d = a.direction_id;
@@ -662,7 +705,7 @@ button.lnk{border:0;background:none;padding:0;margin:0;color:var(--accent);font:
     }).then(function () { if (loadingKey === key) loading = false; });
   }
 
-  var KEEP_EFFECTS = { DELAY: 1, SUSPENSION: 1, SHUTTLE: 1, DETOUR: 1, STOP_CLOSURE: 1, STATION_CLOSURE: 1, CANCELLATION: 1, SNOW_ROUTE: 1, TRACK_CHANGE: 1, STOP_MOVE: 1, SERVICE_CHANGE: 3, NOTICE: 5, STATION_ISSUE: 5, EXTRA_SERVICE: 9 };
+  var KEEP_EFFECTS = dict({ DELAY: 1, SUSPENSION: 1, SHUTTLE: 1, DETOUR: 1, STOP_CLOSURE: 1, STATION_CLOSURE: 1, CANCELLATION: 1, SNOW_ROUTE: 1, TRACK_CHANGE: 1, STOP_MOVE: 1, SERVICE_CHANGE: 3, NOTICE: 5, STATION_ISSUE: 5, EXTRA_SERVICE: 9 });
   function loadAlerts() {
     api('/alerts', { 'filter[route]': 'Orange', 'filter[datetime]': 'NOW', 'filter[activity]': 'BOARD,EXIT,RIDE' })
       .then(function (j) { state.alerts = j.data || []; render(); })
@@ -800,14 +843,14 @@ button.lnk{border:0;background:none;padding:0;margin:0;color:var(--accent);font:
     }
   }
 
-  var LEVEL = { EMPTY: 1, MANY_SEATS_AVAILABLE: 1, FEW_SEATS_AVAILABLE: 2, STANDING_ROOM_ONLY: 3, CRUSHED_STANDING_ROOM_ONLY: 4, FULL: 4 };
+  var LEVEL = dict({ EMPTY: 1, MANY_SEATS_AVAILABLE: 1, FEW_SEATS_AVAILABLE: 2, STANDING_ROOM_ONLY: 3, CRUSHED_STANDING_ROOM_ONLY: 4, FULL: 4 });
   var FILL = [12, 34, 62, 86, 100];
   // The train itself: the T lists its cars front first (the end that pulls in first, in the
   // direction it's going), so it's drawn back-to-front, left to right, nose on the right.
   function consistHTML(v) {
     var cs = v && v.attributes && v.attributes.carriages;
     if (!cs || !cs.length) return '';
-    var cars = cs.map(function (c, i) { return { lv: LEVEL[c.occupancy_status] || 0, pct: c.occupancy_percentage, fromFront: i + 1 }; });
+    var cars = cs.map(function (c, i) { return { lv: +LEVEL[c.occupancy_status] || 0, pct: +c.occupancy_percentage || 0, fromFront: i + 1 }; });
     var best = null;
     cars.forEach(function (c) {
       if (c.lv && (!best || c.lv < best.lv || (c.lv === best.lv && (c.pct || 0) < (best.pct || 0)))) best = c;
@@ -862,7 +905,7 @@ button.lnk{border:0;background:none;padding:0;margin:0;color:var(--accent);font:
   function setPlan(v) {
     state.planAt = v || null;
     state.planDay = v ? planDayFor(v) : null;
-    chimed = {}; state.sched = []; state.schedKey = '';
+    chimed = dict(); state.sched = []; state.schedKey = '';
     saveSettings(); loadSchedule(); smooth();
   }
   // When you're leaving: one small button ("Leaving now" / "Leaving 5 PM") with a menu
@@ -903,7 +946,7 @@ button.lnk{border:0;background:none;padding:0;margin:0;color:var(--accent);font:
       'filter[max_time]': pad(endHour) + ':' + pad(e.getMinutes())
     }).then(function (j) {
       if (from !== state.from || to !== state.to) return;
-      var byTrip = {};
+      var byTrip = dict();
       (j.data || []).forEach(function (sc) {
         var a = sc.attributes || {}, r = sc.relationships || {};
         var trip = r.trip && r.trip.data && r.trip.data.id, stop = r.stop && r.stop.data && r.stop.data.id;
@@ -1170,7 +1213,7 @@ button.lnk{border:0;background:none;padding:0;margin:0;color:var(--accent);font:
       return '<button type="button" class="tchip ' + cls.join(' ') + '" data-trip="' + esc(t.trip) + '" aria-pressed="' + (t.trip === sel) + '" aria-label="' + esc('The ' + clock(t.arr) + ' train, ' + cap) + '">'
         + clock(t.arr) + '<small>' + esc(cap) + '</small></button>';
     }).join('');
-    if (html !== stripKey) { chips.innerHTML = html; stripKey = html; }   // only when it changes, so taps land
+    if (html !== stripKey) { swapKeyed(chips, html, POP); stripKey = html; }   // only when it changes, so taps land
     var i = -1;
     list.forEach(function (u, k) { if (u.t.trip === sel) i = k; });
     strip.querySelector('[data-step="-1"]').disabled = i <= 0;
@@ -1209,11 +1252,11 @@ button.lnk{border:0;background:none;padding:0;margin:0;color:var(--accent);font:
 
     // alerts
     var al = relevantAlerts();
-    $('alerts').innerHTML = al.length ? al.map(function (x) {
+    setAlerts(al.length ? al.map(function (x) {
       var a = x.attributes, bad = (a.severity || 0) >= 7 || a.effect === 'SUSPENSION' || a.effect === 'SHUTTLE';
       var chip = a.effect === 'DELAY' ? 'Delays' : a.effect === 'SHUTTLE' ? 'Shuttle' : a.effect === 'SUSPENSION' ? 'No trains' : 'Heads up';
       return '<div class="alert' + (bad ? ' bad' : '') + '"><span class="chip">' + chip + '</span><span>' + esc(a.short_header || a.header) + '</span></div>';
-    }).join('') : '';
+    }).join('') : '');
 
     // pick the train you can make (a plan for later means: not before then)
     var ps = planStart();
@@ -1324,7 +1367,7 @@ button.lnk{border:0;background:none;padding:0;margin:0;color:var(--accent);font:
       listSkel = true; listHtml = '';
     } else {
       var html = rows.length ? rows.join('') : '<li><span class="muted">No predictions yet.</span></li>';
-      if (html !== listHtml) { list.innerHTML = html; listHtml = html; }   // only when it changes, so taps land
+      if (html !== listHtml) { swapKeyed(list, html, RISE); listHtml = html; }   // only when it changes, so taps land
       if (listSkel && !inVT) Array.prototype.forEach.call(list.children, function (li, i) {
         anim(li, RISE, { duration: 340, delay: i * 40, easing: EASE, fill: 'backwards' });
       });
@@ -1390,7 +1433,7 @@ button.lnk{border:0;background:none;padding:0;margin:0;color:var(--accent);font:
     var c = routeCache[state.from + '-' + state.to];
     if (c && Date.now() - c.at < 60000) { state.trains = c.trains; state.fetchedAt = c.at; }
     else { state.trains = []; state.fetchedAt = 0; }
-    state.error = ''; chimed = {}; trackKey = ''; state.pick = null;
+    state.error = ''; chimed = dict(); trackKey = ''; state.pick = null;
     state.sched = []; state.schedKey = ''; setTimeout(loadSchedule, 0);
     state.startFix = state.here; state.riding = null; state.boardCandidate = null;
     saveSettings(); smooth(); loadTrains();
@@ -1467,21 +1510,32 @@ button.lnk{border:0;background:none;padding:0;margin:0;color:var(--accent);font:
     }, { enableHighAccuracy: true, timeout: 12000, maximumAge: 10000 });
   }
   $('locBtn').addEventListener('click', function () { state.fromSource = 'auto'; startWatching(); useMyLocation(true); });
+  // The When menu springs open and fades shut (160 ms, like the search list)
+  var menuOpen = false;
   function whenMenu(open) {
     var menu = $('whenMenu');
-    if (open === !menu.hidden) return;
+    if (open === menuOpen) return;
+    menuOpen = open;
     $('whenBtn').setAttribute('aria-expanded', open ? 'true' : 'false');
-    menu.hidden = !open;
-    if (open) anim(menu, [{ opacity: 0, transform: 'translateY(-6px) scale(.96)' }, { opacity: 1, transform: 'none' }], { duration: 180, easing: EASE });
+    if (open) {
+      menu.hidden = false;
+      menu.style.pointerEvents = '';
+      anim(menu, [{ opacity: 0, transform: 'translateY(-6px) scale(.96)' }, { opacity: 1, transform: 'none' }], { duration: 180, easing: EASE });
+      return;
+    }
+    menu.style.pointerEvents = 'none';
+    var a = anim(menu, [{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateY(-6px) scale(.96)' }], { duration: 160, easing: 'ease-in' });
+    if (a) a.onfinish = function () { if (!menuOpen) menu.hidden = true; };
+    else menu.hidden = true;
   }
-  $('whenBtn').addEventListener('click', function () { whenMenu($('whenMenu').hidden); });
+  $('whenBtn').addEventListener('click', function () { whenMenu(!menuOpen); });
   Array.prototype.forEach.call(document.querySelectorAll('#whenMenu [data-plan]'), function (c) {
     c.addEventListener('click', function () { whenMenu(false); setPlan(c.getAttribute('data-plan')); });
   });
   $('pickChip').addEventListener('click', function () { try { $('planTime').showPicker(); } catch (e) {} });
   $('planTime').addEventListener('change', function () { if (this.value) { whenMenu(false); setPlan(this.value); } });
   document.addEventListener('pointerdown', function (e) {
-    if (!$('whenMenu').hidden && !$('when').contains(e.target)) whenMenu(false);
+    if (menuOpen && !$('when').contains(e.target)) whenMenu(false);
   }, true);
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') whenMenu(false); });
   $('segTrain').addEventListener('click', function () { setBig('train'); });
@@ -1529,7 +1583,7 @@ button.lnk{border:0;background:none;padding:0;margin:0;color:var(--accent);font:
     var b = e.target.closest ? e.target.closest('[data-act="here"], [data-act="nothere"]') : null;
     if (!b) return;
     state.manualAt = b.getAttribute('data-act') === 'here' ? { i: state.from, at: Date.now() } : null;
-    state.pick = null; chimed = {};
+    state.pick = null; chimed = dict();
     smooth();
   });
   $('locHelpX').addEventListener('click', function () {
@@ -1815,7 +1869,7 @@ button.lnk{border:0;background:none;padding:0;margin:0;color:var(--accent);font:
     closeSearch();
   }, true);
 
-  function setWalk(n) { state.walk = Math.max(1, Math.min(30, n)); state.manualWalk = state.walk; state.walkSource = 'manual'; chimed = {}; saveSettings(); render(); }
+  function setWalk(n) { state.walk = Math.max(1, Math.min(30, n)); state.manualWalk = state.walk; state.walkSource = 'manual'; chimed = dict(); saveSettings(); render(); }
   $('walkMinus').addEventListener('click', function () { setWalk(state.walk - 1); });
   $('walkPlus').addEventListener('click', function () { setWalk(state.walk + 1); });
   $('soundChk').addEventListener('change', function () {
